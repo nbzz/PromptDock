@@ -46,16 +46,16 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
     return (
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
         <h3 className="mb-2 text-sm font-semibold text-slate-800">变量填写</h3>
-        <p className="text-sm text-slate-500">这个模板没有变量，直接可用。</p>
+        <p className="text-base text-slate-500 sm:text-sm">这个模板没有变量，直接可用。</p>
       </section>
     );
   }
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
-      <div className="mb-3 flex items-center justify-between gap-3">
+      <div className="mb-3 flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <h3 className="text-sm font-semibold text-slate-800">变量填写</h3>
-        {stockStatusText ? <p className="text-[11px] text-slate-500">{stockStatusText}</p> : null}
+        {stockStatusText ? <p className="text-xs text-slate-500">{stockStatusText}</p> : null}
       </div>
 
       <div className="space-y-3">
@@ -88,7 +88,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   rows={3}
                   value={value}
                   placeholder={variable.placeholder ?? ''}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
                   onKeyDown={(event) => handleEnterToNext(event, index, true)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
@@ -99,7 +99,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   id={`var-${variable.id}`}
                   data-field-index={index}
                   value={value}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 >
                   <option value="">请选择</option>
@@ -127,7 +127,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   value={value}
                   enterKeyHint="next"
                   placeholder={variable.placeholder ?? ''}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
                   onKeyDown={(event) => handleEnterToNext(event, index)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />

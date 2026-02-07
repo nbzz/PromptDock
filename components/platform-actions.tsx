@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
-import { getPlatformIcon, PLATFORMS } from '@/lib/platforms';
+import { PLATFORMS } from '@/lib/platforms';
 
 interface PlatformActionsProps {
   content: string;
@@ -57,19 +57,18 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
     if (ok) {
       onAction?.({ type: 'copy_and_open', platformKey });
     }
-    showNotice(ok ? '已复制并打开新标签' : '已打开新标签（复制失败）');
+    showNotice(ok ? '已复制并跳转' : '已跳转（复制失败）');
   }
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold text-slate-800">快捷动作</h3>
+        <h3 className="text-sm font-semibold text-slate-800">快捷动作（复制并跳转）</h3>
         <button
           type="button"
           onClick={copyOnly}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 sm:py-1.5 sm:text-xs"
         >
-          <span className="text-sm">📋</span>
           <span>仅复制</span>
         </button>
       </div>
@@ -79,14 +78,14 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
           <button
             key={platform.key}
             type="button"
-            title={`${platform.name}（复制并打开）`}
-            className="group flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-1 py-2 text-[11px] transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50"
+            title={`${platform.name}（复制并跳转）`}
+            className="group flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-1 py-2 text-xs transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 sm:text-[11px]"
             onClick={() => {
               void copyAndOpen(platform.key, platform.url);
             }}
           >
             <Image
-              src={getPlatformIcon(platform.url)}
+              src={platform.icon}
               alt={platform.name}
               width={24}
               height={24}

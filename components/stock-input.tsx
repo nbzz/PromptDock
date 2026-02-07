@@ -77,7 +77,7 @@ export function StockInput({
         data-field-index={fieldIndex}
         value={value}
         placeholder={placeholder ?? '输入股票代码或名称，例如寒武纪，小米，nvda等'}
-        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
         autoComplete="off"
         enterKeyHint="next"
         onFocus={() => setOpen(true)}
@@ -133,7 +133,7 @@ export function StockInput({
                 selectAt(index);
               }}
             >
-              <div className="truncate text-sm font-semibold text-slate-900">{entry.item.name}</div>
+              <div className="truncate text-base font-semibold text-slate-900 sm:text-sm">{entry.item.name}</div>
               <div className="mt-1 flex items-center gap-2 text-xs">
                 <span
                   className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${marketBadgeClass(entry.item.market)}`}

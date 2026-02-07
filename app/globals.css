@@ -15,6 +15,8 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
   background:
     radial-gradient(circle at 20% 20%, rgba(14, 165, 165, 0.12), transparent 42%),
     radial-gradient(circle at 85% 10%, rgba(37, 99, 235, 0.12), transparent 35%),
@@ -32,4 +34,12 @@ input,
 select,
 button {
   font: inherit;
+}
+
+@media (max-width: 640px) {
+  textarea,
+  input,
+  select {
+    font-size: 16px;
+  }
 }

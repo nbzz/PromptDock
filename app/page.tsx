@@ -2,11 +2,9 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
-import { HistoryPanel } from '@/components/history-panel';
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
-import { clearHistory, loadHistory, saveHistory } from '@/lib/history';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
 import {
@@ -15,7 +13,7 @@ import {
   renderPrompt,
   renderPromptSegments
 } from '@/lib/template-parser';
-import { PromptHistoryEntry, StockItem, StoredTemplate } from '@/lib/types';
+import { StockItem, StoredTemplate } from '@/lib/types';
 
 interface TemplateResponse {
   items: StoredTemplate[];
@@ -60,6 +58,8 @@ function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
   return templates.filter((item) => item.source === 'local');
 }
 
+const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股', '证券', '财报'];
+
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
@@ -69,9 +69,7 @@ export default function HomePage() {
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
-  const [historyItems, setHistoryItems] = useState<PromptHistoryEntry[]>([]);
   const [notice, setNotice] = useState('');
-  const [pendingReuse, setPendingReuse] = useState<PromptHistoryEntry | null>(null);
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -134,7 +132,6 @@ export default function HomePage() {
 
     async function loadInitialData() {
       const localTemplates = loadLocalTemplates();
-      const localHistory = loadHistory();
 
       let builtinTemplates: StoredTemplate[] = [];
       try {
@@ -151,7 +148,6 @@ export default function HomePage() {
 
       const merged = mergeTemplates(builtinTemplates, localTemplates);
       setTemplates(merged);
-      setHistoryItems(localHistory);
 
       if (merged.length > 0) {
         setSelectedId(merged[0].id);
@@ -239,18 +235,6 @@ export default function HomePage() {
     setDraftMarkdown(selectedTemplate.rawMarkdown);
   }, [selectedTemplate]);
 
-  useEffect(() => {
-    if (!pendingReuse || !parsed || pendingReuse.templateId !== parsed.id) {
-      return;
-    }
-
-    setValues((previous) => ({
-      ...previous,
-      ...pendingReuse.values
-    }));
-    setPendingReuse(null);
-  }, [pendingReuse, parsed]);
-
   const rendered = useMemo(() => {
     if (!parsed) {
       return '';
@@ -267,7 +251,20 @@ export default function HomePage() {
     return renderPromptSegments(parsed.content, values);
   }, [parsed, values]);
 
+  const shouldShowStockStatus = useMemo(() => {
+    if (!parsed) {
+      return false;
+    }
+
+    const title = parsed.title.toLowerCase();
+    return STOCK_TEMPLATE_KEYWORDS.some((keyword) => title.includes(keyword.toLowerCase()));
+  }, [parsed]);
+
   const stockStatusText = useMemo(() => {
+    if (!shouldShowStockStatus) {
+      return '';
+    }
+
     const date = new Date(stockMeta.updatedAt);
     const shortTime = date.toLocaleString('zh-CN', {
       month: '2-digit',
@@ -283,7 +280,7 @@ export default function HomePage() {
         : '在线数据';
 
     return `股票库 ${stockMeta.count} 条 · A ${stockMeta.marketCounts.CN} / H ${stockMeta.marketCounts.HK} / US ${stockMeta.marketCounts.US} · ${source} · ${shortTime}`;
-  }, [stockMeta]);
+  }, [shouldShowStockStatus, stockMeta]);
 
   function showNotice(text: string) {
     setNotice(text);
@@ -383,52 +380,6 @@ export default function HomePage() {
     showNotice('模板已导出为 Markdown');
   }
 
-  function addHistory(action: 'copy_only' | 'copy_and_open', platformKey?: string) {
-    if (!parsed || !rendered.trim()) {
-      return;
-    }
-
-    const entry: PromptHistoryEntry = {
-      id: crypto.randomUUID(),
-      createdAt: Date.now(),
-      templateId: parsed.id,
-      templateTitle: parsed.title,
-      values: { ...values },
-      rendered,
-      action,
-      platformKey
-    };
-
-    setHistoryItems((previous) => {
-      const next = [entry, ...previous].slice(0, 20);
-      saveHistory(next);
-      return next;
-    });
-  }
-
-  function handleReuseHistory(entry: PromptHistoryEntry) {
-    const targetTemplate = templates.find((item) => item.id === entry.templateId);
-    if (targetTemplate) {
-      setSelectedId(targetTemplate.id);
-      setDraftMarkdown(targetTemplate.rawMarkdown);
-      setPendingReuse(entry);
-      showNotice('已载入历史记录');
-      return;
-    }
-
-    setValues((previous) => ({
-      ...previous,
-      ...entry.values
-    }));
-    showNotice('模板不存在，已仅复用变量值');
-  }
-
-  function handleClearHistory() {
-    clearHistory();
-    setHistoryItems([]);
-    showNotice('历史记录已清空');
-  }
-
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
@@ -495,7 +446,7 @@ export default function HomePage() {
               variables={parsed?.variables ?? []}
               values={values}
               stocks={stocks}
-              stockStatusText={stockStatusText}
+              stockStatusText={stockStatusText || undefined}
               onChange={(name, value) => {
                 setValues((previous) => ({
                   ...previous,
@@ -504,18 +455,7 @@ export default function HomePage() {
               }}
             />
 
-            <PlatformActions
-              content={rendered}
-              onAction={(action) => {
-                addHistory(action.type, action.platformKey);
-              }}
-            />
-
-            <HistoryPanel
-              entries={historyItems}
-              onReuse={handleReuseHistory}
-              onClear={handleClearHistory}
-            />
+            <PlatformActions content={rendered} />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -566,7 +506,7 @@ export default function HomePage() {
                   <textarea
                     value={draftMarkdown}
                     rows={14}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm leading-6 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
                     placeholder="在这里临时调整模板内容"
                     onChange={(event) => setDraftMarkdown(event.target.value)}
                   />
@@ -588,23 +528,21 @@ export default function HomePage() {
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
           <p>© 2026 cyberteng. All rights reserved.</p>
           <p>
-            公共模板投稿:
-            <a
-              href="mailto:tz@ittz.top"
-              className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
-            >
-              tz@ittz.top
-            </a>
-          </p>
-          <p>
-            开源仓库:
+            公共模板投稿：
             <a
               href="https://github.com/nbzz/PromptDock"
               target="_blank"
               rel="noreferrer"
               className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
             >
-              GitHub（优先 Pull Request 提交）
+              Pull Request · GitHub: PromptDock
+            </a>
+            ，或联系
+            <a
+              href="mailto:tz@ittz.top"
+              className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
+            >
+              tz@ittz.top
             </a>
           </p>
         </footer>
