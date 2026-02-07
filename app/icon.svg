@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="PromptDock">
+  <defs>
+    <linearGradient id="dock" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0ea5a5" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#dock)" />
+  <rect x="48" y="50" width="160" height="156" rx="22" fill="#ffffff" fill-opacity="0.96" />
+  <path d="M78 88h70c22 0 40 18 40 40s-18 40-40 40H78z" fill="#0f172a" />
+  <path d="M96 106h48c12 0 22 10 22 22s-10 22-22 22H96z" fill="#ffffff" />
+  <rect x="78" y="164" width="100" height="12" rx="6" fill="#14b8a6" />
+</svg>

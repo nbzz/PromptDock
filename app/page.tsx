@@ -380,13 +380,44 @@ export default function HomePage() {
     showNotice('模板已导出为 Markdown');
   }
 
+  function handleDeleteTemplate() {
+    if (!selectedTemplate) {
+      return;
+    }
+
+    if (selectedTemplate.source !== 'local') {
+      showNotice('内置模板不支持删除');
+      return;
+    }
+
+    const ok = window.confirm(`确认删除本地模板「${selectedTemplate.title}」？`);
+    if (!ok) {
+      return;
+    }
+
+    setTemplates((previous) => {
+      const next = previous.filter((item) => item.id !== selectedTemplate.id);
+      saveLocalTemplates(getLocalTemplates(next));
+
+      const nextSelected = next[0];
+      setSelectedId(nextSelected?.id ?? '');
+      setDraftMarkdown(nextSelected?.rawMarkdown ?? '');
+
+      return next;
+    });
+    showNotice('本地模板已删除');
+  }
+
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
         <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft">
-          <div className="flex items-center justify-between gap-3">
-            <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
-            {notice ? <p className="text-xs text-teal-700">{notice}</p> : null}
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
+              <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
+            </div>
+            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
           </div>
         </header>
 
@@ -412,6 +443,10 @@ export default function HomePage() {
                   }}
                 />
               </div>
+
+              <p className="mb-3 text-xs leading-5 text-slate-500">
+                上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。
+              </p>
 
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
                 {templates.map((item) => (
@@ -482,11 +517,11 @@ export default function HomePage() {
 
               <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600">
                 <summary className="cursor-pointer select-none font-medium text-slate-700">
-                  高级设置：编辑模板 / 保存 / 导出
+                  高级设置：编辑模板 / 保存 / 导出 / 删除
                 </summary>
 
                 <div className="mt-3 space-y-2">
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={handleSaveTemplate}
@@ -500,6 +535,15 @@ export default function HomePage() {
                       className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
                     >
                       导出 Markdown
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDeleteTemplate}
+                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={selectedTemplate?.source !== 'local'}
+                      title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
+                    >
+                      删除本地模板
                     </button>
                   </div>
 
@@ -528,16 +572,16 @@ export default function HomePage() {
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
           <p>© 2026 cyberteng. All rights reserved.</p>
           <p>
-            公共模板投稿：
+            公共模板投稿：Pull Request（
             <a
               href="https://github.com/nbzz/PromptDock"
               target="_blank"
               rel="noreferrer"
-              className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
+              className="font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
             >
-              Pull Request · GitHub: PromptDock
+              GitHub: PromptDock
             </a>
-            ，或联系
+            ），或联系
             <a
               href="mailto:tz@ittz.top"
               className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
