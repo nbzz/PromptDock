@@ -73,17 +73,31 @@ export function executeAutoFill(kind: AutoFillKind, now: Date = new Date()): str
 
 const AUTO_FILL_BY_NAME: Record<string, { type: VariableType; autoFill: AutoFillKind }> = {
   今天: { type: 'date', autoFill: 'date' },
+  今日: { type: 'date', autoFill: 'date' },
   日期: { type: 'date', autoFill: 'date' },
   当前日期: { type: 'date', autoFill: 'date' },
+  current_date: { type: 'date', autoFill: 'date' },
+  today: { type: 'date', autoFill: 'date' },
   时间: { type: 'time', autoFill: 'time' },
   当前时间: { type: 'time', autoFill: 'time' },
+  current_time: { type: 'time', autoFill: 'time' },
   日期时间: { type: 'text', autoFill: 'datetime' },
   当前日期时间: { type: 'text', autoFill: 'datetime' },
+  current_datetime: { type: 'text', autoFill: 'datetime' },
+  now: { type: 'text', autoFill: 'datetime' },
   星期: { type: 'text', autoFill: 'weekday' },
+  周几: { type: 'text', autoFill: 'weekday' },
   本月: { type: 'text', autoFill: 'month' },
+  当前月份: { type: 'text', autoFill: 'month' },
+  当前年月: { type: 'text', autoFill: 'month' },
   本季度: { type: 'text', autoFill: 'quarter' },
+  当前季度: { type: 'text', autoFill: 'quarter' },
   时间戳: { type: 'text', autoFill: 'timestamp' },
-  最近交易日: { type: 'date', autoFill: 'trading_day' }
+  UNIX时间戳: { type: 'text', autoFill: 'timestamp' },
+  Unix时间戳: { type: 'text', autoFill: 'timestamp' },
+  最近交易日: { type: 'date', autoFill: 'trading_day' },
+  交易日: { type: 'date', autoFill: 'trading_day' },
+  最新交易日: { type: 'date', autoFill: 'trading_day' }
 };
 
 function normalizeName(name: string): string {

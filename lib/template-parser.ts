@@ -8,12 +8,49 @@ import {
   VariableMeta
 } from '@/lib/types';
 
-const PLACEHOLDER_RE = /\[([^\[\]\n]+)\](?!\()/g;
+const PLACEHOLDER_RE = /\[([^\[\]\n]{1,40})\](?!\()/g;
+const CODE_FENCE_RE = /```[\s\S]*?```/g;
+const INLINE_CODE_RE = /`[^`\n]+`/g;
+const IGNORED_PLACEHOLDER_NAMES = new Set([
+  'google_search',
+  'model_config',
+  'instruction',
+  'fusion_strategy',
+  'visual_elements',
+  'text_rendering',
+  'style_config'
+]);
 
 export interface PromptSegment {
   text: string;
   isFilled: boolean;
   variableName?: string;
+}
+
+function sanitizeForVariableScan(content: string): string {
+  return content.replace(CODE_FENCE_RE, '\n').replace(INLINE_CODE_RE, '');
+}
+
+function isValidPlaceholderName(raw: string): boolean {
+  const name = raw.trim();
+  if (!name || name.length > 24) {
+    return false;
+  }
+
+  if (name.length === 1 && /^[xX*]$/.test(name)) {
+    return false;
+  }
+
+  if (IGNORED_PLACEHOLDER_NAMES.has(name)) {
+    return false;
+  }
+
+  // 仅保留常见变量命名字符，避免把 JSON/示例语法误识别为变量。
+  if (!/^[\p{L}\p{N}\s_\-·（）()]+$/u.test(name)) {
+    return false;
+  }
+
+  return true;
 }
 
 function parseFrontmatter(markdown: string): {
@@ -76,10 +113,11 @@ function detectTitle(content: string): string {
 export function extractVariableNames(content: string): string[] {
   const seen = new Set<string>();
   const output: string[] = [];
+  const scanContent = sanitizeForVariableScan(content);
 
-  for (const match of content.matchAll(PLACEHOLDER_RE)) {
+  for (const match of scanContent.matchAll(PLACEHOLDER_RE)) {
     const value = match[1]?.trim();
-    if (!value || seen.has(value)) {
+    if (!value || !isValidPlaceholderName(value) || seen.has(value)) {
       continue;
     }
 

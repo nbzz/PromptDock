@@ -40,6 +40,31 @@ function countFallbackByMarket(items: StockItem[]): { CN: number; HK: number; US
   return counts;
 }
 
+const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股', '证券', '财报'];
+const PINNED_BUILTIN_TITLES = ['个股分析', '由新闻分析个股板块影响', '枯燥报告转生动网页'];
+const DEFAULT_TEMPLATE_TITLE = '个股分析';
+
+function getTemplateOrderRank(item: StoredTemplate): number {
+  if (item.source !== 'builtin') {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  const index = PINNED_BUILTIN_TITLES.indexOf(item.title);
+  if (index >= 0) {
+    return index;
+  }
+
+  return 100;
+}
+
+function pickPreferredTemplate(items: StoredTemplate[]): StoredTemplate | null {
+  if (items.length === 0) {
+    return null;
+  }
+
+  return items.find((item) => item.title === DEFAULT_TEMPLATE_TITLE) ?? items[0];
+}
+
 function mergeTemplates(builtin: StoredTemplate[], local: StoredTemplate[]): StoredTemplate[] {
   const map = new Map<string, StoredTemplate>();
 
@@ -51,14 +76,27 @@ function mergeTemplates(builtin: StoredTemplate[], local: StoredTemplate[]): Sto
     map.set(item.id, item);
   }
 
-  return [...map.values()].sort((a, b) => b.updatedAt - a.updatedAt);
+  return [...map.values()].sort((a, b) => {
+    const rankDiff = getTemplateOrderRank(a) - getTemplateOrderRank(b);
+    if (rankDiff !== 0) {
+      return rankDiff;
+    }
+
+    if (a.source !== b.source) {
+      return a.source === 'builtin' ? -1 : 1;
+    }
+
+    if (a.source === 'builtin') {
+      return a.title.localeCompare(b.title, 'zh-CN');
+    }
+
+    return b.updatedAt - a.updatedAt;
+  });
 }
 
 function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
   return templates.filter((item) => item.source === 'local');
 }
-
-const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股', '证券', '财报'];
 
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -149,9 +187,10 @@ export default function HomePage() {
       const merged = mergeTemplates(builtinTemplates, localTemplates);
       setTemplates(merged);
 
-      if (merged.length > 0) {
-        setSelectedId(merged[0].id);
-        setDraftMarkdown(merged[0].rawMarkdown);
+      const preferred = pickPreferredTemplate(merged);
+      if (preferred) {
+        setSelectedId(preferred.id);
+        setDraftMarkdown(preferred.rawMarkdown);
       }
     }
 
@@ -399,7 +438,7 @@ export default function HomePage() {
       const next = previous.filter((item) => item.id !== selectedTemplate.id);
       saveLocalTemplates(getLocalTemplates(next));
 
-      const nextSelected = next[0];
+      const nextSelected = pickPreferredTemplate(next);
       setSelectedId(nextSelected?.id ?? '');
       setDraftMarkdown(nextSelected?.rawMarkdown ?? '');
 
@@ -446,6 +485,9 @@ export default function HomePage() {
 
               <p className="mb-3 text-xs leading-5 text-slate-500">
                 上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。
+              </p>
+              <p className="mb-3 text-xs leading-5 text-slate-500">
+                模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。
               </p>
 
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
