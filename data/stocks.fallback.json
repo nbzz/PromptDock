@@ -1,0 +1,38 @@
+[
+  {
+    "code": "00700.HK",
+    "name": "腾讯控股",
+    "market": "HK",
+    "aliases": ["腾讯", "00700", "HK00700", "700"]
+  },
+  {
+    "code": "09988.HK",
+    "name": "阿里巴巴-W",
+    "market": "HK",
+    "aliases": ["阿里", "09988", "HK09988", "9988"]
+  },
+  {
+    "code": "600519.SH",
+    "name": "贵州茅台",
+    "market": "CN",
+    "aliases": ["茅台", "600519", "SH600519"]
+  },
+  {
+    "code": "000001.SZ",
+    "name": "平安银行",
+    "market": "CN",
+    "aliases": ["平安银行", "000001", "SZ000001"]
+  },
+  {
+    "code": "AAPL",
+    "name": "Apple Inc.",
+    "market": "US",
+    "aliases": ["APPLE", "AAPL"]
+  },
+  {
+    "code": "TSLA",
+    "name": "Tesla, Inc.",
+    "market": "US",
+    "aliases": ["TESLA", "TSLA"]
+  }
+]

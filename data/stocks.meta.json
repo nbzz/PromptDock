@@ -1,0 +1,29 @@
+{
+  "updatedAt": "2026-02-07T08:58:58.635Z",
+  "total": 14219,
+  "counts": {
+    "CN": 5148,
+    "HK": 2384,
+    "US": 6687
+  },
+  "mode": "base+delta",
+  "sources": {
+    "cn": {
+      "name": "A股(沪深A股列表)",
+      "url": "https://raw.githubusercontent.com/khscience/OSkhQuant/main/data/%E6%B2%AA%E6%B7%B1A%E8%82%A1_%E8%82%A1%E7%A5%A8%E5%88%97%E8%A1%A8.csv"
+    },
+    "hk": {
+      "name": "港股(HK Listings)",
+      "url": "https://raw.githubusercontent.com/jacktth/ga-hk_stock_info/main/hk-listings/date.json"
+    },
+    "usTickers": {
+      "name": "美股Ticker全集",
+      "url": "https://raw.githubusercontent.com/rreichel3/US-Stock-Symbols/main/all/all_tickers.txt"
+    },
+    "usNames": {
+      "name": "美股名称映射(SEC Mirror)",
+      "url": "https://raw.githubusercontent.com/LondonMarket/Global-Stock-Symbols/main/sec_company_tickers_cik.json"
+    }
+  },
+  "fetchedInSeconds": 1
+}
