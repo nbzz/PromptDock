@@ -44,18 +44,18 @@ function handleEnterToNext(
 export function VariableForm({ variables, values, stocks, stockStatusText, onChange }: VariableFormProps) {
   if (variables.length === 0) {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
-        <h3 className="mb-2 text-sm font-semibold text-slate-800">变量填写</h3>
-        <p className="text-base text-slate-500 sm:text-sm">这个模板没有变量，直接可用。</p>
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+        <h3 className="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-200">变量填写</h3>
+        <p className="text-base text-slate-500 sm:text-sm dark:text-slate-400">这个模板没有变量，直接可用。</p>
       </section>
     );
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
       <div className="mb-3 flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-        <h3 className="text-sm font-semibold text-slate-800">变量填写</h3>
-        {stockStatusText ? <p className="text-xs text-slate-500">{stockStatusText}</p> : null}
+        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">变量填写</h3>
+        {stockStatusText ? <p className="text-xs text-slate-500 dark:text-slate-400">{stockStatusText}</p> : null}
       </div>
 
       <div className="space-y-3">
@@ -65,7 +65,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
 
           return (
             <div key={variable.id} className="space-y-1.5">
-              <label htmlFor={`var-${variable.id}`} className="text-sm font-medium text-slate-700">
+              <label htmlFor={`var-${variable.id}`} className="text-sm font-medium text-slate-700 dark:text-slate-300">
                 {label}
               </label>
 
@@ -88,7 +88,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   rows={3}
                   value={value}
                   placeholder={variable.placeholder ?? ''}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:focus:ring-teal-900/50"
                   onKeyDown={(event) => handleEnterToNext(event, index, true)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
@@ -99,7 +99,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   id={`var-${variable.id}`}
                   data-field-index={index}
                   value={value}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:focus:ring-teal-900/50"
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 >
                   <option value="">请选择</option>
@@ -127,13 +127,13 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   value={value}
                   enterKeyHint="next"
                   placeholder={variable.placeholder ?? ''}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:focus:ring-teal-900/50"
                   onKeyDown={(event) => handleEnterToNext(event, index)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
               ) : null}
 
-              {variable.hint ? <p className="text-xs text-slate-500">{variable.hint}</p> : null}
+              {variable.hint ? <p className="text-xs text-slate-500 dark:text-slate-400">{variable.hint}</p> : null}
             </div>
           );
         })}

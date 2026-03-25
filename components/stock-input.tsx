@@ -77,7 +77,7 @@ export function StockInput({
         data-field-index={fieldIndex}
         value={value}
         placeholder={placeholder ?? '输入股票代码或名称，例如寒武纪，小米，nvda等'}
-        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
+        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:focus:ring-teal-900/50"
         autoComplete="off"
         enterKeyHint="next"
         onFocus={() => setOpen(true)}
@@ -120,27 +120,27 @@ export function StockInput({
       />
 
       {open && results.length > 0 ? (
-        <div className="absolute z-20 mt-2 max-h-80 w-full overflow-auto rounded-xl border border-slate-200 bg-white shadow-soft">
+        <div className="absolute z-20 mt-2 max-h-80 w-full overflow-auto rounded-xl border border-slate-200 bg-white shadow-soft dark:border-slate-700 dark:bg-slate-900">
           {results.map((entry, index) => (
             <button
               key={`${entry.item.market}:${entry.item.code}`}
               type="button"
-              className={`w-full border-b border-slate-100 px-3 py-2.5 text-left transition last:border-b-0 ${
-                index === active ? 'bg-teal-50' : 'hover:bg-slate-50'
+              className={`w-full border-b border-slate-100 px-3 py-2.5 text-left transition last:border-b-0 dark:border-slate-800 ${
+                index === active ? 'bg-teal-50 dark:bg-teal-900/30' : 'hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
               onMouseEnter={() => setActive(index)}
               onClick={() => {
                 selectAt(index);
               }}
             >
-              <div className="truncate text-base font-semibold text-slate-900 sm:text-sm">{entry.item.name}</div>
+              <div className="truncate text-base font-semibold text-slate-900 dark:text-slate-100 sm:text-sm">{entry.item.name}</div>
               <div className="mt-1 flex items-center gap-2 text-xs">
                 <span
                   className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${marketBadgeClass(entry.item.market)}`}
                 >
                   {marketLabel(entry.item.market)}
                 </span>
-                <span className="font-mono text-slate-500">{formatStockCode(entry.item)}</span>
+                <span className="font-mono text-slate-500 dark:text-slate-400">{formatStockCode(entry.item)}</span>
               </div>
             </button>
           ))}

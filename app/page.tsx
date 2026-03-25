@@ -3,6 +3,7 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlatformActions } from '@/components/platform-actions';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
@@ -450,25 +451,28 @@ export default function HomePage() {
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
-        <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft">
+        <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
-              <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
+              <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">PromptDock</h1>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <p className="min-h-4 text-xs text-teal-700 dark:text-teal-400">{notice || ' '}</p>
+            </div>
           </div>
         </header>
 
         <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit">
-            <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft">
+            <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-slate-800">模板列表</h2>
+                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">模板列表</h2>
                 <button
                   type="button"
                   onClick={handleUploadClick}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
+                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100 dark:border-teal-800 dark:bg-teal-900/30 dark:text-teal-300 dark:hover:bg-teal-900/50"
                 >
                   上传 .md
                 </button>
@@ -483,10 +487,10 @@ export default function HomePage() {
                 />
               </div>
 
-              <p className="mb-3 text-xs leading-5 text-slate-500">
+              <p className="mb-3 text-xs leading-5 text-slate-500 dark:text-slate-400">
                 上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。
               </p>
-              <p className="mb-3 text-xs leading-5 text-slate-500">
+              <p className="mb-3 text-xs leading-5 text-slate-500 dark:text-slate-400">
                 模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。
               </p>
 
@@ -498,19 +502,19 @@ export default function HomePage() {
                     onClick={() => handleTemplateSelect(item.id)}
                     className={`w-full rounded-xl border px-3 py-2 text-left transition ${
                       selectedId === item.id
-                        ? 'border-teal-400 bg-teal-50 text-teal-900'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                        ? 'border-teal-400 bg-teal-50 text-teal-900 dark:border-teal-500 dark:bg-teal-900/30 dark:text-teal-300'
+                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/50'
                     }`}
                   >
                     <p className="truncate text-sm font-medium">{item.title}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                       {item.source === 'builtin' ? '内置模板' : '本地模板'}
                     </p>
                   </button>
                 ))}
 
                 {templates.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500">
+                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
                     先上传一个 .md 模板
                   </p>
                 ) : null}
@@ -534,19 +538,19 @@ export default function HomePage() {
 
             <PlatformActions content={rendered} />
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="text-sm font-semibold text-slate-800">模板与预览</h3>
-                <p className="text-xs text-slate-500">高亮部分为已填充变量</p>
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">模板与预览</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">高亮部分为已填充变量</p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-                <pre className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
+                <pre className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700 dark:text-slate-300">
                   {renderedSegments.map((segment, index) =>
                     segment.isFilled ? (
                       <span
                         key={`seg-${index}`}
-                        className="rounded bg-teal-100 px-1 font-mono text-teal-800"
+                        className="rounded bg-teal-100 px-1 font-mono text-teal-800 dark:bg-teal-900/40 dark:text-teal-300"
                       >
                         {segment.text}
                       </span>
@@ -557,8 +561,8 @@ export default function HomePage() {
                 </pre>
               </div>
 
-              <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600">
-                <summary className="cursor-pointer select-none font-medium text-slate-700">
+              <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900">
+                <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">
                   高级设置：编辑模板 / 保存 / 导出 / 删除
                 </summary>
 
@@ -567,21 +571,21 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={handleSaveTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                       保存模板
                     </button>
                     <button
                       type="button"
                       onClick={handleExportTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                       导出 Markdown
                     </button>
                     <button
                       type="button"
                       onClick={handleDeleteTemplate}
-                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-800 dark:bg-rose-900/30 dark:text-rose-400 dark:hover:bg-rose-900/50"
                       disabled={selectedTemplate?.source !== 'local'}
                       title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
                     >
@@ -592,15 +596,15 @@ export default function HomePage() {
                   <textarea
                     value={draftMarkdown}
                     rows={14}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:focus:ring-teal-900/50"
                     placeholder="在这里临时调整模板内容"
                     onChange={(event) => setDraftMarkdown(event.target.value)}
                   />
                 </div>
               </details>
 
-              <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-                <summary className="cursor-pointer select-none font-medium">自动变量（可选）</summary>
+              <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+                <summary className="cursor-pointer select-none font-medium dark:text-slate-300">自动变量（可选）</summary>
                 <p className="mt-2 leading-5">
                   仅以下变量名会自动填充：
                   {AUTO_FILL_NAMES.map((name) => ` [${name}]`).join('')}
@@ -611,7 +615,7 @@ export default function HomePage() {
           </section>
         </div>
 
-        <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
+        <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500 dark:text-slate-400">
           <p>© 2026 cyberteng. All rights reserved.</p>
           <p>
             公共模板投稿：Pull Request（
@@ -619,14 +623,14 @@ export default function HomePage() {
               href="https://github.com/nbzz/PromptDock"
               target="_blank"
               rel="noreferrer"
-              className="font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
+              className="font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700 dark:text-slate-400 dark:hover:text-teal-400"
             >
               GitHub: PromptDock
             </a>
             ），或联系
             <a
               href="mailto:tz@ittz.top"
-              className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
+              className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700 dark:text-slate-400 dark:hover:text-teal-400"
             >
               tz@ittz.top
             </a>
