@@ -3,6 +3,7 @@
 import { KeyboardEvent } from 'react';
 
 import { StockInput } from '@/components/stock-input';
+import { useI18n } from '@/lib/i18n';
 import { ParsedVariable, StockItem } from '@/lib/types';
 
 interface VariableFormProps {
@@ -42,11 +43,13 @@ function handleEnterToNext(
 }
 
 export function VariableForm({ variables, values, stocks, stockStatusText, onChange }: VariableFormProps) {
+  const { t } = useI18n();
+
   if (variables.length === 0) {
     return (
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
-        <h3 className="mb-2 text-sm font-semibold text-slate-800">变量填写</h3>
-        <p className="text-base text-slate-500 sm:text-sm">这个模板没有变量，直接可用。</p>
+        <h3 className="mb-2 text-sm font-semibold text-slate-800">{t('vars.title')}</h3>
+        <p className="text-base text-slate-500 sm:text-sm">{t('vars.noVariables')}</p>
       </section>
     );
   }
@@ -54,7 +57,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
       <div className="mb-3 flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-        <h3 className="text-sm font-semibold text-slate-800">变量填写</h3>
+        <h3 className="text-sm font-semibold text-slate-800">{t('vars.title')}</h3>
         {stockStatusText ? <p className="text-xs text-slate-500">{stockStatusText}</p> : null}
       </div>
 
@@ -102,7 +105,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 >
-                  <option value="">请选择</option>
+                  <option value="">{t('vars.pleaseSelect')}</option>
                   {(variable.options ?? []).map((option) => (
                     <option key={option} value={option}>
                       {option}

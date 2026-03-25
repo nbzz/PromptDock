@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
+import { useI18n } from '@/lib/i18n';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
 import {
@@ -99,6 +100,8 @@ function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
 }
 
 export default function HomePage() {
+  const { t, locale, setLocale } = useI18n();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
@@ -305,21 +308,23 @@ export default function HomePage() {
     }
 
     const date = new Date(stockMeta.updatedAt);
-    const shortTime = date.toLocaleString('zh-CN', {
+    const shortTime = date.toLocaleString(locale === 'en' ? 'en-US' : 'zh-CN', {
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit'
     });
 
-    const source = stockMeta.usedFallback
-      ? '兜底数据'
-      : stockMeta.partialFallback
-        ? '在线+兜底'
-        : '在线数据';
+    const stockLibraryLabel = locale === 'en' ? 'Stock DB' : '股票库';
+    const sourceLabel =
+      stockMeta.usedFallback
+        ? t('stock.sourceFallback')
+        : stockMeta.partialFallback
+          ? t('stock.sourcePartial')
+          : t('stock.sourceOnline');
 
-    return `股票库 ${stockMeta.count} 条 · A ${stockMeta.marketCounts.CN} / H ${stockMeta.marketCounts.HK} / US ${stockMeta.marketCounts.US} · ${source} · ${shortTime}`;
-  }, [shouldShowStockStatus, stockMeta]);
+    return `${stockLibraryLabel} ${stockMeta.count} · A ${stockMeta.marketCounts.CN} / H ${stockMeta.marketCounts.HK} / US ${stockMeta.marketCounts.US} · ${sourceLabel} · ${shortTime}`;
+  }, [shouldShowStockStatus, stockMeta, locale, t]);
 
   function showNotice(text: string) {
     setNotice(text);
@@ -358,7 +363,7 @@ export default function HomePage() {
     setSelectedId(localTemplate.id);
     setDraftMarkdown(text);
     event.target.value = '';
-    showNotice('模板已导入');
+    showNotice(t('notice.imported'));
   }
 
   function handleSaveTemplate() {
@@ -381,7 +386,7 @@ export default function HomePage() {
         return next;
       });
       setSelectedId(copied.id);
-      showNotice('已另存为本地模板副本');
+      showNotice(t('notice.savedCopy'));
       return;
     }
 
@@ -400,7 +405,7 @@ export default function HomePage() {
       saveLocalTemplates(getLocalTemplates(next));
       return next;
     });
-    showNotice('模板已保存');
+    showNotice(t('notice.saved'));
   }
 
   function handleExportTemplate() {
@@ -416,7 +421,7 @@ export default function HomePage() {
     link.download = `${parsed.title || 'prompt-template'}.md`;
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 200);
-    showNotice('模板已导出为 Markdown');
+    showNotice(t('notice.exported'));
   }
 
   function handleDeleteTemplate() {
@@ -425,11 +430,14 @@ export default function HomePage() {
     }
 
     if (selectedTemplate.source !== 'local') {
-      showNotice('内置模板不支持删除');
+      showNotice(t('notice.cannotDeleteBuiltin'));
       return;
     }
 
-    const ok = window.confirm(`确认删除本地模板「${selectedTemplate.title}」？`);
+    const message = locale === 'en'
+      ? `Delete local template "${selectedTemplate.title}"?`
+      : `确认删除本地模板「${selectedTemplate.title}」？`;
+    const ok = window.confirm(message);
     if (!ok) {
       return;
     }
@@ -444,7 +452,7 @@ export default function HomePage() {
 
       return next;
     });
-    showNotice('本地模板已删除');
+    showNotice(t('notice.deleted'));
   }
 
   return (
@@ -454,9 +462,19 @@ export default function HomePage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
-              <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
+              <p className="mt-1 text-xs text-slate-500">{t('app.subtitle')}</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
+                className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                title="Switch language"
+              >
+                {locale === 'zh' ? 'EN' : '中'}
+              </button>
+              <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+            </div>
           </div>
         </header>
 
@@ -464,13 +482,13 @@ export default function HomePage() {
           <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-slate-800">模板列表</h2>
+                <h2 className="text-sm font-semibold text-slate-800">{t('template.list')}</h2>
                 <button
                   type="button"
                   onClick={handleUploadClick}
                   className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
                 >
-                  上传 .md
+                  {t('template.import')}
                 </button>
                 <input
                   ref={inputRef}
@@ -484,10 +502,10 @@ export default function HomePage() {
               </div>
 
               <p className="mb-3 text-xs leading-5 text-slate-500">
-                上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。
+                {t('template.selectOrImport')}
               </p>
               <p className="mb-3 text-xs leading-5 text-slate-500">
-                模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。
+                {t('template.bodyHint')}
               </p>
 
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
@@ -504,14 +522,14 @@ export default function HomePage() {
                   >
                     <p className="truncate text-sm font-medium">{item.title}</p>
                     <p className="mt-0.5 text-xs text-slate-500">
-                      {item.source === 'builtin' ? '内置模板' : '本地模板'}
+                      {item.source === 'builtin' ? t('template.builtin') : t('template.local')}
                     </p>
                   </button>
                 ))}
 
                 {templates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500">
-                    先上传一个 .md 模板
+                    {t('template.empty')}
                   </p>
                 ) : null}
               </div>
@@ -536,8 +554,8 @@ export default function HomePage() {
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="text-sm font-semibold text-slate-800">模板与预览</h3>
-                <p className="text-xs text-slate-500">高亮部分为已填充变量</p>
+                <h3 className="text-sm font-semibold text-slate-800">{t('preview.title')}</h3>
+                <p className="text-xs text-slate-500">{t('preview.filledHighlight')}</p>
               </div>
 
               <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
@@ -559,7 +577,7 @@ export default function HomePage() {
 
               <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600">
                 <summary className="cursor-pointer select-none font-medium text-slate-700">
-                  高级设置：编辑模板 / 保存 / 导出 / 删除
+                  {locale === 'en' ? 'Advanced: Edit / Save / Export / Delete' : '高级设置：编辑模板 / 保存 / 导出 / 删除'}
                 </summary>
 
                 <div className="mt-3 space-y-2">
@@ -569,23 +587,23 @@ export default function HomePage() {
                       onClick={handleSaveTemplate}
                       className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
                     >
-                      保存模板
+                      {t('preview.save')}
                     </button>
                     <button
                       type="button"
                       onClick={handleExportTemplate}
                       className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
                     >
-                      导出 Markdown
+                      {t('preview.exportMd')}
                     </button>
                     <button
                       type="button"
                       onClick={handleDeleteTemplate}
                       className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={selectedTemplate?.source !== 'local'}
-                      title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
+                      title={selectedTemplate?.source === 'local' ? (locale === 'en' ? 'Delete current local template' : '删除当前本地模板') : (locale === 'en' ? 'Built-in templates cannot be deleted' : '内置模板不可删除')}
                     >
-                      删除本地模板
+                      {t('preview.delete')}
                     </button>
                   </div>
 
@@ -593,18 +611,16 @@ export default function HomePage() {
                     value={draftMarkdown}
                     rows={14}
                     className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
-                    placeholder="在这里临时调整模板内容"
+                    placeholder={t('preview.adjustHint')}
                     onChange={(event) => setDraftMarkdown(event.target.value)}
                   />
                 </div>
               </details>
 
               <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-                <summary className="cursor-pointer select-none font-medium">自动变量（可选）</summary>
+                <summary className="cursor-pointer select-none font-medium">{t('autoVars.title')}</summary>
                 <p className="mt-2 leading-5">
-                  仅以下变量名会自动填充：
-                  {AUTO_FILL_NAMES.map((name) => ` [${name}]`).join('')}
-                  。其他所有 [] 都按手动输入处理。
+                  {t('autoVars.hint')}
                 </p>
               </details>
             </section>
@@ -614,7 +630,7 @@ export default function HomePage() {
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
           <p>© 2026 cyberteng. All rights reserved.</p>
           <p>
-            公共模板投稿：Pull Request（
+            {t('footer.contribute')}
             <a
               href="https://github.com/nbzz/PromptDock"
               target="_blank"
@@ -623,7 +639,7 @@ export default function HomePage() {
             >
               GitHub: PromptDock
             </a>
-            ），或联系
+            {locale === 'en' ? ')' : '），或联系'}
             <a
               href="mailto:tz@ittz.top"
               className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
