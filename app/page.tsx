@@ -1,9 +1,14 @@
 'use client';
 
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 
-import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
+
+const PlatformActions = dynamic(
+  () => import('@/components/platform-actions').then((m) => ({ default: m.PlatformActions })),
+  { ssr: false }
+);
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
@@ -532,7 +537,20 @@ export default function HomePage() {
               }}
             />
 
-            <PlatformActions content={rendered} />
+            <Suspense fallback={
+              <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h3 className="text-sm font-semibold text-slate-800">快捷动作（复制并跳转）</h3>
+                </div>
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-9">
+                  {Array.from({ length: 9 }).map((_, i) => (
+                    <div key={i} className="min-h-16 animate-pulse rounded-xl border border-slate-200 bg-slate-100" />
+                  ))}
+                </div>
+              </section>
+            }>
+              <PlatformActions content={rendered} />
+            </Suspense>
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
