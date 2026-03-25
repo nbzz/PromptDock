@@ -44,6 +44,99 @@ const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股',
 const PINNED_BUILTIN_TITLES = ['个股分析', '由新闻分析个股板块影响', '枯燥报告转生动网页'];
 const DEFAULT_TEMPLATE_TITLE = '个股分析';
 
+// Smart suggestion: intent → { templateTitle, autoFill?: { varName, value }, description }
+interface SmartSuggestion {
+  templateTitle: string;
+  autoFill?: { varName: string; value: string };
+  description: string;
+}
+
+const SMART_SUGGESTIONS: Array<{ patterns: string[]; suggestion: SmartSuggestion }> = [
+  {
+    patterns: ['分析', '个股', '股票', '公司'],
+    suggestion: {
+      templateTitle: '个股分析',
+      description: '分析单家公司基本面'
+    }
+  },
+  {
+    patterns: ['新闻', '公告', '消息'],
+    suggestion: {
+      templateTitle: '由新闻分析个股板块影响',
+      description: '分析新闻对板块的影响'
+    }
+  },
+  {
+    patterns: ['枯燥', '无聊', '报告', '生动', '网页'],
+    suggestion: {
+      templateTitle: '枯燥报告转生动网页',
+      description: '把枯燥报告转成生动网页'
+    }
+  }
+];
+
+function matchSmartSuggestions(query: string): SmartSuggestion | null {
+  const q = query.toLowerCase();
+  for (const { patterns, suggestion } of SMART_SUGGESTIONS) {
+    if (patterns.some((p) => q.includes(p))) {
+      return suggestion;
+    }
+  }
+  return null;
+}
+
+function extractStockFromQuery(query: string, stocks: StockItem[]): string | null {
+  for (const stock of stocks) {
+    if (query.includes(stock.name) || query.includes(stock.code)) {
+      return stock.name;
+    }
+    for (const alias of stock.aliases) {
+      if (query.includes(alias)) {
+        return stock.name;
+      }
+    }
+  }
+  return null;
+}
+
+function scoreTemplate(template: StoredTemplate, query: string, stocks: StockItem[]): number {
+  const q = query.toLowerCase().trim();
+  if (!q) return 1;
+
+  const title = template.title.toLowerCase();
+  const content = template.rawMarkdown.toLowerCase();
+
+  // Exact title match
+  if (title === q) return 100;
+  if (title.includes(q)) return 80;
+
+  // Title keywords
+  const qWords = q.split(/\s+/);
+  const titleMatches = qWords.filter((w) => title.includes(w)).length;
+  if (titleMatches > 0) return 60 + titleMatches * 10;
+
+  // Content match
+  const contentMatches = qWords.filter((w) => content.includes(w)).length;
+  if (contentMatches > 0) return 30 + contentMatches * 5;
+
+  // Stock name in query matches template content keywords
+  const stockName = extractStockFromQuery(query, stocks);
+  if (stockName) {
+    const stockLower = stockName.toLowerCase();
+    if (title.includes(stockLower) || content.includes(stockLower)) {
+      return 70;
+    }
+  }
+
+  // Smart suggestion match
+  const suggestion = matchSmartSuggestions(query);
+  if (suggestion && suggestion.templateTitle === template.title) {
+    return 90;
+  }
+
+  return 0;
+}
+
 function getTemplateOrderRank(item: StoredTemplate): number {
   if (item.source !== 'builtin') {
     return Number.MAX_SAFE_INTEGER;
@@ -108,6 +201,7 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -137,6 +231,27 @@ export default function HomePage() {
       rawMarkdown: draftMarkdown
     });
   }, [selectedTemplate, draftMarkdown]);
+
+  const filteredTemplates = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return templates;
+    }
+    return templates
+      .map((t) => ({ template: t, score: scoreTemplate(t, searchQuery, stocks) }))
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ template }) => template);
+  }, [templates, searchQuery, stocks]);
+
+  const activeSuggestion = useMemo(() => {
+    if (!searchQuery.trim()) return null;
+    const suggestion = matchSmartSuggestions(searchQuery);
+    if (!suggestion) return null;
+    const matched = templates.find((t) => t.title === suggestion.templateTitle);
+    if (!matched) return null;
+    const stockName = extractStockFromQuery(searchQuery, stocks);
+    return { suggestion, templateId: matched.id, stockName };
+  }, [searchQuery, templates, stocks]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -330,6 +445,29 @@ export default function HomePage() {
     setSelectedId(id);
   }
 
+  function handleSuggestionClick(suggestion: SmartSuggestion, stockName: string | null) {
+    const matched = templates.find((t) => t.title === suggestion.templateTitle);
+    if (!matched) return;
+    setSelectedId(matched.id);
+
+    if (suggestion.autoFill || stockName) {
+      const parsedTemplate = parseTemplate({ ...matched, rawMarkdown: matched.rawMarkdown });
+      const newValues: Record<string, string> = { ...values };
+      if (suggestion.autoFill) {
+        newValues[suggestion.autoFill.varName] = suggestion.autoFill.value;
+      }
+      if (stockName) {
+        const stockVar = parsedTemplate.variables.find((v) => v.type === 'stock');
+        if (stockVar) {
+          newValues[stockVar.name] = stockName;
+        }
+      }
+      setValues(newValues);
+    }
+
+    setSearchQuery('');
+  }
+
   function handleUploadClick() {
     inputRef.current?.click();
   }
@@ -463,24 +601,48 @@ export default function HomePage() {
         <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft">
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-slate-800">模板列表</h2>
-                <button
-                  type="button"
-                  onClick={handleUploadClick}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
-                >
-                  上传 .md
-                </button>
+              <div className="mb-3 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-slate-800">模板列表</h2>
+                  <button
+                    type="button"
+                    onClick={handleUploadClick}
+                    className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
+                  >
+                    上传 .md
+                  </button>
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept=".md,text/markdown"
+                    className="hidden"
+                    onChange={(event) => {
+                      void handleFileUpload(event);
+                    }}
+                  />
+                </div>
+
                 <input
-                  ref={inputRef}
-                  type="file"
-                  accept=".md,text/markdown"
-                  className="hidden"
-                  onChange={(event) => {
-                    void handleFileUpload(event);
-                  }}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="搜索模板（支持语义描述）"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700 placeholder-slate-400 outline-none transition focus:border-teal-400 focus:bg-white focus:ring-2 focus:ring-teal-100"
                 />
+
+                {activeSuggestion && (
+                  <button
+                    type="button"
+                    onClick={() => handleSuggestionClick(activeSuggestion.suggestion, activeSuggestion.stockName)}
+                    className="flex w-full items-center gap-2 rounded-xl border border-teal-300 bg-teal-50 px-3 py-2 text-left transition hover:bg-teal-100"
+                  >
+                    <span className="shrink-0 text-xs text-teal-600">💡</span>
+                    <span className="truncate text-sm text-teal-800">
+                      {activeSuggestion.suggestion.description}
+                      {activeSuggestion.stockName ? `（将填入「${activeSuggestion.stockName}」）` : ''}
+                    </span>
+                  </button>
+                )}
               </div>
 
               <p className="mb-3 text-xs leading-5 text-slate-500">
@@ -491,7 +653,7 @@ export default function HomePage() {
               </p>
 
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
-                {templates.map((item) => (
+                {(searchQuery.trim() ? filteredTemplates : templates).map((item) => (
                   <button
                     key={item.id}
                     type="button"
