@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes noticeFade {
+  0%   { opacity: 0; transform: translateY(-4px); }
+  15%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+.notice-pop {
+  animation: noticeFade 1.8s ease-in-out forwards;
+  display: block;
+}
+
 :root {
   color-scheme: light;
 }

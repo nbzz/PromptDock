@@ -108,6 +108,7 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [noticeKey, setNoticeKey] = useState(0);
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -322,6 +323,7 @@ export default function HomePage() {
   }, [shouldShowStockStatus, stockMeta]);
 
   function showNotice(text: string) {
+    setNoticeKey((k) => k + 1);
     setNotice(text);
     window.setTimeout(() => setNotice(''), 1800);
   }
@@ -456,7 +458,9 @@ export default function HomePage() {
               <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
               <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
-            <p className="h-4 overflow-hidden text-xs text-teal-700">{notice || ''}</p>
+            <p key={noticeKey} className={`h-4 overflow-hidden text-xs text-teal-700 ${notice ? 'notice-pop' : ''}`}>
+              {notice || ''}
+            </p>
           </div>
         </header>
 
