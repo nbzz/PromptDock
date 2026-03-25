@@ -42,7 +42,7 @@ function isValidPlaceholderName(raw: string): boolean {
   }
 
   // 去掉首尾的常见标点再检查
-  const cleaned = name.replace(/^[\s,，.。!！?？:：;；]+/).replace(/[\s,，.。!！?？:：;；]+$/, '');
+  const cleaned = name.replace(/^[\s,，.。!！?？:：;；]+/, '').replace(/[\s,，.。!！?？:：;；]+$/, '');
   if (!cleaned || cleaned.length > 24) {
     return false;
   }
