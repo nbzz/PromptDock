@@ -13,6 +13,12 @@ import {
   renderPrompt,
   renderPromptSegments
 } from '@/lib/template-parser';
+import {
+  getOrCreateIndex,
+  reindexTemplates,
+  semanticSearch,
+  SearchResult
+} from '@/lib/semantic-search';
 import { StockItem, StoredTemplate } from '@/lib/types';
 
 interface TemplateResponse {
@@ -122,10 +128,25 @@ export default function HomePage() {
     marketCounts: countFallbackByMarket(clientFallback)
   });
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchIndex, setSearchIndex] = useState<ReturnType<typeof getOrCreateIndex> | null>(null);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
   const selectedTemplate = useMemo(
     () => templates.find((item) => item.id === selectedId) ?? null,
     [templates, selectedId]
   );
+
+  // Displayed templates: search results or full list
+  const displayedTemplates = useMemo<StoredTemplate[]>(() => {
+    if (searchQuery.trim() && searchIndex && templates.length > 0) {
+      const results = semanticSearch(searchQuery, templates, searchIndex);
+      setSearchResults(results);
+      return results.map((r) => r.template);
+    }
+    setSearchResults([]);
+    return templates;
+  }, [searchQuery, templates, searchIndex]);
 
   const parsed = useMemo(() => {
     if (!selectedTemplate) {
@@ -186,6 +207,10 @@ export default function HomePage() {
 
       const merged = mergeTemplates(builtinTemplates, localTemplates);
       setTemplates(merged);
+
+      // Initialize semantic search index
+      const index = getOrCreateIndex(merged);
+      setSearchIndex(index);
 
       const preferred = pickPreferredTemplate(merged);
       if (preferred) {
@@ -273,6 +298,14 @@ export default function HomePage() {
 
     setDraftMarkdown(selectedTemplate.rawMarkdown);
   }, [selectedTemplate]);
+
+  // Reindex templates for semantic search whenever templates change
+  useEffect(() => {
+    if (templates.length === 0) return;
+    const index = reindexTemplates(templates);
+    setSearchIndex(index);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [templates]);
 
   const rendered = useMemo(() => {
     if (!parsed) {
@@ -483,6 +516,38 @@ export default function HomePage() {
                 />
               </div>
 
+              {/* Semantic Search Input */}
+              <div className="mb-3">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="搜索模板..."
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 pr-8 text-xs text-slate-700 placeholder-slate-400 outline-none transition focus:border-teal-400 focus:bg-white focus:ring-1 focus:ring-teal-100"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+                {searchQuery.trim() && (
+                  <p className="mt-1 text-xs text-slate-500">
+                    找到 {displayedTemplates.length} 个结果
+                    {searchResults[0] && (
+                      <span className="ml-1 text-teal-600">
+                        · 最相关: {searchResults[0].template.title}
+                      </span>
+                    )}
+                  </p>
+                )}
+              </div>
+
               <p className="mb-3 text-xs leading-5 text-slate-500">
                 上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。
               </p>
@@ -491,27 +556,39 @@ export default function HomePage() {
               </p>
 
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
-                {templates.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleTemplateSelect(item.id)}
-                    className={`w-full rounded-xl border px-3 py-2 text-left transition ${
-                      selectedId === item.id
-                        ? 'border-teal-400 bg-teal-50 text-teal-900'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <p className="truncate text-sm font-medium">{item.title}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      {item.source === 'builtin' ? '内置模板' : '本地模板'}
-                    </p>
-                  </button>
-                ))}
+                {displayedTemplates.map((item) => {
+                  const searchResult = searchResults.find((r) => r.template.id === item.id);
+                  const scoreLabel =
+                    searchResult && searchQuery.trim()
+                      ? `匹配度 ${Math.round(searchResult.score * 100)}%`
+                      : null;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleTemplateSelect(item.id)}
+                      className={`w-full rounded-xl border px-3 py-2 text-left transition ${
+                        selectedId === item.id
+                          ? 'border-teal-400 bg-teal-50 text-teal-900'
+                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <p className="truncate text-sm font-medium">{item.title}</p>
+                      <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-500">
+                        {item.source === 'builtin' ? '内置模板' : '本地模板'}
+                        {scoreLabel && (
+                          <span className="rounded bg-teal-100 px-1 text-teal-700">{scoreLabel}</span>
+                        )}
+                      </p>
+                    </button>
+                  );
+                })}
 
-                {templates.length === 0 ? (
+                {displayedTemplates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500">
-                    先上传一个 .md 模板
+                    {searchQuery.trim()
+                      ? `未找到匹配「${searchQuery}」的模板`
+                      : '先上传一个 .md 模板'}
                   </p>
                 ) : null}
               </div>
