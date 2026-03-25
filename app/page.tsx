@@ -105,6 +105,9 @@ export default function HomePage() {
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [draftMarkdown, setDraftMarkdown] = useState('');
+  const [undoStack, setUndoStack] = useState<string[]>([]);
+  const [redoStack, setRedoStack] = useState<string[]>([]);
+  const draftMarkdownRef = useRef('');
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
@@ -274,6 +277,45 @@ export default function HomePage() {
     setDraftMarkdown(selectedTemplate.rawMarkdown);
   }, [selectedTemplate]);
 
+  useEffect(() => {
+    draftMarkdownRef.current = draftMarkdown;
+  }, [draftMarkdown]);
+
+  // Clear undo/redo stacks when switching templates
+  useEffect(() => {
+    setUndoStack([]);
+    setRedoStack([]);
+  }, [selectedId]);
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const modifier = isMac ? e.metaKey : e.ctrlKey;
+
+      if (!modifier) return;
+
+      if (e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        if (undoStack.length === 0) return;
+        const prev = undoStack[undoStack.length - 1];
+        setUndoStack((s) => s.slice(0, -1));
+        setRedoStack((s) => [...s, draftMarkdownRef.current].slice(-20));
+        setDraftMarkdown(prev);
+      } else if (e.key === 'z' && e.shiftKey) {
+        e.preventDefault();
+        if (redoStack.length === 0) return;
+        const next = redoStack[redoStack.length - 1];
+        setRedoStack((s) => s.slice(0, -1));
+        setUndoStack((s) => [...s, draftMarkdownRef.current].slice(-20));
+        setDraftMarkdown(next);
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undoStack, redoStack]);
+
   const rendered = useMemo(() => {
     if (!parsed) {
       return '';
@@ -324,6 +366,29 @@ export default function HomePage() {
   function showNotice(text: string) {
     setNotice(text);
     window.setTimeout(() => setNotice(''), 1800);
+  }
+
+  function handleTextareaChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const newValue = e.target.value;
+    setUndoStack((prev) => [...prev, draftMarkdownRef.current].slice(-20));
+    setRedoStack([]);
+    setDraftMarkdown(newValue);
+  }
+
+  function handleUndo() {
+    if (undoStack.length === 0) return;
+    const prev = undoStack[undoStack.length - 1];
+    setUndoStack((s) => s.slice(0, -1));
+    setRedoStack((s) => [...s, draftMarkdownRef.current].slice(-20));
+    setDraftMarkdown(prev);
+  }
+
+  function handleRedo() {
+    if (redoStack.length === 0) return;
+    const next = redoStack[redoStack.length - 1];
+    setRedoStack((s) => s.slice(0, -1));
+    setUndoStack((s) => [...s, draftMarkdownRef.current].slice(-20));
+    setDraftMarkdown(next);
   }
 
   function handleTemplateSelect(id: string) {
@@ -589,12 +654,36 @@ export default function HomePage() {
                     </button>
                   </div>
 
+                  <div className="mb-2 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleUndo}
+                      disabled={undoStack.length === 0}
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                      title="撤销 (Ctrl/Cmd+Z)"
+                    >
+                      撤销
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRedo}
+                      disabled={redoStack.length === 0}
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                      title="重做 (Ctrl/Cmd+Shift+Z)"
+                    >
+                      重做
+                    </button>
+                    <span className="text-xs text-slate-400">
+                      {undoStack.length > 0 ? `${undoStack.length} 条历史` : ''}
+                    </span>
+                  </div>
+
                   <textarea
                     value={draftMarkdown}
                     rows={14}
                     className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
                     placeholder="在这里临时调整模板内容"
-                    onChange={(event) => setDraftMarkdown(event.target.value)}
+                    onChange={handleTextareaChange}
                   />
                 </div>
               </details>
