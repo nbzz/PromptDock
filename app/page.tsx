@@ -2,6 +2,9 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ThemeSettings } from '@/components/theme-settings';
+import { useTheme } from '@/components/theme-provider';
+
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
@@ -108,6 +111,8 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [showThemeSettings, setShowThemeSettings] = useState(false);
+  const { resolvedTheme } = useTheme();
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -450,13 +455,24 @@ export default function HomePage() {
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
-        <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft">
+        <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft dark:border-dark-border dark:bg-dark-slate">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
-              <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
+              <h1 className="text-lg font-semibold text-slate-900 dark:text-dark-ink">PromptDock</h1>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+            <div className="flex items-center gap-2">
+              <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+              <button
+                type="button"
+                onClick={() => setShowThemeSettings(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 dark:border-dark-border dark:bg-dark-slate dark:text-slate-300 dark:hover:bg-slate-800"
+                title="主题设置"
+              >
+                <span className="text-sm">{resolvedTheme === 'dark' ? '🌙' : '☀️'}</span>
+                <span className="hidden sm:inline">{resolvedTheme === 'dark' ? '深色' : '浅色'}</span>
+              </button>
+            </div>
           </div>
         </header>
 
@@ -633,6 +649,10 @@ export default function HomePage() {
           </p>
         </footer>
       </div>
+
+      {showThemeSettings && (
+        <ThemeSettings onClose={() => setShowThemeSettings(false)} />
+      )}
     </main>
   );
 }

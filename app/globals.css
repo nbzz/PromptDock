@@ -6,6 +6,10 @@
   color-scheme: light;
 }
 
+.dark {
+  color-scheme: dark;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -17,12 +21,24 @@ body {
   min-height: 100%;
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+body {
   background:
     radial-gradient(circle at 20% 20%, rgba(14, 165, 165, 0.12), transparent 42%),
     radial-gradient(circle at 85% 10%, rgba(37, 99, 235, 0.12), transparent 35%),
     #f8fafc;
   color: #0f172a;
-  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+.dark body,
+.dark body {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(14, 165, 165, 0.08), transparent 42%),
+    radial-gradient(circle at 85% 10%, rgba(37, 99, 235, 0.08), transparent 35%),
+    #0f172a;
+  color: #e2e8f0;
 }
 
 main {
@@ -42,4 +58,81 @@ button {
   select {
     font-size: 16px;
   }
+}
+
+/* Dark mode element overrides */
+.dark .border-slate-200 {
+  border-color: #334155;
+}
+
+.dark .bg-white {
+  background-color: #1e293b;
+}
+
+.dark .bg-slate-50 {
+  background-color: #1e293b;
+}
+
+.dark .bg-slate-100 {
+  background-color: #1e293b;
+}
+
+.dark .text-slate-900 {
+  color: #e2e8f0;
+}
+
+.dark .text-slate-800 {
+  color: #e2e8f0;
+}
+
+.dark .text-slate-700 {
+  color: #cbd5e1;
+}
+
+.dark .text-slate-600 {
+  color: #94a3b8;
+}
+
+.dark .text-slate-500 {
+  color: #64748b;
+}
+
+.dark .text-teal-700 {
+  color: #5eead4;
+}
+
+.dark .border-teal-200 {
+  border-color: #115e59;
+}
+
+.dark .bg-teal-50 {
+  background-color: rgba(20, 184, 166, 0.1);
+}
+
+.dark .border-accent {
+  border-color: #14b8a6;
+}
+
+.dark .border-rose-200 {
+  border-color: #9f1239;
+}
+
+.dark .bg-rose-50 {
+  background-color: rgba(225, 29, 72, 0.1);
+}
+
+.dark .border-dark-border {
+  border-color: #334155;
+}
+
+.dark .bg-dark-slate {
+  background-color: #1e293b;
+}
+
+.dark .text-dark-ink {
+  color: #e2e8f0;
+}
+
+.dark .text-dark-accent {
+  color: #14b8a6;
 }
