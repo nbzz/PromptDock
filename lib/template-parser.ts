@@ -33,7 +33,7 @@ function sanitizeForVariableScan(content: string): string {
 
 function isValidPlaceholderName(raw: string): boolean {
   const name = raw.trim();
-  if (!name || name.length > 24) {
+  if (!name || name.length > 40) {
     return false;
   }
 
@@ -41,12 +41,18 @@ function isValidPlaceholderName(raw: string): boolean {
     return false;
   }
 
-  if (IGNORED_PLACEHOLDER_NAMES.has(name)) {
+  // 去掉首尾的常见标点再检查
+  const cleaned = name.replace(/^[\s,，.。!！?？:：;；]+/).replace(/[\s,，.。!！?？:：;；]+$/, '');
+  if (!cleaned || cleaned.length > 24) {
     return false;
   }
 
-  // 仅保留常见变量命名字符，避免把 JSON/示例语法误识别为变量。
-  if (!/^[\p{L}\p{N}\s_\-·（）()]+$/u.test(name)) {
+  if (IGNORED_PLACEHOLDER_NAMES.has(cleaned)) {
+    return false;
+  }
+
+  // 允许更丰富的变量命名字符，包括中文、英文、标点符号
+  if (!/^[\p{L}\p{N}\s_\-·（）()，,。!！?？:：;；…——""''""''【】\[\]「」『』]+$/u.test(name)) {
     return false;
   }
 

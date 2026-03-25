@@ -456,7 +456,7 @@ export default function HomePage() {
               <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
               <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+            <p className="h-4 overflow-hidden text-xs text-teal-700">{notice || ''}</p>
           </div>
         </header>
 
