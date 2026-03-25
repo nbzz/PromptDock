@@ -808,6 +808,13 @@ export default function HomePage() {
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
           <p>© 2026 cyberteng. All rights reserved.</p>
           <p>
+            <a
+              href="/help"
+              className="mx-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
+            >
+              帮助
+            </a>
+            {' · '}
             公共模板投稿：Pull Request（
             <a
               href="https://github.com/nbzz/PromptDock"
