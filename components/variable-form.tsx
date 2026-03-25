@@ -1,9 +1,10 @@
 'use client';
 
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { StockInput } from '@/components/stock-input';
 import { ParsedVariable, StockItem } from '@/lib/types';
+import { addVariableSuggestion, getVariableSuggestions } from '@/lib/storage';
 
 interface VariableFormProps {
   variables: ParsedVariable[];
@@ -41,7 +42,50 @@ function handleEnterToNext(
   focusNextField(index);
 }
 
+/** Extract stock name from buildStockLabel format: "贵州茅台，SH: 688256" */
+function extractStockName(label: string): string {
+  const idx = label.indexOf('，');
+  return idx > 0 ? label.slice(0, idx) : label;
+}
+
 export function VariableForm({ variables, values, stocks, stockStatusText, onChange }: VariableFormProps) {
+  // Track loaded suggestions per variable name
+  const [suggestionsMap, setSuggestionsMap] = useState<Record<string, string[]>>({});
+  const prevValuesRef = useRef<Record<string, string>>({});
+
+  // Load suggestions on mount
+  useEffect(() => {
+    const loaded: Record<string, string[]> = {};
+    for (const v of variables) {
+      loaded[v.name] = getVariableSuggestions(v.name);
+    }
+    setSuggestionsMap(loaded);
+  }, [variables]);
+
+  // Save to history when a value changes
+  useEffect(() => {
+    for (const variable of variables) {
+      const prev = prevValuesRef.current[variable.name];
+      const current = values[variable.name] ?? '';
+
+      if (current && current !== prev) {
+        const toSave =
+          variable.type === 'stock' && current.includes('，')
+            ? extractStockName(current)
+            : current;
+        addVariableSuggestion(variable.name, toSave);
+
+        // Update local suggestions state immediately
+        setSuggestionsMap((prev) => ({
+          ...prev,
+          [variable.name]: [toSave, ...(prev[variable.name] ?? []).filter((v) => v !== toSave)].slice(0, 5)
+        }));
+      }
+    }
+
+    prevValuesRef.current = { ...values };
+  }, [values, variables]);
+
   if (variables.length === 0) {
     return (
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
@@ -62,6 +106,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
         {variables.map((variable, index) => {
           const value = values[variable.name] ?? '';
           const label = variable.required ? `${variable.name} *` : variable.name;
+          const suggestions = suggestionsMap[variable.name] ?? [];
 
           return (
             <div key={variable.id} className="space-y-1.5">
@@ -131,6 +176,22 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   onKeyDown={(event) => handleEnterToNext(event, index)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
+              ) : null}
+
+              {/* Suggestion chips */}
+              {suggestions.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {suggestions.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => onChange(variable.name, s)}
+                      className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-600 transition hover:border-teal-300 hover:bg-teal-50 hover:text-teal-700"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               ) : null}
 
               {variable.hint ? <p className="text-xs text-slate-500">{variable.hint}</p> : null}
