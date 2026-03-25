@@ -79,7 +79,7 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
             key={platform.key}
             type="button"
             title={`${platform.name}（复制并跳转）`}
-            className="group flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-1 py-2 text-xs transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 sm:text-[11px]"
+            className="group flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-1 py-2 text-xs transition active:border-teal-400 active:bg-teal-50 sm:text-[11px] sm:min-h-16 sm:hover:-translate-y-0.5 sm:hover:border-teal-300 sm:hover:bg-teal-50"
             onClick={() => {
               void copyAndOpen(platform.key, platform.url);
             }}

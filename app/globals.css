@@ -36,10 +36,84 @@ button {
   font: inherit;
 }
 
+/* Mobile touch optimizations */
 @media (max-width: 640px) {
   textarea,
   input,
   select {
     font-size: 16px;
   }
+}
+
+/* Touch-friendly active states — replace hover-only interactions */
+@media (hover: hover) {
+  /* Only apply hover styles on devices that support it */
+}
+
+/* Touch active feedback for all buttons */
+button:active,
+[role="button"]:active {
+  opacity: 0.85;
+  transform: scale(0.97);
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+/* Ensure minimum 44px touch targets on mobile */
+@media (max-width: 640px) {
+  button,
+  [role="button"],
+  select,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Touch-friendly scroll with momentum */
+  .touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Remove hover-only lift effects on touch */
+  .hover-lift:hover {
+    transform: none;
+  }
+}
+
+/* PWA install banner */
+.pwa-install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.pwa-install-banner button {
+  min-height: 36px;
+  min-width: 36px;
+  border-radius: 8px;
+  background: #0ea5a5;
+  color: white;
+  border: none;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pwa-install-banner button.dismiss {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0;
 }

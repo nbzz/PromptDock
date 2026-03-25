@@ -101,6 +101,18 @@ function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
+  const [showPwaBanner, setShowPwaBanner] = useState(false);
+
+  // Show PWA install banner on mobile web (not in standalone/PWA mode)
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    if (!isStandalone) {
+      // Small delay to avoid layout shift
+      const timer = window.setTimeout(() => setShowPwaBanner(true), 1200);
+      return () => window.clearTimeout(timer);
+    }
+  }, []);
 
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [selectedId, setSelectedId] = useState('');
@@ -448,7 +460,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="px-3 py-4 sm:px-5 lg:px-8">
+    <main className={`px-3 py-4 sm:px-5 lg:px-8 ${showPwaBanner ? 'pb-16' : ''}`}>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
         <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft">
           <div className="flex items-start justify-between gap-3">
@@ -490,7 +502,7 @@ export default function HomePage() {
                 模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。
               </p>
 
-              <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
+              <div className="max-h-[70vh] space-y-2 overflow-auto pr-1 touch-scroll">
                 {templates.map((item) => (
                   <button
                     key={item.id}
@@ -610,6 +622,31 @@ export default function HomePage() {
             </section>
           </section>
         </div>
+
+        {showPwaBanner && (
+          <div className="pwa-install-banner">
+            <span>添加到主屏幕，随时快速调用提示词</span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  // Prompt iOS users to use Safari share menu
+                  setShowPwaBanner(false);
+                }}
+              >
+                知道了
+              </button>
+              <button
+                type="button"
+                className="dismiss"
+                onClick={() => setShowPwaBanner(false)}
+                aria-label="关闭"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
 
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
           <p>© 2026 cyberteng. All rights reserved.</p>
