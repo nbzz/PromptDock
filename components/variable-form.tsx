@@ -1,8 +1,9 @@
 'use client';
 
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent, useState } from 'react';
 
 import { StockInput } from '@/components/stock-input';
+import { BookmarkMap, loadBookmarks, removeBookmark, saveBookmark } from '@/lib/storage';
 import { ParsedVariable, StockItem } from '@/lib/types';
 
 interface VariableFormProps {
@@ -41,7 +42,40 @@ function handleEnterToNext(
   focusNextField(index);
 }
 
+// Bookmark icon components
+function BookmarkIcon({ filled }: { filled: boolean }) {
+  return filled ? (
+    <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+    </svg>
+  ) : (
+    <svg className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+    </svg>
+  );
+}
+
 export function VariableForm({ variables, values, stocks, stockStatusText, onChange }: VariableFormProps) {
+  const [bookmarks, setBookmarks] = useState<BookmarkMap>(() => loadBookmarks());
+
+  const handleSaveBookmark = (variableName: string, value: string) => {
+    if (!value.trim()) return;
+    saveBookmark(variableName, value);
+    setBookmarks(loadBookmarks());
+  };
+
+  const handleRemoveBookmark = (variableName: string) => {
+    removeBookmark(variableName);
+    setBookmarks(loadBookmarks());
+  };
+
+  const handleFillBookmark = (variableName: string, value: string) => {
+    onChange(variableName, value);
+  };
+
+  // Get variables that have bookmarks
+  const bookmarkedVariables = variables.filter((v) => bookmarks[v.name]);
+
   if (variables.length === 0) {
     return (
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
@@ -58,16 +92,55 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
         {stockStatusText ? <p className="text-xs text-slate-500">{stockStatusText}</p> : null}
       </div>
 
+      {/* Bookmarked values quick access */}
+      {bookmarkedVariables.length > 0 && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3">
+          <p className="mb-2 text-xs font-medium text-amber-700">书签快速填充</p>
+          <div className="flex flex-wrap gap-2">
+            {bookmarkedVariables.map((variable) => (
+              <button
+                key={variable.name}
+                type="button"
+                onClick={() => handleFillBookmark(variable.name, bookmarks[variable.name])}
+                className="flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-2.5 py-1.5 text-xs text-slate-700 transition hover:border-amber-500 hover:bg-amber-100"
+                title={`填充: ${variable.name} = ${bookmarks[variable.name]}`}
+              >
+                <BookmarkIcon filled />
+                <span className="font-medium">{variable.name}:</span>
+                <span className="max-w-[120px] truncate">{bookmarks[variable.name]}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {variables.map((variable, index) => {
           const value = values[variable.name] ?? '';
           const label = variable.required ? `${variable.name} *` : variable.name;
+          const isBookmarked = !!bookmarks[variable.name];
 
           return (
             <div key={variable.id} className="space-y-1.5">
-              <label htmlFor={`var-${variable.id}`} className="text-sm font-medium text-slate-700">
-                {label}
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor={`var-${variable.id}`} className="text-sm font-medium text-slate-700">
+                  {label}
+                </label>
+                {value.trim() && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      isBookmarked
+                        ? handleRemoveBookmark(variable.name)
+                        : handleSaveBookmark(variable.name, value)
+                    }
+                    className="flex items-center gap-1 rounded-md p-1 transition hover:bg-slate-100"
+                    title={isBookmarked ? '移除书签' : '添加书签'}
+                  >
+                    <BookmarkIcon filled={isBookmarked} />
+                  </button>
+                )}
+              </div>
 
               {variable.type === 'stock' ? (
                 <StockInput
