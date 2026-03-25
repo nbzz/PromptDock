@@ -6,6 +6,13 @@ import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
+import {
+  getPromptsGeneratedCount,
+  getTopTemplates,
+  getUsageCount,
+  trackPromptGenerated,
+  trackTemplateUsage
+} from '@/lib/analytics';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
 import {
   buildMarkdownExport,
@@ -321,6 +328,23 @@ export default function HomePage() {
     return `股票库 ${stockMeta.count} 条 · A ${stockMeta.marketCounts.CN} / H ${stockMeta.marketCounts.HK} / US ${stockMeta.marketCounts.US} · ${source} · ${shortTime}`;
   }, [shouldShowStockStatus, stockMeta]);
 
+  const analyticsStats = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    return {
+      usageCount: getUsageCount(),
+      promptsGenerated: getPromptsGeneratedCount(),
+      topTemplates: getTopTemplates(5)
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedId, templates.length]);
+
+  const statsSummary = useMemo(() => {
+    if (!analyticsStats) return '';
+    const { usageCount, promptsGenerated } = analyticsStats;
+    if (usageCount === 0 && promptsGenerated === 0) return '';
+    return `已使用 ${usageCount} 次 · 已生成 ${promptsGenerated} 条 Prompt`;
+  }, [analyticsStats]);
+
   function showNotice(text: string) {
     setNotice(text);
     window.setTimeout(() => setNotice(''), 1800);
@@ -328,6 +352,7 @@ export default function HomePage() {
 
   function handleTemplateSelect(id: string) {
     setSelectedId(id);
+    trackTemplateUsage(id);
   }
 
   function handleUploadClick() {
@@ -532,7 +557,12 @@ export default function HomePage() {
               }}
             />
 
-            <PlatformActions content={rendered} />
+            <PlatformActions
+              content={rendered}
+              onAction={() => {
+                trackPromptGenerated();
+              }}
+            />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -612,6 +642,7 @@ export default function HomePage() {
         </div>
 
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
+          {statsSummary ? <p className="mb-1 font-medium text-teal-700">{statsSummary}</p> : null}
           <p>© 2026 cyberteng. All rights reserved.</p>
           <p>
             公共模板投稿：Pull Request（
