@@ -36,6 +36,16 @@ button {
   font: inherit;
 }
 
+/* Global focus-visible styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 @media (max-width: 640px) {
   textarea,
   input,

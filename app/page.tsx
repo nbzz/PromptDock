@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
@@ -100,10 +100,12 @@ function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
 
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const templateListRef = useRef<HTMLDivElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [selectedId, setSelectedId] = useState('');
+  const [focusedTemplateIndex, setFocusedTemplateIndex] = useState(-1);
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
@@ -200,6 +202,23 @@ export default function HomePage() {
       cancelled = true;
     };
   }, []);
+
+  // Focus first template on mount for keyboard users
+  const mountedRef = useRef(false);
+  useEffect(() => {
+    if (mountedRef.current) {
+      return;
+    }
+    mountedRef.current = true;
+    const timer = window.setTimeout(() => {
+      if (templates.length > 0) {
+        setFocusedTemplateIndex(0);
+        const buttons = templateListRef.current?.querySelectorAll<HTMLButtonElement>('[data-template-index]');
+        buttons?.[0]?.focus();
+      }
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [templates]);
 
   useEffect(() => {
     let cancelled = false;
@@ -330,6 +349,41 @@ export default function HomePage() {
     setSelectedId(id);
   }
 
+  function handleTemplateListKeyDown(event: KeyboardEvent<HTMLDivElement>, index: number) {
+    const native = event.nativeEvent as globalThis.KeyboardEvent;
+    if (native.isComposing) {
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setFocusedTemplateIndex((prev) => {
+        const next = Math.min(prev + 1, templates.length - 1);
+        const buttons = templateListRef.current?.querySelectorAll<HTMLButtonElement>('[data-template-index]');
+        buttons?.[next]?.focus();
+        return next;
+      });
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setFocusedTemplateIndex((prev) => {
+        const next = Math.max(prev - 1, 0);
+        const buttons = templateListRef.current?.querySelectorAll<HTMLButtonElement>('[data-template-index]');
+        buttons?.[next]?.focus();
+        return next;
+      });
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleTemplateSelect(templates[index].id);
+      return;
+    }
+  }
+
   function handleUploadClick() {
     inputRef.current?.click();
   }
@@ -456,7 +510,7 @@ export default function HomePage() {
               <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
               <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+            <p className="min-h-4 text-xs text-teal-700" role="status" aria-live="polite">{notice || ' '}</p>
           </div>
         </header>
 
@@ -464,11 +518,12 @@ export default function HomePage() {
           <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-slate-800">模板列表</h2>
+                <h2 className="text-sm font-semibold text-slate-800" id="template-list-heading">模板列表</h2>
                 <button
                   type="button"
+                  aria-label="上传 Markdown 模板文件"
                   onClick={handleUploadClick}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
+                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1"
                 >
                   上传 .md
                 </button>
@@ -476,6 +531,7 @@ export default function HomePage() {
                   ref={inputRef}
                   type="file"
                   accept=".md,text/markdown"
+                  aria-label="上传 Markdown 模板文件"
                   className="hidden"
                   onChange={(event) => {
                     void handleFileUpload(event);
@@ -490,15 +546,35 @@ export default function HomePage() {
                 模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。
               </p>
 
-              <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
-                {templates.map((item) => (
+              <div
+                ref={templateListRef}
+                role="listbox"
+                aria-label="模板列表"
+                tabIndex={0}
+                className="max-h-[70vh] space-y-2 overflow-auto pr-1"
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                    const native = event.nativeEvent as globalThis.KeyboardEvent;
+                    if (!native.isComposing) {
+                      void handleTemplateListKeyDown(event, focusedTemplateIndex >= 0 ? focusedTemplateIndex : 0);
+                    }
+                  }
+                }}
+              >
+                {templates.map((item, index) => (
                   <button
                     key={item.id}
                     type="button"
+                    role="option"
+                    aria-selected={selectedId === item.id}
+                    data-template-index={index}
+                    tabIndex={focusedTemplateIndex === index ? 0 : -1}
                     onClick={() => handleTemplateSelect(item.id)}
-                    className={`w-full rounded-xl border px-3 py-2 text-left transition ${
+                    onFocus={() => setFocusedTemplateIndex(index)}
+                    onKeyDown={(event) => handleTemplateListKeyDown(event, index)}
+                    className={`w-full rounded-xl border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 ${
                       selectedId === item.id
-                        ? 'border-teal-400 bg-teal-50 text-teal-900'
+                        ? 'border-teal-400 bg-teal-50 text-teal-900 ring-2 ring-teal-400 ring-offset-1'
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                     }`}
                   >
@@ -557,31 +633,41 @@ export default function HomePage() {
                 </pre>
               </div>
 
-              <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600">
-                <summary className="cursor-pointer select-none font-medium text-slate-700">
+              <details
+                className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600"
+                onToggle={(event) => {
+                  const details = event.currentTarget as HTMLDetailsElement;
+                  if (details.open) {
+                    window.setTimeout(() => {
+                      details.querySelector<HTMLTextAreaElement>('[data-template-editor]')?.focus();
+                    }, 50);
+                  }
+                }}
+              >
+                <summary className="cursor-pointer select-none font-medium text-slate-700" aria-label="高级设置：编辑模板 / 保存 / 导出 / 删除">
                   高级设置：编辑模板 / 保存 / 导出 / 删除
                 </summary>
 
                 <div className="mt-3 space-y-2">
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2" role="toolbar" aria-label="模板操作按钮">
                     <button
                       type="button"
                       onClick={handleSaveTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1"
                     >
                       保存模板
                     </button>
                     <button
                       type="button"
                       onClick={handleExportTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1"
                     >
                       导出 Markdown
                     </button>
                     <button
                       type="button"
                       onClick={handleDeleteTemplate}
-                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-1"
                       disabled={selectedTemplate?.source !== 'local'}
                       title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
                     >
@@ -590,6 +676,8 @@ export default function HomePage() {
                   </div>
 
                   <textarea
+                    data-template-editor
+                    aria-label="模板内容编辑器"
                     value={draftMarkdown}
                     rows={14}
                     className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
@@ -600,7 +688,7 @@ export default function HomePage() {
               </details>
 
               <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-                <summary className="cursor-pointer select-none font-medium">自动变量（可选）</summary>
+                <summary className="cursor-pointer select-none font-medium" aria-label="自动变量说明">自动变量（可选）</summary>
                 <p className="mt-2 leading-5">
                   仅以下变量名会自动填充：
                   {AUTO_FILL_NAMES.map((name) => ` [${name}]`).join('')}
