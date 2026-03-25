@@ -2,9 +2,11 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
+import { HistoryPanel } from '@/components/history-panel';
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
+import { clearHistory, loadHistory, pushHistory } from '@/lib/history';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
 import {
@@ -13,7 +15,7 @@ import {
   renderPrompt,
   renderPromptSegments
 } from '@/lib/template-parser';
-import { StockItem, StoredTemplate } from '@/lib/types';
+import { PromptHistoryEntry, StockItem, StoredTemplate } from '@/lib/types';
 
 interface TemplateResponse {
   items: StoredTemplate[];
@@ -109,6 +111,7 @@ export default function HomePage() {
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
   const [noticeKey, setNoticeKey] = useState(0);
+  const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -240,6 +243,10 @@ export default function HomePage() {
       cancelled = true;
     };
   }, [clientFallback]);
+
+  useEffect(() => {
+    setHistory(loadHistory());
+  }, []);
 
   useEffect(() => {
     if (!parsed) {
@@ -520,6 +527,23 @@ export default function HomePage() {
                 ) : null}
               </div>
             </section>
+
+            <HistoryPanel
+              entries={history}
+              onReuse={(entry) => {
+                const template = templates.find((t) => t.id === entry.templateId);
+                if (!template) {
+                  return;
+                }
+                setSelectedId(template.id);
+                setDraftMarkdown(template.rawMarkdown);
+                setValues(entry.values);
+              }}
+              onClear={() => {
+                clearHistory();
+                setHistory([]);
+              }}
+            />
           </aside>
 
           <section className="space-y-3">
@@ -536,7 +560,25 @@ export default function HomePage() {
               }}
             />
 
-            <PlatformActions content={rendered} />
+            <PlatformActions
+              content={rendered}
+              onAction={(action) => {
+                if (!selectedTemplate || !rendered.trim()) {
+                  return;
+                }
+                const entry: PromptHistoryEntry = {
+                  id: crypto.randomUUID(),
+                  createdAt: Date.now(),
+                  templateId: selectedTemplate.id,
+                  templateTitle: selectedTemplate.title,
+                  values: { ...values },
+                  rendered,
+                  action: action.type,
+                  platformKey: action.platformKey
+                };
+                setHistory(pushHistory(entry));
+              }}
+            />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
