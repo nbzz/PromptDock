@@ -3,6 +3,7 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlatformActions } from '@/components/platform-actions';
+import { ShareModal, encodeShareUrl } from '@/components/share-modal';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
@@ -108,6 +109,8 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -326,6 +329,14 @@ export default function HomePage() {
     window.setTimeout(() => setNotice(''), 1800);
   }
 
+  function handleShareClick() {
+    if (selectedTemplate) {
+      const url = encodeShareUrl(selectedTemplate.id, values);
+      setShareUrl(url);
+      setShareModalOpen(true);
+    }
+  }
+
   function handleTemplateSelect(id: string) {
     setSelectedId(id);
   }
@@ -456,7 +467,18 @@ export default function HomePage() {
               <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
               <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+            <div className="flex items-center gap-3">
+              <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+              {selectedTemplate && (
+                <button
+                  type="button"
+                  onClick={handleShareClick}
+                  className="rounded-lg border border-teal-300 bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
+                >
+                  分享
+                </button>
+              )}
+            </div>
           </div>
         </header>
 
@@ -632,6 +654,12 @@ export default function HomePage() {
             </a>
           </p>
         </footer>
+
+        <ShareModal
+          isOpen={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+          shareUrl={shareUrl}
+        />
       </div>
     </main>
   );
