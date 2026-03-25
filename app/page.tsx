@@ -7,6 +7,7 @@ import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
+import { decodeShareUrl, encodeShareUrl } from '@/lib/share-url';
 import {
   buildMarkdownExport,
   parseTemplate,
@@ -200,6 +201,45 @@ export default function HomePage() {
       cancelled = true;
     };
   }, []);
+
+  // Handle URL params for shared template links
+  useEffect(() => {
+    if (templates.length === 0) {
+      return;
+    }
+
+    const search = window.location.search;
+    if (!search) {
+      return;
+    }
+
+    const { templateId, values } = decodeShareUrl(search);
+    if (!templateId) {
+      return;
+    }
+
+    const matched = templates.find((t) => t.id === templateId);
+    if (!matched) {
+      return;
+    }
+
+    setSelectedId(matched.id);
+    setDraftMarkdown(matched.rawMarkdown);
+
+    // Pre-fill variables from URL params (only if not already filled)
+    setValues((prev) => {
+      const next = { ...prev };
+      for (const [key, val] of Object.entries(values)) {
+        if (!next[key]) {
+          next[key] = val;
+        }
+      }
+      return next;
+    });
+
+    // Clear URL params after handling (replace state without params)
+    window.history.replaceState({}, '', '/app');
+  }, [templates]);
 
   useEffect(() => {
     let cancelled = false;
@@ -419,6 +459,24 @@ export default function HomePage() {
     showNotice('模板已导出为 Markdown');
   }
 
+  function handleShareTemplate() {
+    if (!selectedTemplate) {
+      return;
+    }
+
+    const shareUrl = encodeShareUrl(selectedTemplate.id, values);
+    const fullUrl = `${window.location.origin}${shareUrl}`;
+
+    void navigator.clipboard
+      .writeText(fullUrl)
+      .then(() => {
+        showNotice('链接已复制到剪贴板');
+      })
+      .catch(() => {
+        showNotice('复制失败，请手动复制');
+      });
+  }
+
   function handleDeleteTemplate() {
     if (!selectedTemplate) {
       return;
@@ -532,7 +590,7 @@ export default function HomePage() {
               }}
             />
 
-            <PlatformActions content={rendered} />
+            <PlatformActions content={rendered} selectedId={selectedId} values={values} />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -577,6 +635,13 @@ export default function HomePage() {
                       className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
                     >
                       导出 Markdown
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleShareTemplate}
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100"
+                    >
+                      分享
                     </button>
                     <button
                       type="button"

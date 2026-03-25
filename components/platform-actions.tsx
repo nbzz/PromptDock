@@ -3,10 +3,13 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
+import { encodeShareUrl } from '@/lib/share-url';
 import { PLATFORMS } from '@/lib/platforms';
 
 interface PlatformActionsProps {
   content: string;
+  selectedId?: string;
+  values?: Record<string, string>;
   onAction?: (action: { type: 'copy_only' | 'copy_and_open'; platformKey?: string }) => void;
 }
 
@@ -35,7 +38,7 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
-export function PlatformActions({ content, onAction }: PlatformActionsProps) {
+export function PlatformActions({ content, selectedId, values, onAction }: PlatformActionsProps) {
   const [notice, setNotice] = useState('');
 
   function showNotice(text: string) {
@@ -95,6 +98,26 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
             <span className="max-w-full truncate text-slate-700">{platform.name}</span>
           </button>
         ))}
+      </div>
+
+      <div className="mt-3 flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            if (!selectedId) {
+              showNotice('请先选择一个模板');
+              return;
+            }
+            const shareUrl = encodeShareUrl(selectedId, values ?? {});
+            const fullUrl = `${window.location.origin}${shareUrl}`;
+            void navigator.clipboard.writeText(fullUrl).then(() => {
+              showNotice('分享链接已复制到剪贴板');
+            });
+          }}
+          className="inline-flex items-center gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs text-teal-700 transition hover:bg-teal-100"
+        >
+          分享链接
+        </button>
       </div>
 
       {notice ? <p className="mt-3 text-xs text-teal-700">{notice}</p> : null}
