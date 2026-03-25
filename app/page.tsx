@@ -5,6 +5,8 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
+import { createBackup, downloadBackup, parseBackupFile, restoreBackup } from '@/lib/backup';
+import { loadHistory, saveHistory } from '@/lib/history';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
 import {
@@ -100,6 +102,7 @@ function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
 
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const restoreInputRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
@@ -447,6 +450,54 @@ export default function HomePage() {
     showNotice('本地模板已删除');
   }
 
+  function handleBackupData() {
+    const backup = createBackup();
+    downloadBackup(backup);
+    showNotice(`已备份 ${backup.templates.length} 个模板、${backup.history.length} 条历史`);
+  }
+
+  function handleRestoreClick() {
+    restoreInputRef.current?.click();
+  }
+
+  async function handleRestoreFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const backup = await parseBackupFile(file);
+      const existingTemplates = loadLocalTemplates();
+      const existingHistory = loadHistory();
+      const result = restoreBackup(backup, existingTemplates, existingHistory);
+
+      // Apply restored data
+      if (result.templatesRestored > 0) {
+        const newTemplates = backup.templates.filter(
+          (t) => !existingTemplates.some((et) => et.id === t.id)
+        );
+        const merged = [...newTemplates, ...existingTemplates];
+        saveLocalTemplates(merged);
+        setTemplates((prev) => mergeTemplates(prev.filter((t) => t.source === 'builtin'), merged));
+      }
+
+      if (result.historyRestored > 0) {
+        const newHistory = backup.history.filter(
+          (h) => !existingHistory.some((eh) => eh.id === h.id)
+        );
+        const mergedHistory = [...newHistory, ...existingHistory].slice(0, 20);
+        saveHistory(mergedHistory);
+      }
+
+      showNotice(`已恢复 ${result.templatesRestored} 个模板、${result.historyRestored} 条历史`);
+    } catch (err) {
+      showNotice(err instanceof Error ? err.message : '恢复失败');
+    }
+
+    event.target.value = '';
+  }
+
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
@@ -587,6 +638,30 @@ export default function HomePage() {
                     >
                       删除本地模板
                     </button>
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-200 pt-3">
+                    <button
+                      type="button"
+                      onClick={handleBackupData}
+                      className="rounded-lg border border-teal-300 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100"
+                    >
+                      备份数据
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRestoreClick}
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+                    >
+                      恢复数据
+                    </button>
+                    <input
+                      ref={restoreInputRef}
+                      type="file"
+                      accept="application/json,.json"
+                      className="hidden"
+                      onChange={handleRestoreFile}
+                    />
                   </div>
 
                   <textarea
