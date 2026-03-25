@@ -15,6 +15,13 @@ import {
 } from '@/lib/template-parser';
 import { StockItem, StoredTemplate } from '@/lib/types';
 
+const SHORTCUTS_HELP = [
+  { keys: '⌘K', desc: '聚焦搜索' },
+  { keys: '⌘↵', desc: '复制提示词' },
+  { keys: '⌘S', desc: '保存模板' },
+  { keys: 'Esc', desc: '关闭高级设置' },
+];
+
 interface TemplateResponse {
   items: StoredTemplate[];
 }
@@ -100,6 +107,7 @@ function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
 
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
@@ -108,6 +116,7 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [search, setSearch] = useState('');
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -299,6 +308,14 @@ export default function HomePage() {
     return STOCK_TEMPLATE_KEYWORDS.some((keyword) => title.includes(keyword.toLowerCase()));
   }, [parsed]);
 
+  const filteredTemplates = useMemo(() => {
+    if (!search.trim()) {
+      return templates;
+    }
+    const q = search.toLowerCase();
+    return templates.filter((t) => t.title.toLowerCase().includes(q));
+  }, [templates, search]);
+
   const stockStatusText = useMemo(() => {
     if (!shouldShowStockStatus) {
       return '';
@@ -325,6 +342,39 @@ export default function HomePage() {
     setNotice(text);
     window.setTimeout(() => setNotice(''), 1800);
   }
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const isMac = navigator.platform.toUpperCase().includes('MAC');
+      const cmdKey = isMac ? e.metaKey : e.ctrlKey;
+
+      if (e.key === 'k' && cmdKey) {
+        e.preventDefault();
+        searchRef.current?.focus();
+        showNotice('已聚焦搜索框');
+        return;
+      }
+
+      if (e.key === 'Enter' && cmdKey) {
+        e.preventDefault();
+        if (rendered) {
+          void navigator.clipboard.writeText(rendered);
+          showNotice('提示词已复制到剪贴板');
+        }
+        return;
+      }
+
+      if (e.key === 's' && cmdKey) {
+        e.preventDefault();
+        handleSaveTemplate();
+        return;
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [rendered]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleTemplateSelect(id: string) {
     setSelectedId(id);
@@ -473,6 +523,14 @@ export default function HomePage() {
                   上传 .md
                 </button>
                 <input
+                  ref={searchRef}
+                  type="search"
+                  placeholder="搜索模板..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs text-slate-700 placeholder-slate-400 outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-100"
+                />
+                <input
                   ref={inputRef}
                   type="file"
                   accept=".md,text/markdown"
@@ -491,7 +549,7 @@ export default function HomePage() {
               </p>
 
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
-                {templates.map((item) => (
+                {filteredTemplates.map((item) => (
                   <button
                     key={item.id}
                     type="button"
@@ -509,7 +567,7 @@ export default function HomePage() {
                   </button>
                 ))}
 
-                {templates.length === 0 ? (
+                {filteredTemplates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500">
                     先上传一个 .md 模板
                   </p>
@@ -613,7 +671,10 @@ export default function HomePage() {
 
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
           <p>© 2026 cyberteng. All rights reserved.</p>
-          <p>
+          <p className="mt-1">
+            快捷键：{SHORTCUTS_HELP.map((s) => `${s.keys}=${s.desc}`).join(' | ')}
+          </p>
+          <p className="mt-1">
             公共模板投稿：Pull Request（
             <a
               href="https://github.com/nbzz/PromptDock"
