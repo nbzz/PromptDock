@@ -1,6 +1,13 @@
 'use client';
 
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
@@ -108,6 +115,7 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -419,6 +427,25 @@ export default function HomePage() {
     showNotice('模板已导出为 Markdown');
   }
 
+  const handleFullscreenToggle = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
+
+  useEffect(() => {
+    if (!isFullscreen) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsFullscreen(false);
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
   function handleDeleteTemplate() {
     if (!selectedTemplate) {
       return;
@@ -537,7 +564,17 @@ export default function HomePage() {
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <h3 className="text-sm font-semibold text-slate-800">模板与预览</h3>
-                <p className="text-xs text-slate-500">高亮部分为已填充变量</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-slate-500">高亮部分为已填充变量</p>
+                  <button
+                    type="button"
+                    onClick={handleFullscreenToggle}
+                    className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-700 transition hover:bg-slate-100"
+                    title="全屏编辑"
+                  >
+                    {isFullscreen ? '退出全屏' : '全屏编辑'}
+                  </button>
+                </div>
               </div>
 
               <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
@@ -633,6 +670,42 @@ export default function HomePage() {
           </p>
         </footer>
       </div>
+
+      {/* Fullscreen Editor Overlay */}
+      {isFullscreen && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-white transition-all duration-300"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsFullscreen(false);
+            }
+          }}
+        >
+          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3">
+            <h3 className="text-sm font-semibold text-slate-800">全屏编辑模板</h3>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500">按 ESC 退出</span>
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(false)}
+                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
+              >
+                退出全屏
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto p-4">
+            <textarea
+              value={draftMarkdown}
+              rows={30}
+              className="h-full w-full rounded-xl border border-slate-300 px-4 py-3 text-base leading-7 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
+              placeholder="在这里编辑模板内容"
+              onChange={(event) => setDraftMarkdown(event.target.value)}
+              autoFocus
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
