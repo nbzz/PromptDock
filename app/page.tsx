@@ -7,6 +7,7 @@ import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
+import { incrementShareCount, loadShareCounts } from '@/lib/share-tracker';
 import {
   buildMarkdownExport,
   parseTemplate,
@@ -106,6 +107,7 @@ export default function HomePage() {
   const [selectedId, setSelectedId] = useState('');
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
+  const [shareCounts, setShareCounts] = useState<Record<string, number>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
   const [stockMeta, setStockMeta] = useState<{
@@ -192,6 +194,8 @@ export default function HomePage() {
         setSelectedId(preferred.id);
         setDraftMarkdown(preferred.rawMarkdown);
       }
+
+      setShareCounts(loadShareCounts());
     }
 
     void loadInitialData();
@@ -503,8 +507,13 @@ export default function HomePage() {
                     }`}
                   >
                     <p className="truncate text-sm font-medium">{item.title}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      {item.source === 'builtin' ? '内置模板' : '本地模板'}
+                    <p className="mt-0.5 flex items-center gap-2 text-xs text-slate-500">
+                      <span>{item.source === 'builtin' ? '内置模板' : '本地模板'}</span>
+                      {(shareCounts[item.id] ?? 0) > 0 ? (
+                        <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-xs text-amber-700">
+                          {shareCounts[item.id]}次分享
+                        </span>
+                      ) : null}
                     </p>
                   </button>
                 ))}
@@ -532,7 +541,17 @@ export default function HomePage() {
               }}
             />
 
-            <PlatformActions content={rendered} />
+            <PlatformActions
+              content={rendered}
+              onAction={({ type }) => {
+                if (type === 'copy_only' || type === 'copy_and_open') {
+                  if (selectedId) {
+                    const newCount = incrementShareCount(selectedId);
+                    setShareCounts((prev) => ({ ...prev, [selectedId]: newCount }));
+                  }
+                }
+              }}
+            />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -612,6 +631,32 @@ export default function HomePage() {
         </div>
 
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
+          {((): null => {
+            const sorted = templates
+              .filter((t) => (shareCounts[t.id] ?? 0) > 0)
+              .sort((a, b) => (shareCounts[b.id] ?? 0) - (shareCounts[a.id] ?? 0))
+              .slice(0, 5);
+
+            if (sorted.length === 0) {
+              return null;
+            }
+
+            return (
+              <div className="mb-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-left">
+                <p className="mb-1 font-medium text-amber-700">🏆 分享排行榜</p>
+                <ul className="space-y-0.5">
+                  {sorted.map((t, i) => (
+                    <li key={t.id} className="flex items-center justify-between text-slate-600">
+                      <span>
+                        {i + 1}. {t.title}
+                      </span>
+                      <span className="font-medium text-amber-600">{shareCounts[t.id]}次</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })()}
           <p>© 2026 cyberteng. All rights reserved.</p>
           <p>
             公共模板投稿：Pull Request（
