@@ -4,6 +4,8 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
+import { WorkflowBuilder } from '@/components/workflow-builder';
+import { WorkflowStep } from '@/lib/types';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
@@ -108,6 +110,8 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [workflowMode, setWorkflowMode] = useState(false);
+  const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>([]);
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -519,20 +523,30 @@ export default function HomePage() {
           </aside>
 
           <section className="space-y-3">
-            <VariableForm
-              variables={parsed?.variables ?? []}
-              values={values}
-              stocks={stocks}
-              stockStatusText={stockStatusText || undefined}
-              onChange={(name, value) => {
-                setValues((previous) => ({
-                  ...previous,
-                  [name]: value
-                }));
-              }}
-            />
+            {workflowMode ? (
+              <WorkflowBuilder
+                templates={templates}
+                steps={workflowSteps}
+                onChange={setWorkflowSteps}
+              />
+            ) : (
+              <>
+                <VariableForm
+                  variables={parsed?.variables ?? []}
+                  values={values}
+                  stocks={stocks}
+                  stockStatusText={stockStatusText || undefined}
+                  onChange={(name, value) => {
+                    setValues((previous) => ({
+                      ...previous,
+                      [name]: value
+                    }));
+                  }}
+                />
 
-            <PlatformActions content={rendered} />
+                <PlatformActions content={rendered} />
+              </>
+            )}
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -559,10 +573,39 @@ export default function HomePage() {
 
               <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600">
                 <summary className="cursor-pointer select-none font-medium text-slate-700">
-                  高级设置：编辑模板 / 保存 / 导出 / 删除
+                  高级设置：编辑模板 / 保存 / 导出 / 删除 / 工作流
                 </summary>
 
                 <div className="mt-3 space-y-2">
+                  {/* Workflow mode toggle */}
+                  <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                    <div>
+                      <p className="font-medium text-slate-700">工作流模式</p>
+                      <p className="mt-0.5 text-xs text-slate-500">链式执行多个模板</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setWorkflowMode(!workflowMode);
+                        if (!workflowMode) {
+                          // Initialize with first template when entering workflow mode
+                          if (templates.length > 0 && workflowSteps.length === 0) {
+                            setWorkflowSteps([{ templateId: templates[0].id, values: {} }]);
+                          }
+                        }
+                      }}
+                      className={`relative h-6 w-11 rounded-full transition-colors ${
+                        workflowMode ? 'bg-teal-500' : 'bg-slate-300'
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                          workflowMode ? 'translate-x-5' : 'translate-x-0.5'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"

@@ -129,3 +129,16 @@ export interface TemplateTagRecord {
   name: string;
   slug: string;
 }
+
+// 工作流类型
+export interface WorkflowStep {
+  templateId: string;
+  values: Record<string, string>;
+  output?: string; // filled by AI
+}
+
+export interface Workflow {
+  id: string;
+  name: string;
+  steps: WorkflowStep[];
+}
