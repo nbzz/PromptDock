@@ -1,19 +1,33 @@
 'use client';
 
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
+import { InstallPrompt } from '@/components/install-prompt';
 import { PlatformActions } from '@/components/platform-actions';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
-import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
+import { exportTemplates, importTemplates, loadLocalTemplates, saveLocalTemplates, validateImportData } from '@/lib/storage';
 import {
   buildMarkdownExport,
   parseTemplate,
   renderPrompt,
   renderPromptSegments
 } from '@/lib/template-parser';
+import {
+  getOrCreateIndex,
+  reindexTemplates,
+  semanticSearch,
+  SearchResult
+} from '@/lib/semantic-search';
 import { StockItem, StoredTemplate } from '@/lib/types';
 
 interface TemplateResponse {
@@ -99,8 +113,52 @@ function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
   return templates.filter((item) => item.source === 'local');
 }
 
+function InstallPromptButton() {
+  const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    const STORAGE_KEY = 'pwa-install-state';
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const state = JSON.parse(raw);
+        if (state.installed) {
+          setInstalled(true);
+          return;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    if (
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true ||
+      window.matchMedia('(display-mode: standalone)').matches
+    ) {
+      setInstalled(true);
+    }
+  }, []);
+
+  if (installed) return null;
+
+  function handleClick() {
+    const fn = (window as Window & { __showInstallPrompt?: () => void }).__showInstallPrompt;
+    if (fn) fn();
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
+    >
+      安装 App
+    </button>
+  );
+}
+
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const importJsonRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
@@ -109,6 +167,7 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -123,10 +182,25 @@ export default function HomePage() {
     marketCounts: countFallbackByMarket(clientFallback)
   });
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchIndex, setSearchIndex] = useState<ReturnType<typeof getOrCreateIndex> | null>(null);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
   const selectedTemplate = useMemo(
     () => templates.find((item) => item.id === selectedId) ?? null,
     [templates, selectedId]
   );
+
+  // Displayed templates: search results or full list
+  const displayedTemplates = useMemo<StoredTemplate[]>(() => {
+    if (searchQuery.trim() && searchIndex && templates.length > 0) {
+      const results = semanticSearch(searchQuery, templates, searchIndex);
+      setSearchResults(results);
+      return results.map((r) => r.template);
+    }
+    setSearchResults([]);
+    return templates;
+  }, [searchQuery, templates, searchIndex]);
 
   const parsed = useMemo(() => {
     if (!selectedTemplate) {
@@ -187,6 +261,10 @@ export default function HomePage() {
 
       const merged = mergeTemplates(builtinTemplates, localTemplates);
       setTemplates(merged);
+
+      // Initialize semantic search index
+      const index = getOrCreateIndex(merged);
+      setSearchIndex(index);
 
       const preferred = pickPreferredTemplate(merged);
       if (preferred) {
@@ -274,6 +352,14 @@ export default function HomePage() {
 
     setDraftMarkdown(selectedTemplate.rawMarkdown);
   }, [selectedTemplate]);
+
+  // Reindex templates for semantic search whenever templates change
+  useEffect(() => {
+    if (templates.length === 0) return;
+    const index = reindexTemplates(templates);
+    setSearchIndex(index);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [templates]);
 
   const rendered = useMemo(() => {
     if (!parsed) {
@@ -420,6 +506,25 @@ export default function HomePage() {
     showNotice('模板已导出为 Markdown');
   }
 
+  const handleFullscreenToggle = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
+
+  useEffect(() => {
+    if (!isFullscreen) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsFullscreen(false);
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
   function handleDeleteTemplate() {
     if (!selectedTemplate) {
       return;
@@ -448,6 +553,62 @@ export default function HomePage() {
     showNotice('本地模板已删除');
   }
 
+  function handleExportAllTemplates() {
+    const local = getLocalTemplates(templates);
+    if (local.length === 0) {
+      showNotice('暂无本地模板可导出');
+      return;
+    }
+
+    const json = exportTemplates(local);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = `promptdock-templates-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 200);
+    showNotice(`已导出 ${local.length} 个本地模板`);
+  }
+
+  function handleImportJsonClick() {
+    importJsonRef.current?.click();
+  }
+
+  async function handleImportJson(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    let data: unknown;
+    try {
+      data = JSON.parse(await file.text());
+    } catch {
+      showNotice('文件格式错误：无法解析 JSON');
+      event.target.value = '';
+      return;
+    }
+
+    if (!validateImportData(data)) {
+      showNotice('文件格式错误：结构不符合模板规范');
+      event.target.value = '';
+      return;
+    }
+
+    const local = getLocalTemplates(templates);
+    const { merged, added, skipped } = importTemplates(local, data);
+    saveLocalTemplates(merged);
+    setTemplates((previous) => {
+      const builtin = previous.filter((t) => t.source === 'builtin');
+      return [...merged.filter((t) => t.source === 'local'), ...builtin].sort(
+        (a, b) => getTemplateOrderRank(a) - getTemplateOrderRank(b)
+      );
+    });
+    showNotice(`导入完成：新增 ${added} 个${skipped > 0 ? `，跳过 ${skipped} 个重复` : ''}`);
+    event.target.value = '';
+  }
+
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
@@ -461,8 +622,17 @@ export default function HomePage() {
               <ThemeToggle />
               <p className="min-h-4 text-xs text-teal-700 dark:text-teal-400">{notice || ' '}</p>
             </div>
+<<<<<<< HEAD
+=======
+            <div className="flex items-center gap-3">
+              <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+              <InstallPromptButton />
+            </div>
+>>>>>>> origin/main
           </div>
         </header>
+
+        <InstallPrompt />
 
         <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit">
@@ -485,6 +655,47 @@ export default function HomePage() {
                     void handleFileUpload(event);
                   }}
                 />
+                <input
+                  ref={importJsonRef}
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  onChange={(event) => {
+                    void handleImportJson(event);
+                  }}
+                />
+              </div>
+
+              {/* Semantic Search Input */}
+              <div className="mb-3">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="搜索模板..."
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 pr-8 text-xs text-slate-700 placeholder-slate-400 outline-none transition focus:border-teal-400 focus:bg-white focus:ring-1 focus:ring-teal-100"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+                {searchQuery.trim() && (
+                  <p className="mt-1 text-xs text-slate-500">
+                    找到 {displayedTemplates.length} 个结果
+                    {searchResults[0] && (
+                      <span className="ml-1 text-teal-600">
+                        · 最相关: {searchResults[0].template.title}
+                      </span>
+                    )}
+                  </p>
+                )}
               </div>
 
               <p className="mb-3 text-xs leading-5 text-slate-500 dark:text-slate-400">
@@ -495,6 +706,7 @@ export default function HomePage() {
               </p>
 
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
+<<<<<<< HEAD
                 {templates.map((item) => (
                   <button
                     key={item.id}
@@ -516,6 +728,41 @@ export default function HomePage() {
                 {templates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
                     先上传一个 .md 模板
+=======
+                {displayedTemplates.map((item) => {
+                  const searchResult = searchResults.find((r) => r.template.id === item.id);
+                  const scoreLabel =
+                    searchResult && searchQuery.trim()
+                      ? `匹配度 ${Math.round(searchResult.score * 100)}%`
+                      : null;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleTemplateSelect(item.id)}
+                      className={`w-full rounded-xl border px-3 py-2 text-left transition ${
+                        selectedId === item.id
+                          ? 'border-teal-400 bg-teal-50 text-teal-900'
+                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <p className="truncate text-sm font-medium">{item.title}</p>
+                      <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-500">
+                        {item.source === 'builtin' ? '内置模板' : '本地模板'}
+                        {scoreLabel && (
+                          <span className="rounded bg-teal-100 px-1 text-teal-700">{scoreLabel}</span>
+                        )}
+                      </p>
+                    </button>
+                  );
+                })}
+
+                {displayedTemplates.length === 0 ? (
+                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500">
+                    {searchQuery.trim()
+                      ? `未找到匹配「${searchQuery}」的模板`
+                      : '先上传一个 .md 模板'}
+>>>>>>> origin/main
                   </p>
                 ) : null}
               </div>
@@ -540,8 +787,23 @@ export default function HomePage() {
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-3">
+<<<<<<< HEAD
                 <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">模板与预览</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">高亮部分为已填充变量</p>
+=======
+                <h3 className="text-sm font-semibold text-slate-800">模板与预览</h3>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-slate-500">高亮部分为已填充变量</p>
+                  <button
+                    type="button"
+                    onClick={handleFullscreenToggle}
+                    className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-700 transition hover:bg-slate-100"
+                    title="全屏编辑"
+                  >
+                    {isFullscreen ? '退出全屏' : '全屏编辑'}
+                  </button>
+                </div>
+>>>>>>> origin/main
               </div>
 
               <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
@@ -591,6 +853,20 @@ export default function HomePage() {
                     >
                       删除本地模板
                     </button>
+                    <button
+                      type="button"
+                      onClick={handleExportAllTemplates}
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100"
+                    >
+                      导出全部模板
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleImportJsonClick}
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100"
+                    >
+                      导入 JSON
+                    </button>
                   </div>
 
                   <textarea
@@ -618,6 +894,13 @@ export default function HomePage() {
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500 dark:text-slate-400">
           <p>© 2026 cyberteng. All rights reserved.</p>
           <p>
+            <a
+              href="/help"
+              className="mx-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700"
+            >
+              帮助
+            </a>
+            {' · '}
             公共模板投稿：Pull Request（
             <a
               href="https://github.com/nbzz/PromptDock"
@@ -637,6 +920,42 @@ export default function HomePage() {
           </p>
         </footer>
       </div>
+
+      {/* Fullscreen Editor Overlay */}
+      {isFullscreen && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-white transition-all duration-300"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsFullscreen(false);
+            }
+          }}
+        >
+          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3">
+            <h3 className="text-sm font-semibold text-slate-800">全屏编辑模板</h3>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500">按 ESC 退出</span>
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(false)}
+                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
+              >
+                退出全屏
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto p-4">
+            <textarea
+              value={draftMarkdown}
+              rows={30}
+              className="h-full w-full rounded-xl border border-slate-300 px-4 py-3 text-base leading-7 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
+              placeholder="在这里编辑模板内容"
+              onChange={(event) => setDraftMarkdown(event.target.value)}
+              autoFocus
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
