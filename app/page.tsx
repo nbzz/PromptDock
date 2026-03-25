@@ -6,7 +6,7 @@ import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
-import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
+import { exportTemplates, importTemplates, loadLocalTemplates, saveLocalTemplates, validateImportData } from '@/lib/storage';
 import {
   buildMarkdownExport,
   parseTemplate,
@@ -100,6 +100,7 @@ function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
 
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const importJsonRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
@@ -447,6 +448,62 @@ export default function HomePage() {
     showNotice('本地模板已删除');
   }
 
+  function handleExportAllTemplates() {
+    const local = getLocalTemplates(templates);
+    if (local.length === 0) {
+      showNotice('暂无本地模板可导出');
+      return;
+    }
+
+    const json = exportTemplates(local);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = `promptdock-templates-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 200);
+    showNotice(`已导出 ${local.length} 个本地模板`);
+  }
+
+  function handleImportJsonClick() {
+    importJsonRef.current?.click();
+  }
+
+  async function handleImportJson(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    let data: unknown;
+    try {
+      data = JSON.parse(await file.text());
+    } catch {
+      showNotice('文件格式错误：无法解析 JSON');
+      event.target.value = '';
+      return;
+    }
+
+    if (!validateImportData(data)) {
+      showNotice('文件格式错误：结构不符合模板规范');
+      event.target.value = '';
+      return;
+    }
+
+    const local = getLocalTemplates(templates);
+    const { merged, added, skipped } = importTemplates(local, data);
+    saveLocalTemplates(merged);
+    setTemplates((previous) => {
+      const builtin = previous.filter((t) => t.source === 'builtin');
+      return [...merged.filter((t) => t.source === 'local'), ...builtin].sort(
+        (a, b) => getTemplateOrderRank(a) - getTemplateOrderRank(b)
+      );
+    });
+    showNotice(`导入完成：新增 ${added} 个${skipped > 0 ? `，跳过 ${skipped} 个重复` : ''}`);
+    event.target.value = '';
+  }
+
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
@@ -479,6 +536,15 @@ export default function HomePage() {
                   className="hidden"
                   onChange={(event) => {
                     void handleFileUpload(event);
+                  }}
+                />
+                <input
+                  ref={importJsonRef}
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  onChange={(event) => {
+                    void handleImportJson(event);
                   }}
                 />
               </div>
@@ -586,6 +652,20 @@ export default function HomePage() {
                       title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
                     >
                       删除本地模板
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleExportAllTemplates}
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100"
+                    >
+                      导出全部模板
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleImportJsonClick}
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100"
+                    >
+                      导入 JSON
                     </button>
                   </div>
 
