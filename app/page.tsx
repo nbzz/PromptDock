@@ -532,7 +532,7 @@ export default function HomePage() {
               }}
             />
 
-            <PlatformActions content={rendered} />
+            <PlatformActions content={rendered} title={parsed?.title} />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">

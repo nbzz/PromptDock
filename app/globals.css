@@ -43,3 +43,28 @@ button {
     font-size: 16px;
   }
 }
+
+/* Print styles - hide UI chrome when exporting PDF */
+@media print {
+  /* Hide interactive elements */
+  button,
+  .no-print,
+  header,
+  aside,
+  footer,
+  .shadow-soft {
+    display: none !important;
+  }
+
+  /* Clean background */
+  body {
+    background: white !important;
+    color: #1e293b !important;
+  }
+
+  /* Ensure proper page breaks */
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
