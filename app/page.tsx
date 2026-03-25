@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
+import { useToast } from '@/lib/toast';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
 import {
@@ -107,7 +108,7 @@ export default function HomePage() {
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
-  const [notice, setNotice] = useState('');
+  const { showToast } = useToast();
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -321,11 +322,6 @@ export default function HomePage() {
     return `股票库 ${stockMeta.count} 条 · A ${stockMeta.marketCounts.CN} / H ${stockMeta.marketCounts.HK} / US ${stockMeta.marketCounts.US} · ${source} · ${shortTime}`;
   }, [shouldShowStockStatus, stockMeta]);
 
-  function showNotice(text: string) {
-    setNotice(text);
-    window.setTimeout(() => setNotice(''), 1800);
-  }
-
   function handleTemplateSelect(id: string) {
     setSelectedId(id);
   }
@@ -358,7 +354,7 @@ export default function HomePage() {
     setSelectedId(localTemplate.id);
     setDraftMarkdown(text);
     event.target.value = '';
-    showNotice('模板已导入');
+    showToast('模板已导入');
   }
 
   function handleSaveTemplate() {
@@ -381,7 +377,7 @@ export default function HomePage() {
         return next;
       });
       setSelectedId(copied.id);
-      showNotice('已另存为本地模板副本');
+      showToast('已另存为本地模板副本');
       return;
     }
 
@@ -400,7 +396,7 @@ export default function HomePage() {
       saveLocalTemplates(getLocalTemplates(next));
       return next;
     });
-    showNotice('模板已保存');
+    showToast('模板已保存');
   }
 
   function handleExportTemplate() {
@@ -416,7 +412,7 @@ export default function HomePage() {
     link.download = `${parsed.title || 'prompt-template'}.md`;
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 200);
-    showNotice('模板已导出为 Markdown');
+    showToast('模板已导出为 Markdown');
   }
 
   function handleDeleteTemplate() {
@@ -425,7 +421,7 @@ export default function HomePage() {
     }
 
     if (selectedTemplate.source !== 'local') {
-      showNotice('内置模板不支持删除');
+      showToast('内置模板不支持删除', 'error');
       return;
     }
 
@@ -444,7 +440,7 @@ export default function HomePage() {
 
       return next;
     });
-    showNotice('本地模板已删除');
+    showToast('已删除', 'success');
   }
 
   return (
@@ -456,7 +452,6 @@ export default function HomePage() {
               <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
               <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
           </div>
         </header>
 

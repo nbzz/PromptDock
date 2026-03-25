@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
 
 import { PLATFORMS } from '@/lib/platforms';
+import { useToast } from '@/lib/toast';
 
 interface PlatformActionsProps {
   content: string;
@@ -36,19 +36,16 @@ async function copyText(text: string): Promise<boolean> {
 }
 
 export function PlatformActions({ content, onAction }: PlatformActionsProps) {
-  const [notice, setNotice] = useState('');
-
-  function showNotice(text: string) {
-    setNotice(text);
-    window.setTimeout(() => setNotice(''), 1800);
-  }
+  const { showToast } = useToast();
 
   async function copyOnly() {
     const ok = await copyText(content);
     if (ok) {
       onAction?.({ type: 'copy_only' });
+      showToast('已复制到剪贴板');
+    } else {
+      showToast('复制失败，请手动复制', 'error');
     }
-    showNotice(ok ? '已复制' : '复制失败，请手动复制');
   }
 
   async function copyAndOpen(platformKey: string, url: string) {
@@ -56,8 +53,10 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
     window.open(url, '_blank', 'noopener,noreferrer');
     if (ok) {
       onAction?.({ type: 'copy_and_open', platformKey });
+      showToast('已复制到剪贴板');
+    } else {
+      showToast('已跳转（复制失败）', 'error');
     }
-    showNotice(ok ? '已复制并跳转' : '已跳转（复制失败）');
   }
 
   return (
@@ -96,8 +95,6 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
           </button>
         ))}
       </div>
-
-      {notice ? <p className="mt-3 text-xs text-teal-700">{notice}</p> : null}
     </section>
   );
 }
