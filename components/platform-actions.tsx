@@ -4,10 +4,13 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 import { PLATFORMS } from '@/lib/platforms';
+import { StoredTemplate } from '@/lib/types';
 
 interface PlatformActionsProps {
   content: string;
+  template?: StoredTemplate | null;
   onAction?: (action: { type: 'copy_only' | 'copy_and_open'; platformKey?: string }) => void;
+  onShare?: (template: StoredTemplate) => void;
 }
 
 async function copyText(text: string): Promise<boolean> {
@@ -35,7 +38,7 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
-export function PlatformActions({ content, onAction }: PlatformActionsProps) {
+export function PlatformActions({ content, template, onAction, onShare }: PlatformActionsProps) {
   const [notice, setNotice] = useState('');
 
   function showNotice(text: string) {
@@ -71,6 +74,31 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
         >
           <span>仅复制</span>
         </button>
+        {template && onShare ? (
+          <button
+            type="button"
+            onClick={() => onShare(template)}
+            className="inline-flex items-center gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-700 transition hover:bg-teal-100 sm:py-1.5 sm:text-xs"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+            </svg>
+            <span>二维码</span>
+          </button>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-9">

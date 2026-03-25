@@ -3,9 +3,11 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlatformActions } from '@/components/platform-actions';
+import { ShareModal } from '@/components/share-modal';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { createClientFallbackStocks } from '@/lib/stocks';
+import { decodeShareParam } from '@/lib/share';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
 import {
   buildMarkdownExport,
@@ -108,6 +110,7 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [shareTemplate, setShareTemplate] = useState<StoredTemplate | null>(null);
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -239,6 +242,38 @@ export default function HomePage() {
       cancelled = true;
     };
   }, [clientFallback]);
+
+  // Handle shared template from URL (?t=...)
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const shareParam = params.get('t');
+    if (!shareParam) {
+      return;
+    }
+    const shared = decodeShareParam(shareParam);
+    if (!shared) {
+      return;
+    }
+
+    // Merge into templates list and select it
+    setTemplates((previous) => {
+      const exists = previous.some((t) => t.id === shared.id);
+      if (exists) {
+        return previous;
+      }
+      return [shared, ...previous];
+    });
+    setSelectedId(shared.id);
+    setDraftMarkdown(shared.rawMarkdown);
+
+    // Clean URL without reload
+    const url = new URL(window.location.href);
+    url.searchParams.delete('t');
+    window.history.replaceState({}, '', url.toString());
+  }, []);
 
   useEffect(() => {
     if (!parsed) {
@@ -532,7 +567,11 @@ export default function HomePage() {
               }}
             />
 
-            <PlatformActions content={rendered} />
+            <PlatformActions
+              content={rendered}
+              template={selectedTemplate}
+              onShare={(t) => setShareTemplate(t)}
+            />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -610,6 +649,10 @@ export default function HomePage() {
             </section>
           </section>
         </div>
+
+        {shareTemplate ? (
+          <ShareModal template={shareTemplate} onClose={() => setShareTemplate(null)} />
+        ) : null}
 
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500">
           <p>© 2026 cyberteng. All rights reserved.</p>
