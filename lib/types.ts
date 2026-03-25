@@ -63,6 +63,7 @@ export interface StoredTemplate {
   rawMarkdown: string;
   source: 'builtin' | 'local';
   updatedAt: number;
+  tags?: string[];
 }
 
 export interface StockItem {

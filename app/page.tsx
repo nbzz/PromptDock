@@ -108,6 +108,9 @@ export default function HomePage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [editingTagsFor, setEditingTagsFor] = useState<string | null>(null);
+  const [tagInput, setTagInput] = useState('');
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -137,6 +140,21 @@ export default function HomePage() {
       rawMarkdown: draftMarkdown
     });
   }, [selectedTemplate, draftMarkdown]);
+
+  const filteredTemplates = useMemo(() => {
+    if (!selectedTag) return templates;
+    return templates.filter((t) => t.tags?.includes(selectedTag));
+  }, [templates, selectedTag]);
+
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    for (const t of templates) {
+      for (const tag of t.tags ?? []) {
+        tagSet.add(tag);
+      }
+    }
+    return [...tagSet].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+  }, [templates]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -491,23 +509,93 @@ export default function HomePage() {
               </p>
 
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
-                {templates.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleTemplateSelect(item.id)}
-                    className={`w-full rounded-xl border px-3 py-2 text-left transition ${
-                      selectedId === item.id
-                        ? 'border-teal-400 bg-teal-50 text-teal-900'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <p className="truncate text-sm font-medium">{item.title}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      {item.source === 'builtin' ? '内置模板' : '本地模板'}
-                    </p>
-                  </button>
+                {allTags.length > 0 ? (
+                  <div className="mb-2 flex flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedTag(null)}
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium transition ${
+                        selectedTag === null
+                          ? 'bg-teal-600 text-white'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      全部
+                    </button>
+                    {allTags.map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium transition ${
+                          selectedTag === tag
+                            ? 'bg-teal-600 text-white'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
+                {filteredTemplates.map((item) => (
+                  <div key={item.id} className="relative group">
+                    <button
+                      type="button"
+                      onClick={() => handleTemplateSelect(item.id)}
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        if (item.source === 'local') {
+                          setEditingTagsFor(item.id);
+                          setTagInput((item.tags ?? []).join(', '));
+                        }
+                      }}
+                      className={`w-full rounded-xl border px-3 py-2 text-left transition ${
+                        selectedId === item.id
+                          ? 'border-teal-400 bg-teal-50 text-teal-900'
+                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <p className="truncate text-sm font-medium">{item.title}</p>
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        {item.source === 'builtin' ? '内置模板' : '本地模板'}
+                      </p>
+                      {item.tags && item.tags.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {item.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full bg-teal-100 px-1.5 py-0.5 text-xs text-teal-700"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </button>
+                    {item.source === 'local' && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingTagsFor(item.id);
+                          setTagInput((item.tags ?? []).join(', '));
+                        }}
+                        className="absolute right-2 top-2 rounded-lg px-1.5 py-0.5 text-xs text-slate-400 opacity-0 transition hover:bg-slate-200 hover:text-slate-600 group-hover:opacity-100"
+                        title="编辑标签"
+                      >
+                        🏷️
+                      </button>
+                    )}
+                  </div>
                 ))}
+
+                {filteredTemplates.length === 0 && templates.length > 0 ? (
+                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500">
+                    没有标签为「{selectedTag}」的模板
+                  </p>
+                ) : null}
 
                 {templates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500">
@@ -515,6 +603,76 @@ export default function HomePage() {
                   </p>
                 ) : null}
               </div>
+
+              {/* Tag edit dialog */}
+              {editingTagsFor && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+                  onClick={() => setEditingTagsFor(null)}
+                >
+                  <div
+                    className="w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h3 className="mb-3 text-sm font-semibold text-slate-800">编辑标签</h3>
+                    <p className="mb-2 text-xs text-slate-500">用逗号分隔多个标签</p>
+                    <input
+                      type="text"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      className="mb-3 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                      placeholder="标签1, 标签2, 标签3"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const tags = tagInput.split(',').map((t) => t.trim()).filter(Boolean);
+                          setTemplates((prev) =>
+                            prev.map((t) =>
+                              t.id === editingTagsFor ? { ...t, tags } : t
+                            )
+                          );
+                          const updated = templates.find((t) => t.id === editingTagsFor);
+                          if (updated) {
+                            const newTemplates = templates.map((t) =>
+                              t.id === editingTagsFor ? { ...t, tags } : t
+                            );
+                            saveLocalTemplates(getLocalTemplates(newTemplates));
+                          }
+                          setEditingTagsFor(null);
+                        }
+                        if (e.key === 'Escape') setEditingTagsFor(null);
+                      }}
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingTagsFor(null)}
+                        className="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+                      >
+                        取消
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const tags = tagInput.split(',').map((t) => t.trim()).filter(Boolean);
+                          setTemplates((prev) =>
+                            prev.map((t) =>
+                              t.id === editingTagsFor ? { ...t, tags } : t
+                            )
+                          );
+                          const newTemplates = templates.map((t) =>
+                            t.id === editingTagsFor ? { ...t, tags } : t
+                          );
+                          saveLocalTemplates(getLocalTemplates(newTemplates));
+                          setEditingTagsFor(null);
+                        }}
+                        className="flex-1 rounded-xl border border-teal-400 bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
+                      >
+                        保存
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </section>
           </aside>
 
