@@ -9,6 +9,7 @@ import {
   useState
 } from 'react';
 
+import { InstallPrompt } from '@/components/install-prompt';
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
@@ -109,6 +110,49 @@ function mergeTemplates(builtin: StoredTemplate[], local: StoredTemplate[]): Sto
 
 function getLocalTemplates(templates: StoredTemplate[]): StoredTemplate[] {
   return templates.filter((item) => item.source === 'local');
+}
+
+function InstallPromptButton() {
+  const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    const STORAGE_KEY = 'pwa-install-state';
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const state = JSON.parse(raw);
+        if (state.installed) {
+          setInstalled(true);
+          return;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    if (
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true ||
+      window.matchMedia('(display-mode: standalone)').matches
+    ) {
+      setInstalled(true);
+    }
+  }, []);
+
+  if (installed) return null;
+
+  function handleClick() {
+    const fn = (window as Window & { __showInstallPrompt?: () => void }).__showInstallPrompt;
+    if (fn) fn();
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
+    >
+      安装 App
+    </button>
+  );
 }
 
 export default function HomePage() {
@@ -573,9 +617,14 @@ export default function HomePage() {
               <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
               <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+            <div className="flex items-center gap-3">
+              <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
+              <InstallPromptButton />
+            </div>
           </div>
         </header>
+
+        <InstallPrompt />
 
         <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit">
