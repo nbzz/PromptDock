@@ -87664,6 +87664,22 @@
     ]
   },
   {
+    "code": "AACIU",
+    "name": "AACIU",
+    "market": "US",
+    "aliases": [
+      "AACIU"
+    ]
+  },
+  {
+    "code": "AACOU",
+    "name": "AACOU",
+    "market": "US",
+    "aliases": [
+      "AACOU"
+    ]
+  },
+  {
     "code": "AAL",
     "name": "American Airlines Group Inc.",
     "market": "US",
@@ -87878,24 +87894,6 @@
     ]
   },
   {
-    "code": "ABP",
-    "name": "Abpro Holdings, Inc.",
-    "market": "US",
-    "aliases": [
-      "Abpro Holdings, Inc.",
-      "ABP"
-    ]
-  },
-  {
-    "code": "ABPWW",
-    "name": "Abpro Holdings, Inc.",
-    "market": "US",
-    "aliases": [
-      "Abpro Holdings, Inc.",
-      "ABPWW"
-    ]
-  },
-  {
     "code": "ABR",
     "name": "ARBOR REALTY TRUST INC",
     "market": "US",
@@ -88007,6 +88005,14 @@
     "aliases": [
       "Arcosa, Inc.",
       "ACA"
+    ]
+  },
+  {
+    "code": "ACAAU",
+    "name": "ACAAU",
+    "market": "US",
+    "aliases": [
+      "ACAAU"
     ]
   },
   {
@@ -88393,11 +88399,27 @@
     ]
   },
   {
+    "code": "ADAC",
+    "name": "ADAC",
+    "market": "US",
+    "aliases": [
+      "ADAC"
+    ]
+  },
+  {
     "code": "ADACU",
     "name": "ADACU",
     "market": "US",
     "aliases": [
       "ADACU"
+    ]
+  },
+  {
+    "code": "ADACW",
+    "name": "ADACW",
+    "market": "US",
+    "aliases": [
+      "ADACW"
     ]
   },
   {
@@ -88705,14 +88727,6 @@
     ]
   },
   {
-    "code": "AEAQU",
-    "name": "AEAQU",
-    "market": "US",
-    "aliases": [
-      "AEAQU"
-    ]
-  },
-  {
     "code": "AEAQW",
     "name": "AEAQW",
     "market": "US",
@@ -88898,15 +88912,6 @@
     ]
   },
   {
-    "code": "AERTW",
-    "name": "Aeries Technology, Inc.",
-    "market": "US",
-    "aliases": [
-      "Aeries Technology, Inc.",
-      "AERTW"
-    ]
-  },
-  {
     "code": "AES",
     "name": "AES CORP",
     "market": "US",
@@ -88931,14 +88936,6 @@
     "aliases": [
       "Aeva Technologies, Inc.",
       "AEVA"
-    ]
-  },
-  {
-    "code": "AEVAW",
-    "name": "AEVAW",
-    "market": "US",
-    "aliases": [
-      "AEVAW"
     ]
   },
   {
@@ -89118,6 +89115,14 @@
     "aliases": [
       "Allied Gaming & Entertainment Inc.",
       "AGAE"
+    ]
+  },
+  {
+    "code": "AGBK",
+    "name": "AGBK",
+    "market": "US",
+    "aliases": [
+      "AGBK"
     ]
   },
   {
@@ -89359,15 +89364,6 @@
     ]
   },
   {
-    "code": "AHH",
-    "name": "Armada Hoffler Properties, Inc.",
-    "market": "US",
-    "aliases": [
-      "Armada Hoffler Properties, Inc.",
-      "AHH"
-    ]
-  },
-  {
     "code": "AHL",
     "name": "AHL",
     "market": "US",
@@ -89393,6 +89389,14 @@
     ]
   },
   {
+    "code": "AHRT",
+    "name": "AHRT",
+    "market": "US",
+    "aliases": [
+      "AHRT"
+    ]
+  },
+  {
     "code": "AHT",
     "name": "ASHFORD HOSPITALITY TRUST INC",
     "market": "US",
@@ -89408,6 +89412,22 @@
     "aliases": [
       "C3.ai, Inc.",
       "AI"
+    ]
+  },
+  {
+    "code": "AIB",
+    "name": "AIB",
+    "market": "US",
+    "aliases": [
+      "AIB"
+    ]
+  },
+  {
+    "code": "AIDX",
+    "name": "AIDX",
+    "market": "US",
+    "aliases": [
+      "AIDX"
     ]
   },
   {
@@ -89521,6 +89541,14 @@
     "aliases": [
       "Virtus Artificial Intelligence & Technology Opportunities Fund",
       "AIO"
+    ]
+  },
+  {
+    "code": "AIOS",
+    "name": "AIOS",
+    "market": "US",
+    "aliases": [
+      "AIOS"
     ]
   },
   {
@@ -89898,21 +89926,21 @@
     ]
   },
   {
-    "code": "ALEX",
-    "name": "Alexander & Baldwin, Inc.",
-    "market": "US",
-    "aliases": [
-      "Alexander & Baldwin, Inc.",
-      "ALEX"
-    ]
-  },
-  {
     "code": "ALF",
     "name": "Centurion Acquisition Corp.",
     "market": "US",
     "aliases": [
       "Centurion Acquisition Corp.",
       "ALF"
+    ]
+  },
+  {
+    "code": "ALFUU",
+    "name": "Centurion Acquisition Corp.",
+    "market": "US",
+    "aliases": [
+      "Centurion Acquisition Corp.",
+      "ALFUU"
     ]
   },
   {
@@ -90146,11 +90174,35 @@
     ]
   },
   {
+    "code": "ALOV",
+    "name": "ALOV",
+    "market": "US",
+    "aliases": [
+      "ALOV"
+    ]
+  },
+  {
     "code": "ALOVU",
     "name": "ALOVU",
     "market": "US",
     "aliases": [
       "ALOVU"
+    ]
+  },
+  {
+    "code": "ALOVW",
+    "name": "ALOVW",
+    "market": "US",
+    "aliases": [
+      "ALOVW"
+    ]
+  },
+  {
+    "code": "ALOY",
+    "name": "ALOY",
+    "market": "US",
+    "aliases": [
+      "ALOY"
     ]
   },
   {
@@ -90240,15 +90292,6 @@
     "market": "US",
     "aliases": [
       "ALUB"
-    ]
-  },
-  {
-    "code": "ALUR",
-    "name": "ALLURION TECHNOLOGIES, INC.",
-    "market": "US",
-    "aliases": [
-      "ALLURION TECHNOLOGIES, INC.",
-      "ALUR"
     ]
   },
   {
@@ -90536,15 +90579,6 @@
     ]
   },
   {
-    "code": "AMPGW",
-    "name": "AmpliTech Group, Inc.",
-    "market": "US",
-    "aliases": [
-      "AmpliTech Group, Inc.",
-      "AMPGW"
-    ]
-  },
-  {
     "code": "AMPGZ",
     "name": "AMPGZ",
     "market": "US",
@@ -90793,15 +90827,6 @@
     ]
   },
   {
-    "code": "ANEB",
-    "name": "Anebulo Pharmaceuticals, Inc.",
-    "market": "US",
-    "aliases": [
-      "Anebulo Pharmaceuticals, Inc.",
-      "ANEB"
-    ]
-  },
-  {
     "code": "ANET",
     "name": "Arista Networks, Inc.",
     "market": "US",
@@ -90834,6 +90859,15 @@
     "aliases": [
       "Anghami Inc",
       "ANGH"
+    ]
+  },
+  {
+    "code": "ANGHW",
+    "name": "Anghami Inc",
+    "market": "US",
+    "aliases": [
+      "Anghami Inc",
+      "ANGHW"
     ]
   },
   {
@@ -90949,15 +90983,6 @@
     "aliases": [
       "Agriculture & Natural Solutions Acquisition Corp",
       "ANSC"
-    ]
-  },
-  {
-    "code": "ANSCU",
-    "name": "Agriculture & Natural Solutions Acquisition Corp",
-    "market": "US",
-    "aliases": [
-      "Agriculture & Natural Solutions Acquisition Corp",
-      "ANSCU"
     ]
   },
   {
@@ -91111,11 +91136,11 @@
     ]
   },
   {
-    "code": "APACR",
-    "name": "APACR",
+    "code": "APACU",
+    "name": "APACU",
     "market": "US",
     "aliases": [
-      "APACR"
+      "APACU"
     ]
   },
   {
@@ -91135,12 +91160,28 @@
     ]
   },
   {
+    "code": "APADU",
+    "name": "APADU",
+    "market": "US",
+    "aliases": [
+      "APADU"
+    ]
+  },
+  {
     "code": "APAM",
     "name": "Artisan Partners Asset Management Inc.",
     "market": "US",
     "aliases": [
       "Artisan Partners Asset Management Inc.",
       "APAM"
+    ]
+  },
+  {
+    "code": "APC",
+    "name": "APC",
+    "market": "US",
+    "aliases": [
+      "APC"
     ]
   },
   {
@@ -91528,11 +91569,27 @@
     ]
   },
   {
+    "code": "ARCI",
+    "name": "ARCI",
+    "market": "US",
+    "aliases": [
+      "ARCI"
+    ]
+  },
+  {
     "code": "ARCIU",
     "name": "ARCIU",
     "market": "US",
     "aliases": [
       "ARCIU"
+    ]
+  },
+  {
+    "code": "ARCIW",
+    "name": "ARCIW",
+    "market": "US",
+    "aliases": [
+      "ARCIW"
     ]
   },
   {
@@ -91590,24 +91647,6 @@
     ]
   },
   {
-    "code": "AREB",
-    "name": "AMERICAN REBEL HOLDINGS INC",
-    "market": "US",
-    "aliases": [
-      "AMERICAN REBEL HOLDINGS INC",
-      "AREB"
-    ]
-  },
-  {
-    "code": "AREBW",
-    "name": "AMERICAN REBEL HOLDINGS INC",
-    "market": "US",
-    "aliases": [
-      "AMERICAN REBEL HOLDINGS INC",
-      "AREBW"
-    ]
-  },
-  {
     "code": "AREC",
     "name": "American Resources Corp",
     "market": "US",
@@ -91659,6 +91698,15 @@
     "aliases": [
       "Apollo Commercial Real Estate Finance, Inc.",
       "ARI"
+    ]
+  },
+  {
+    "code": "ARIS",
+    "name": "Aris Water Solutions, Inc.",
+    "market": "US",
+    "aliases": [
+      "Aris Water Solutions, Inc.",
+      "ARIS"
     ]
   },
   {
@@ -91722,15 +91770,6 @@
     "aliases": [
       "Aramark",
       "ARMK"
-    ]
-  },
-  {
-    "code": "ARMN",
-    "name": "Aris Mining Corp",
-    "market": "US",
-    "aliases": [
-      "Aris Mining Corp",
-      "ARMN"
     ]
   },
   {
@@ -91815,11 +91854,27 @@
     ]
   },
   {
+    "code": "ARTC",
+    "name": "ARTC",
+    "market": "US",
+    "aliases": [
+      "ARTC"
+    ]
+  },
+  {
     "code": "ARTCU",
     "name": "ARTCU",
     "market": "US",
     "aliases": [
       "ARTCU"
+    ]
+  },
+  {
+    "code": "ARTCW",
+    "name": "ARTCW",
+    "market": "US",
+    "aliases": [
+      "ARTCW"
     ]
   },
   {
@@ -92347,15 +92402,6 @@
     ]
   },
   {
-    "code": "ATGE",
-    "name": "Adtalem Global Education Inc.",
-    "market": "US",
-    "aliases": [
-      "Adtalem Global Education Inc.",
-      "ATGE"
-    ]
-  },
-  {
     "code": "ATGL",
     "name": "Alpha Technology Group Ltd",
     "market": "US",
@@ -92774,15 +92820,6 @@
     ]
   },
   {
-    "code": "AUUDW",
-    "name": "AUDDIA INC.",
-    "market": "US",
-    "aliases": [
-      "AUDDIA INC.",
-      "AUUDW"
-    ]
-  },
-  {
     "code": "AVA",
     "name": "AVISTA CORP",
     "market": "US",
@@ -92859,15 +92896,6 @@
     "aliases": [
       "AMERICAN VANGUARD CORP",
       "AVD"
-    ]
-  },
-  {
-    "code": "AVDL",
-    "name": "AVADEL PHARMACEUTICALS PLC",
-    "market": "US",
-    "aliases": [
-      "AVADEL PHARMACEUTICALS PLC",
-      "AVDL"
     ]
   },
   {
@@ -93323,40 +93351,6 @@
     ]
   },
   {
-    "code": "BACCR",
-    "name": "BACCR",
-    "market": "US",
-    "aliases": [
-      "BACCR"
-    ]
-  },
-  {
-    "code": "BACCU",
-    "name": "BACCU",
-    "market": "US",
-    "aliases": [
-      "BACCU"
-    ]
-  },
-  {
-    "code": "BACQ",
-    "name": "Bleichroeder Acquisition Corp. I",
-    "market": "US",
-    "aliases": [
-      "Bleichroeder Acquisition Corp. I",
-      "BACQ"
-    ]
-  },
-  {
-    "code": "BACQR",
-    "name": "Bleichroeder Acquisition Corp. I",
-    "market": "US",
-    "aliases": [
-      "Bleichroeder Acquisition Corp. I",
-      "BACQR"
-    ]
-  },
-  {
     "code": "BAER",
     "name": "Bridger Aerospace Group Holdings, Inc.",
     "market": "US",
@@ -93492,14 +93486,6 @@
     ]
   },
   {
-    "code": "BANXR",
-    "name": "BANXR",
-    "market": "US",
-    "aliases": [
-      "BANXR"
-    ]
-  },
-  {
     "code": "BAOS",
     "name": "Baosheng Media Group Holdings Ltd",
     "market": "US",
@@ -93569,6 +93555,15 @@
     "aliases": [
       "Bayview Acquisition Corp",
       "BAYA"
+    ]
+  },
+  {
+    "code": "BAYAR",
+    "name": "Bayview Acquisition Corp",
+    "market": "US",
+    "aliases": [
+      "Bayview Acquisition Corp",
+      "BAYAR"
     ]
   },
   {
@@ -93835,14 +93830,6 @@
     ]
   },
   {
-    "code": "BCARU",
-    "name": "BCARU",
-    "market": "US",
-    "aliases": [
-      "BCARU"
-    ]
-  },
-  {
     "code": "BCARW",
     "name": "BCARW",
     "market": "US",
@@ -93932,6 +93919,15 @@
     ]
   },
   {
+    "code": "BCHT",
+    "name": "Birchtech Corp.",
+    "market": "US",
+    "aliases": [
+      "Birchtech Corp.",
+      "BCHT"
+    ]
+  },
+  {
     "code": "BCIC",
     "name": "BCIC",
     "market": "US",
@@ -94016,15 +94012,6 @@
     "market": "US",
     "aliases": [
       "BCTXL"
-    ]
-  },
-  {
-    "code": "BCTXW",
-    "name": "BriaCell Therapeutics Corp.",
-    "market": "US",
-    "aliases": [
-      "BriaCell Therapeutics Corp.",
-      "BCTXW"
     ]
   },
   {
@@ -94123,15 +94110,6 @@
     ]
   },
   {
-    "code": "BDMDW",
-    "name": "Baird Medical Investment Holdings Ltd",
-    "market": "US",
-    "aliases": [
-      "Baird Medical Investment Holdings Ltd",
-      "BDMDW"
-    ]
-  },
-  {
     "code": "BDN",
     "name": "BRANDYWINE REALTY TRUST",
     "market": "US",
@@ -94201,15 +94179,6 @@
     "aliases": [
       "Bold Eagle Acquisition Corp.",
       "BEAGR"
-    ]
-  },
-  {
-    "code": "BEAGU",
-    "name": "Bold Eagle Acquisition Corp.",
-    "market": "US",
-    "aliases": [
-      "Bold Eagle Acquisition Corp.",
-      "BEAGU"
     ]
   },
   {
@@ -94365,6 +94334,14 @@
     ]
   },
   {
+    "code": "BESS",
+    "name": "BESS",
+    "market": "US",
+    "aliases": [
+      "BESS"
+    ]
+  },
+  {
     "code": "BETA",
     "name": "BETA",
     "market": "US",
@@ -94423,15 +94400,6 @@
     "aliases": [
       "BREAD FINANCIAL HOLDINGS, INC.",
       "BFH"
-    ]
-  },
-  {
-    "code": "BFK",
-    "name": "BLACKROCK MUNICIPAL INCOME TRUST",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNICIPAL INCOME TRUST",
-      "BFK"
     ]
   },
   {
@@ -94495,15 +94463,6 @@
     "aliases": [
       "Business First Bancshares, Inc.",
       "BFST"
-    ]
-  },
-  {
-    "code": "BFZ",
-    "name": "BLACKROCK CALIFORNIA MUNICIPAL INCOME TRUST",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK CALIFORNIA MUNICIPAL INCOME TRUST",
-      "BFZ"
     ]
   },
   {
@@ -94602,14 +94561,6 @@
     ]
   },
   {
-    "code": "BGMSP",
-    "name": "BGMSP",
-    "market": "US",
-    "aliases": [
-      "BGMSP"
-    ]
-  },
-  {
     "code": "BGR",
     "name": "BlackRock Energy & Resources Trust",
     "market": "US",
@@ -94681,12 +94632,11 @@
     ]
   },
   {
-    "code": "BHAT",
-    "name": "Blue Hat Interactive Entertainment Technology",
+    "code": "BHAVU",
+    "name": "BHAVU",
     "market": "US",
     "aliases": [
-      "Blue Hat Interactive Entertainment Technology",
-      "BHAT"
+      "BHAVU"
     ]
   },
   {
@@ -95135,6 +95085,15 @@
     ]
   },
   {
+    "code": "BKHAR",
+    "name": "Black Hawk Acquisition Corp",
+    "market": "US",
+    "aliases": [
+      "Black Hawk Acquisition Corp",
+      "BKHAR"
+    ]
+  },
+  {
     "code": "BKHAU",
     "name": "Black Hawk Acquisition Corp",
     "market": "US",
@@ -95150,15 +95109,6 @@
     "aliases": [
       "Bakkt Holdings, Inc.",
       "BKKT"
-    ]
-  },
-  {
-    "code": "BKN",
-    "name": "BLACKROCK INVESTMENT QUALITY MUNICIPAL TRUST, INC.",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK INVESTMENT QUALITY MUNICIPAL TRUST, INC.",
-      "BKN"
     ]
   },
   {
@@ -95252,15 +95202,6 @@
     ]
   },
   {
-    "code": "BLBX",
-    "name": "BLACKBOXSTOCKS INC.",
-    "market": "US",
-    "aliases": [
-      "BLACKBOXSTOCKS INC.",
-      "BLBX"
-    ]
-  },
-  {
     "code": "BLCO",
     "name": "Bausch & Lomb Corp",
     "market": "US",
@@ -95294,15 +95235,6 @@
     "aliases": [
       "Builders FirstSource, Inc.",
       "BLDR"
-    ]
-  },
-  {
-    "code": "BLE",
-    "name": "BLACKROCK MUNICIPAL INCOME TRUST II",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNICIPAL INCOME TRUST II",
-      "BLE"
     ]
   },
   {
@@ -95845,15 +95777,6 @@
     ]
   },
   {
-    "code": "BNY",
-    "name": "BLACKROCK NEW YORK MUNICIPAL INCOME TRUST",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK NEW YORK MUNICIPAL INCOME TRUST",
-      "BNY"
-    ]
-  },
-  {
     "code": "BNZI",
     "name": "Banzai International, Inc.",
     "market": "US",
@@ -96050,11 +95973,11 @@
     ]
   },
   {
-    "code": "BPACR",
-    "name": "BPACR",
+    "code": "BPACU",
+    "name": "BPACU",
     "market": "US",
     "aliases": [
-      "BPACR"
+      "BPACU"
     ]
   },
   {
@@ -96153,6 +96076,14 @@
     "aliases": [
       "Bragg Gaming Group Inc.",
       "BRAG"
+    ]
+  },
+  {
+    "code": "BRAI",
+    "name": "BRAI",
+    "market": "US",
+    "aliases": [
+      "BRAI"
     ]
   },
   {
@@ -96401,11 +96332,11 @@
     ]
   },
   {
-    "code": "BSAA",
-    "name": "BSAA",
+    "code": "BSAAR",
+    "name": "BSAAR",
     "market": "US",
     "aliases": [
-      "BSAA"
+      "BSAAR"
     ]
   },
   {
@@ -96514,15 +96445,6 @@
     "aliases": [
       "BENTLEY SYSTEMS INC",
       "BSY"
-    ]
-  },
-  {
-    "code": "BTA",
-    "name": "BlackRock Long-Term Municipal Advantage Trust",
-    "market": "US",
-    "aliases": [
-      "BlackRock Long-Term Municipal Advantage Trust",
-      "BTA"
     ]
   },
   {
@@ -97101,15 +97023,6 @@
     ]
   },
   {
-    "code": "BYM",
-    "name": "BLACKROCK MUNICIPAL INCOME QUALITY TRUST",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNICIPAL INCOME QUALITY TRUST",
-      "BYM"
-    ]
-  },
-  {
     "code": "BYND",
     "name": "BEYOND MEAT, INC.",
     "market": "US",
@@ -97466,15 +97379,6 @@
     ]
   },
   {
-    "code": "CAPNU",
-    "name": "Cayson Acquisition Corp",
-    "market": "US",
-    "aliases": [
-      "Cayson Acquisition Corp",
-      "CAPNU"
-    ]
-  },
-  {
     "code": "CAPR",
     "name": "CAPRICOR THERAPEUTICS, INC.",
     "market": "US",
@@ -97590,21 +97494,21 @@
     ]
   },
   {
-    "code": "CASI",
-    "name": "CASI Pharmaceuticals, Inc.",
-    "market": "US",
-    "aliases": [
-      "CASI Pharmaceuticals, Inc.",
-      "CASI"
-    ]
-  },
-  {
     "code": "CASS",
     "name": "CASS INFORMATION SYSTEMS INC",
     "market": "US",
     "aliases": [
       "CASS INFORMATION SYSTEMS INC",
       "CASS"
+    ]
+  },
+  {
+    "code": "CAST",
+    "name": "FreeCast, Inc.",
+    "market": "US",
+    "aliases": [
+      "FreeCast, Inc.",
+      "CAST"
     ]
   },
   {
@@ -97874,30 +97778,6 @@
     ]
   },
   {
-    "code": "CCCX",
-    "name": "CCCX",
-    "market": "US",
-    "aliases": [
-      "CCCX"
-    ]
-  },
-  {
-    "code": "CCCXU",
-    "name": "CCCXU",
-    "market": "US",
-    "aliases": [
-      "CCCXU"
-    ]
-  },
-  {
-    "code": "CCCXW",
-    "name": "CCCXW",
-    "market": "US",
-    "aliases": [
-      "CCCXW"
-    ]
-  },
-  {
     "code": "CCD",
     "name": "Calamos Dynamic Convertible & Income Fund",
     "market": "US",
@@ -97999,15 +97879,6 @@
     "aliases": [
       "Churchill Capital Corp IX/Cayman",
       "CCIX"
-    ]
-  },
-  {
-    "code": "CCIXU",
-    "name": "Churchill Capital Corp IX/Cayman",
-    "market": "US",
-    "aliases": [
-      "Churchill Capital Corp IX/Cayman",
-      "CCIXU"
     ]
   },
   {
@@ -98152,6 +98023,14 @@
     "aliases": [
       "UNITED BREWERIES CO INC",
       "CCU"
+    ]
+  },
+  {
+    "code": "CCXI",
+    "name": "CCXI",
+    "market": "US",
+    "aliases": [
+      "CCXI"
     ]
   },
   {
@@ -98633,15 +98512,6 @@
     ]
   },
   {
-    "code": "CFLT",
-    "name": "Confluent, Inc.",
-    "market": "US",
-    "aliases": [
-      "Confluent, Inc.",
-      "CFLT"
-    ]
-  },
-  {
     "code": "CFND",
     "name": "C1 Fund Inc.",
     "market": "US",
@@ -98921,14 +98791,6 @@
     ]
   },
   {
-    "code": "CHECU",
-    "name": "CHECU",
-    "market": "US",
-    "aliases": [
-      "CHECU"
-    ]
-  },
-  {
     "code": "CHEF",
     "name": "Chefs' Warehouse, Inc.",
     "market": "US",
@@ -99018,11 +98880,11 @@
     ]
   },
   {
-    "code": "CHPGU",
-    "name": "CHPGU",
+    "code": "CHPGR",
+    "name": "CHPGR",
     "market": "US",
     "aliases": [
-      "CHPGU"
+      "CHPGR"
     ]
   },
   {
@@ -99211,6 +99073,14 @@
     "aliases": [
       "CION Investment Corp",
       "CICB"
+    ]
+  },
+  {
+    "code": "CICC",
+    "name": "CICC",
+    "market": "US",
+    "aliases": [
+      "CICC"
     ]
   },
   {
@@ -99868,6 +99738,30 @@
     ]
   },
   {
+    "code": "CMII",
+    "name": "CMII",
+    "market": "US",
+    "aliases": [
+      "CMII"
+    ]
+  },
+  {
+    "code": "CMIIU",
+    "name": "CMIIU",
+    "market": "US",
+    "aliases": [
+      "CMIIU"
+    ]
+  },
+  {
+    "code": "CMIIW",
+    "name": "CMIIW",
+    "market": "US",
+    "aliases": [
+      "CMIIW"
+    ]
+  },
+  {
     "code": "CMMB",
     "name": "Chemomab Therapeutics Ltd.",
     "market": "US",
@@ -100044,15 +99938,6 @@
     "aliases": [
       "Coincheck Group N.V.",
       "CNCK"
-    ]
-  },
-  {
-    "code": "CNCKW",
-    "name": "Coincheck Group N.V.",
-    "market": "US",
-    "aliases": [
-      "Coincheck Group N.V.",
-      "CNCKW"
     ]
   },
   {
@@ -100245,6 +100130,14 @@
     ]
   },
   {
+    "code": "CNTN",
+    "name": "CNTN",
+    "market": "US",
+    "aliases": [
+      "CNTN"
+    ]
+  },
+  {
     "code": "CNTX",
     "name": "Context Therapeutics Inc.",
     "market": "US",
@@ -100350,6 +100243,15 @@
     "aliases": [
       "Compass Diversified Holdings",
       "CODI"
+    ]
+  },
+  {
+    "code": "CODX",
+    "name": "Co-Diagnostics, Inc.",
+    "market": "US",
+    "aliases": [
+      "Co-Diagnostics, Inc.",
+      "CODX"
     ]
   },
   {
@@ -100466,14 +100368,6 @@
     "market": "US",
     "aliases": [
       "COLAR"
-    ]
-  },
-  {
-    "code": "COLAU",
-    "name": "COLAU",
-    "market": "US",
-    "aliases": [
-      "COLAU"
     ]
   },
   {
@@ -101085,39 +100979,12 @@
     ]
   },
   {
-    "code": "CRESW",
-    "name": "CRESUD INC",
-    "market": "US",
-    "aliases": [
-      "CRESUD INC",
-      "CRESW"
-    ]
-  },
-  {
     "code": "CRESY",
     "name": "CRESUD INC",
     "market": "US",
     "aliases": [
       "CRESUD INC",
       "CRESY"
-    ]
-  },
-  {
-    "code": "CREV",
-    "name": "Carbon Revolution Public Ltd Co",
-    "market": "US",
-    "aliases": [
-      "Carbon Revolution Public Ltd Co",
-      "CREV"
-    ]
-  },
-  {
-    "code": "CREVW",
-    "name": "Carbon Revolution Public Ltd Co",
-    "market": "US",
-    "aliases": [
-      "Carbon Revolution Public Ltd Co",
-      "CREVW"
     ]
   },
   {
@@ -101577,6 +101444,14 @@
     ]
   },
   {
+    "code": "CTAAU",
+    "name": "CTAAU",
+    "market": "US",
+    "aliases": [
+      "CTAAU"
+    ]
+  },
+  {
     "code": "CTAS",
     "name": "CINTAS CORP",
     "market": "US",
@@ -101854,6 +101729,15 @@
     ]
   },
   {
+    "code": "CUBWW",
+    "name": "Lionheart Holdings",
+    "market": "US",
+    "aliases": [
+      "Lionheart Holdings",
+      "CUBWW"
+    ]
+  },
+  {
     "code": "CUE",
     "name": "Cue Biopharma, Inc.",
     "market": "US",
@@ -102087,6 +101971,14 @@
     ]
   },
   {
+    "code": "CVSA",
+    "name": "CVSA",
+    "market": "US",
+    "aliases": [
+      "CVSA"
+    ]
+  },
+  {
     "code": "CVU",
     "name": "CPI AEROSTRUCTURES INC",
     "market": "US",
@@ -102282,15 +102174,6 @@
     "aliases": [
       "CoreCivic, Inc.",
       "CXW"
-    ]
-  },
-  {
-    "code": "CYBR",
-    "name": "CyberArk Software Ltd.",
-    "market": "US",
-    "aliases": [
-      "CyberArk Software Ltd.",
-      "CYBR"
     ]
   },
   {
@@ -102581,6 +102464,22 @@
     "aliases": [
       "DEUTSCHE BANK AKTIENGESELLSCHAFT",
       "DB"
+    ]
+  },
+  {
+    "code": "DBCA",
+    "name": "DBCA",
+    "market": "US",
+    "aliases": [
+      "DBCA"
+    ]
+  },
+  {
+    "code": "DBCAW",
+    "name": "DBCAW",
+    "market": "US",
+    "aliases": [
+      "DBCAW"
     ]
   },
   {
@@ -102965,6 +102864,22 @@
     ]
   },
   {
+    "code": "DFNS",
+    "name": "DFNS",
+    "market": "US",
+    "aliases": [
+      "DFNS"
+    ]
+  },
+  {
+    "code": "DFNSW",
+    "name": "DFNSW",
+    "market": "US",
+    "aliases": [
+      "DFNSW"
+    ]
+  },
+  {
     "code": "DFP",
     "name": "Flaherty & Crumrine Dynamic Preferred & Income Fund Inc",
     "market": "US",
@@ -102979,14 +102894,6 @@
     "market": "US",
     "aliases": [
       "DFSC"
-    ]
-  },
-  {
-    "code": "DFSCW",
-    "name": "DFSCW",
-    "market": "US",
-    "aliases": [
-      "DFSCW"
     ]
   },
   {
@@ -103418,15 +103325,6 @@
     ]
   },
   {
-    "code": "DMAAU",
-    "name": "Drugs Made In America Acquisition Corp.",
-    "market": "US",
-    "aliases": [
-      "Drugs Made In America Acquisition Corp.",
-      "DMAAU"
-    ]
-  },
-  {
     "code": "DMAC",
     "name": "DiaMedica Therapeutics Inc.",
     "market": "US",
@@ -103484,6 +103382,14 @@
     "aliases": [
       "Western Asset Mortgage Opportunity Fund Inc.",
       "DMO"
+    ]
+  },
+  {
+    "code": "DMRA",
+    "name": "DMRA",
+    "market": "US",
+    "aliases": [
+      "DMRA"
     ]
   },
   {
@@ -103777,6 +103683,15 @@
     "aliases": [
       "Roman DBDR Acquisition Corp. II",
       "DRDB"
+    ]
+  },
+  {
+    "code": "DRDBU",
+    "name": "Roman DBDR Acquisition Corp. II",
+    "market": "US",
+    "aliases": [
+      "Roman DBDR Acquisition Corp. II",
+      "DRDBU"
     ]
   },
   {
@@ -104233,15 +104148,6 @@
     ]
   },
   {
-    "code": "DVAX",
-    "name": "DYNAVAX TECHNOLOGIES CORP",
-    "market": "US",
-    "aliases": [
-      "DYNAVAX TECHNOLOGIES CORP",
-      "DVAX"
-    ]
-  },
-  {
     "code": "DVLT",
     "name": "DVLT",
     "market": "US",
@@ -104408,6 +104314,14 @@
     ]
   },
   {
+    "code": "DYORW",
+    "name": "DYORW",
+    "market": "US",
+    "aliases": [
+      "DYORW"
+    ]
+  },
+  {
     "code": "E",
     "name": "ENI SPA",
     "market": "US",
@@ -104468,15 +104382,6 @@
     "aliases": [
       "BRINKER INTERNATIONAL, INC",
       "EAT"
-    ]
-  },
-  {
-    "code": "EB",
-    "name": "Eventbrite, Inc.",
-    "market": "US",
-    "aliases": [
-      "Eventbrite, Inc.",
-      "EB"
     ]
   },
   {
@@ -104684,6 +104589,15 @@
     "aliases": [
       "ECARX Holdings Inc.",
       "ECX"
+    ]
+  },
+  {
+    "code": "ECXWW",
+    "name": "ECARX Holdings Inc.",
+    "market": "US",
+    "aliases": [
+      "ECARX Holdings Inc.",
+      "ECXWW"
     ]
   },
   {
@@ -104970,6 +104884,15 @@
     "market": "US",
     "aliases": [
       "EGG"
+    ]
+  },
+  {
+    "code": "EGP",
+    "name": "EASTGROUP PROPERTIES INC",
+    "market": "US",
+    "aliases": [
+      "EASTGROUP PROPERTIES INC",
+      "EGP"
     ]
   },
   {
@@ -105430,14 +105353,6 @@
     "market": "US",
     "aliases": [
       "EMIS"
-    ]
-  },
-  {
-    "code": "EMISR",
-    "name": "EMISR",
-    "market": "US",
-    "aliases": [
-      "EMISR"
     ]
   },
   {
@@ -106076,30 +105991,12 @@
     ]
   },
   {
-    "code": "ESGL",
-    "name": "ESGL Holdings Ltd",
-    "market": "US",
-    "aliases": [
-      "ESGL Holdings Ltd",
-      "ESGL"
-    ]
-  },
-  {
     "code": "ESHA",
     "name": "ESH Acquisition Corp.",
     "market": "US",
     "aliases": [
       "ESH Acquisition Corp.",
       "ESHA"
-    ]
-  },
-  {
-    "code": "ESHAR",
-    "name": "ESH Acquisition Corp.",
-    "market": "US",
-    "aliases": [
-      "ESH Acquisition Corp.",
-      "ESHAR"
     ]
   },
   {
@@ -106256,6 +106153,14 @@
     ]
   },
   {
+    "code": "ETHB",
+    "name": "ETHB",
+    "market": "US",
+    "aliases": [
+      "ETHB"
+    ]
+  },
+  {
     "code": "ETHM",
     "name": "ETHM",
     "market": "US",
@@ -106277,14 +106182,6 @@
     "market": "US",
     "aliases": [
       "ETHMW"
-    ]
-  },
-  {
-    "code": "ETHZ",
-    "name": "ETHZ",
-    "market": "US",
-    "aliases": [
-      "ETHZ"
     ]
   },
   {
@@ -106730,15 +106627,6 @@
     ]
   },
   {
-    "code": "EXAS",
-    "name": "EXACT SCIENCES CORP",
-    "market": "US",
-    "aliases": [
-      "EXACT SCIENCES CORP",
-      "EXAS"
-    ]
-  },
-  {
     "code": "EXC",
     "name": "EXELON CORP",
     "market": "US",
@@ -106754,33 +106642,6 @@
     "aliases": [
       "EXPAND ENERGY Corp",
       "EXE"
-    ]
-  },
-  {
-    "code": "EXEEL",
-    "name": "EXPAND ENERGY Corp",
-    "market": "US",
-    "aliases": [
-      "EXPAND ENERGY Corp",
-      "EXEEL"
-    ]
-  },
-  {
-    "code": "EXEEW",
-    "name": "EXPAND ENERGY Corp",
-    "market": "US",
-    "aliases": [
-      "EXPAND ENERGY Corp",
-      "EXEEW"
-    ]
-  },
-  {
-    "code": "EXEEZ",
-    "name": "EXPAND ENERGY Corp",
-    "market": "US",
-    "aliases": [
-      "EXPAND ENERGY Corp",
-      "EXEEZ"
     ]
   },
   {
@@ -106950,14 +106811,6 @@
     "market": "US",
     "aliases": [
       "EZRA"
-    ]
-  },
-  {
-    "code": "EZRAW",
-    "name": "EZRAW",
-    "market": "US",
-    "aliases": [
-      "EZRAW"
     ]
   },
   {
@@ -107293,6 +107146,14 @@
     ]
   },
   {
+    "code": "FCNCN",
+    "name": "FCNCN",
+    "market": "US",
+    "aliases": [
+      "FCNCN"
+    ]
+  },
+  {
     "code": "FCNCO",
     "name": "FIRST CITIZENS BANCSHARES INC /DE/",
     "market": "US",
@@ -107397,6 +107258,15 @@
     "aliases": [
       "FRESH DEL MONTE PRODUCE INC",
       "FDP"
+    ]
+  },
+  {
+    "code": "FDS",
+    "name": "FACTSET RESEARCH SYSTEMS INC",
+    "market": "US",
+    "aliases": [
+      "FACTSET RESEARCH SYSTEMS INC",
+      "FDS"
     ]
   },
   {
@@ -107675,6 +107545,14 @@
     ]
   },
   {
+    "code": "FGII",
+    "name": "FGII",
+    "market": "US",
+    "aliases": [
+      "FGII"
+    ]
+  },
+  {
     "code": "FGIIU",
     "name": "FGIIU",
     "market": "US",
@@ -107683,12 +107561,11 @@
     ]
   },
   {
-    "code": "FGIWW",
-    "name": "FGI Industries Ltd.",
+    "code": "FGIIW",
+    "name": "FGIIW",
     "market": "US",
     "aliases": [
-      "FGI Industries Ltd.",
-      "FGIWW"
+      "FGIIW"
     ]
   },
   {
@@ -107851,14 +107728,6 @@
     "market": "US",
     "aliases": [
       "FIGX"
-    ]
-  },
-  {
-    "code": "FIGXU",
-    "name": "FIGXU",
-    "market": "US",
-    "aliases": [
-      "FIGXU"
     ]
   },
   {
@@ -108097,6 +107966,14 @@
     "aliases": [
       "FULL HOUSE RESORTS INC",
       "FLL"
+    ]
+  },
+  {
+    "code": "FLNA",
+    "name": "FLNA",
+    "market": "US",
+    "aliases": [
+      "FLNA"
     ]
   },
   {
@@ -108405,6 +108282,14 @@
     ]
   },
   {
+    "code": "FNUC",
+    "name": "FNUC",
+    "market": "US",
+    "aliases": [
+      "FNUC"
+    ]
+  },
+  {
     "code": "FNV",
     "name": "FRANCO NEVADA Corp",
     "market": "US",
@@ -108663,15 +108548,6 @@
     ]
   },
   {
-    "code": "FRGE",
-    "name": "Forge Global Holdings, Inc.",
-    "market": "US",
-    "aliases": [
-      "Forge Global Holdings, Inc.",
-      "FRGE"
-    ]
-  },
-  {
     "code": "FRGT",
     "name": "Freight Technologies, Inc.",
     "market": "US",
@@ -108713,6 +108589,14 @@
     "market": "US",
     "aliases": [
       "FRMI"
+    ]
+  },
+  {
+    "code": "FRMM",
+    "name": "FRMM",
+    "market": "US",
+    "aliases": [
+      "FRMM"
     ]
   },
   {
@@ -109003,15 +108887,6 @@
     ]
   },
   {
-    "code": "FTEL",
-    "name": "Fitell Corp",
-    "market": "US",
-    "aliases": [
-      "Fitell Corp",
-      "FTEL"
-    ]
-  },
-  {
     "code": "FTF",
     "name": "FRANKLIN LTD DURATION INCOME TRUST",
     "market": "US",
@@ -109262,6 +109137,14 @@
     ]
   },
   {
+    "code": "FVAV",
+    "name": "FVAV",
+    "market": "US",
+    "aliases": [
+      "FVAV"
+    ]
+  },
+  {
     "code": "FVCB",
     "name": "FVCBankcorp, Inc.",
     "market": "US",
@@ -109277,15 +109160,6 @@
     "aliases": [
       "Future Vision II Acquisition Corp.",
       "FVN"
-    ]
-  },
-  {
-    "code": "FVNNR",
-    "name": "Future Vision II Acquisition Corp.",
-    "market": "US",
-    "aliases": [
-      "Future Vision II Acquisition Corp.",
-      "FVNNR"
     ]
   },
   {
@@ -109414,6 +109288,14 @@
     ]
   },
   {
+    "code": "GAING",
+    "name": "GAING",
+    "market": "US",
+    "aliases": [
+      "GAING"
+    ]
+  },
+  {
     "code": "GAINI",
     "name": "GLADSTONE INVESTMENT CORPORATIONDE",
     "market": "US",
@@ -109531,6 +109413,14 @@
     ]
   },
   {
+    "code": "GAVA",
+    "name": "GAVA",
+    "market": "US",
+    "aliases": [
+      "GAVA"
+    ]
+  },
+  {
     "code": "GBAB",
     "name": "Guggenheim Taxable Municipal Bond & Investment Grade Debt Trust",
     "market": "US",
@@ -109563,15 +109453,6 @@
     "market": "US",
     "aliases": [
       "GBFH"
-    ]
-  },
-  {
-    "code": "GBIO",
-    "name": "Generation Bio Co.",
-    "market": "US",
-    "aliases": [
-      "Generation Bio Co.",
-      "GBIO"
     ]
   },
   {
@@ -109958,6 +109839,14 @@
     ]
   },
   {
+    "code": "GENB",
+    "name": "GENB",
+    "market": "US",
+    "aliases": [
+      "GENB"
+    ]
+  },
+  {
     "code": "GENC",
     "name": "GENCOR INDUSTRIES INC",
     "market": "US",
@@ -110065,15 +109954,6 @@
     ]
   },
   {
-    "code": "GFAIW",
-    "name": "Guardforce AI Co., Ltd.",
-    "market": "US",
-    "aliases": [
-      "Guardforce AI Co., Ltd.",
-      "GFAIW"
-    ]
-  },
-  {
     "code": "GFF",
     "name": "GRIFFON CORP",
     "market": "US",
@@ -110173,6 +110053,14 @@
     ]
   },
   {
+    "code": "GGRP",
+    "name": "GGRP",
+    "market": "US",
+    "aliases": [
+      "GGRP"
+    ]
+  },
+  {
     "code": "GGT",
     "name": "GABELLI MULTIMEDIA TRUST INC.",
     "market": "US",
@@ -110268,14 +110156,6 @@
     "market": "US",
     "aliases": [
       "GIBO"
-    ]
-  },
-  {
-    "code": "GIBOW",
-    "name": "GIBOW",
-    "market": "US",
-    "aliases": [
-      "GIBOW"
     ]
   },
   {
@@ -110378,15 +110258,6 @@
     ]
   },
   {
-    "code": "GIPRW",
-    "name": "GENERATION INCOME PROPERTIES, INC.",
-    "market": "US",
-    "aliases": [
-      "GENERATION INCOME PROPERTIES, INC.",
-      "GIPRW"
-    ]
-  },
-  {
     "code": "GIS",
     "name": "GENERAL MILLS INC",
     "market": "US",
@@ -110405,14 +110276,6 @@
     ]
   },
   {
-    "code": "GIW",
-    "name": "GIW",
-    "market": "US",
-    "aliases": [
-      "GIW"
-    ]
-  },
-  {
     "code": "GIWWR",
     "name": "GIWWR",
     "market": "US",
@@ -110421,11 +110284,19 @@
     ]
   },
   {
-    "code": "GIWWU",
-    "name": "GIWWU",
+    "code": "GIX",
+    "name": "GIX",
     "market": "US",
     "aliases": [
-      "GIWWU"
+      "GIX"
+    ]
+  },
+  {
+    "code": "GIXXR",
+    "name": "GIXXR",
+    "market": "US",
+    "aliases": [
+      "GIXXR"
     ]
   },
   {
@@ -110446,6 +110317,15 @@
     ]
   },
   {
+    "code": "GJO",
+    "name": "STRATS SM TRUST FOR WAL-MART STORES, INC. SECURITIES, SERIES 2005-4",
+    "market": "US",
+    "aliases": [
+      "STRATS SM TRUST FOR WAL-MART STORES, INC. SECURITIES, SERIES 2005-4",
+      "GJO"
+    ]
+  },
+  {
     "code": "GJP",
     "name": "STRATS(SM) TRUST FOR DOMINION RESOURCES, INC. SECURITIES, SERIES 2005-6",
     "market": "US",
@@ -110461,15 +110341,6 @@
     "aliases": [
       "STRATS(SM) Trust for Procter & Gamble Securities, Series 2006-1",
       "GJR"
-    ]
-  },
-  {
-    "code": "GJS",
-    "name": "STRATS(SM) Trust for Goldman Sachs Group Securities, Series 2006-2",
-    "market": "US",
-    "aliases": [
-      "STRATS(SM) Trust for Goldman Sachs Group Securities, Series 2006-2",
-      "GJS"
     ]
   },
   {
@@ -110676,15 +110547,6 @@
     ]
   },
   {
-    "code": "GLTO",
-    "name": "Galecto, Inc.",
-    "market": "US",
-    "aliases": [
-      "Galecto, Inc.",
-      "GLTO"
-    ]
-  },
-  {
     "code": "GLU",
     "name": "GABELLI GLOBAL UTILITY & INCOME TRUST",
     "market": "US",
@@ -110774,12 +110636,11 @@
     ]
   },
   {
-    "code": "GMGI",
-    "name": "Golden Matrix Group, Inc.",
+    "code": "GMEX",
+    "name": "GMEX",
     "market": "US",
     "aliases": [
-      "Golden Matrix Group, Inc.",
-      "GMGI"
+      "GMEX"
     ]
   },
   {
@@ -110801,12 +110662,11 @@
     ]
   },
   {
-    "code": "GMRE",
-    "name": "Global Medical REIT Inc.",
+    "code": "GMTL",
+    "name": "GMTL",
     "market": "US",
     "aliases": [
-      "Global Medical REIT Inc.",
-      "GMRE"
+      "GMTL"
     ]
   },
   {
@@ -111381,6 +111241,22 @@
     ]
   },
   {
+    "code": "GRML",
+    "name": "GRML",
+    "market": "US",
+    "aliases": [
+      "GRML"
+    ]
+  },
+  {
+    "code": "GRMLW",
+    "name": "GRMLW",
+    "market": "US",
+    "aliases": [
+      "GRMLW"
+    ]
+  },
+  {
     "code": "GRMN",
     "name": "GARMIN LTD",
     "market": "US",
@@ -111682,14 +111558,6 @@
     ]
   },
   {
-    "code": "GTENW",
-    "name": "GTENW",
-    "market": "US",
-    "aliases": [
-      "GTENW"
-    ]
-  },
-  {
     "code": "GTERA",
     "name": "GTERA",
     "market": "US",
@@ -111703,14 +111571,6 @@
     "market": "US",
     "aliases": [
       "GTERR"
-    ]
-  },
-  {
-    "code": "GTERU",
-    "name": "GTERU",
-    "market": "US",
-    "aliases": [
-      "GTERU"
     ]
   },
   {
@@ -111946,6 +111806,14 @@
     ]
   },
   {
+    "code": "HACQU",
+    "name": "HACQU",
+    "market": "US",
+    "aliases": [
+      "HACQU"
+    ]
+  },
+  {
     "code": "HAE",
     "name": "HAEMONETICS CORP",
     "market": "US",
@@ -112032,6 +111900,14 @@
     "market": "US",
     "aliases": [
       "HAVA"
+    ]
+  },
+  {
+    "code": "HAVAR",
+    "name": "HAVAR",
+    "market": "US",
+    "aliases": [
+      "HAVAR"
     ]
   },
   {
@@ -112265,6 +112141,14 @@
     "market": "US",
     "aliases": [
       "HCMA"
+    ]
+  },
+  {
+    "code": "HCMAU",
+    "name": "HCMAU",
+    "market": "US",
+    "aliases": [
+      "HCMAU"
     ]
   },
   {
@@ -112531,15 +112415,6 @@
     "aliases": [
       "HARTE HANKS INC",
       "HHS"
-    ]
-  },
-  {
-    "code": "HI",
-    "name": "Hillenbrand, Inc.",
-    "market": "US",
-    "aliases": [
-      "Hillenbrand, Inc.",
-      "HI"
     ]
   },
   {
@@ -113142,6 +113017,14 @@
     ]
   },
   {
+    "code": "HQ",
+    "name": "HQ",
+    "market": "US",
+    "aliases": [
+      "HQ"
+    ]
+  },
+  {
     "code": "HQH",
     "name": "abrdn Healthcare Investors",
     "market": "US",
@@ -113166,6 +113049,14 @@
     "aliases": [
       "abrdn Life Sciences Investors",
       "HQL"
+    ]
+  },
+  {
+    "code": "HQWWW",
+    "name": "HQWWW",
+    "market": "US",
+    "aliases": [
+      "HQWWW"
     ]
   },
   {
@@ -113322,6 +113213,14 @@
     ]
   },
   {
+    "code": "HSLV",
+    "name": "HSLV",
+    "market": "US",
+    "aliases": [
+      "HSLV"
+    ]
+  },
+  {
     "code": "HSPT",
     "name": "Horizon Space Acquisition II Corp.",
     "market": "US",
@@ -113336,6 +113235,15 @@
     "market": "US",
     "aliases": [
       "HSPTR"
+    ]
+  },
+  {
+    "code": "HSPTU",
+    "name": "Horizon Space Acquisition II Corp.",
+    "market": "US",
+    "aliases": [
+      "Horizon Space Acquisition II Corp.",
+      "HSPTU"
     ]
   },
   {
@@ -113539,6 +113447,15 @@
     "aliases": [
       "Hub Cyber Security Ltd.",
       "HUBCW"
+    ]
+  },
+  {
+    "code": "HUBCZ",
+    "name": "Hub Cyber Security Ltd.",
+    "market": "US",
+    "aliases": [
+      "Hub Cyber Security Ltd.",
+      "HUBCZ"
     ]
   },
   {
@@ -113913,6 +113830,14 @@
     ]
   },
   {
+    "code": "IACOU",
+    "name": "IACOU",
+    "market": "US",
+    "aliases": [
+      "IACOU"
+    ]
+  },
+  {
     "code": "IAE",
     "name": "Voya Asia Pacific High Dividend Equity Income Fund",
     "market": "US",
@@ -113964,6 +113889,15 @@
     "aliases": [
       "IB Acquisition Corp.",
       "IBAC"
+    ]
+  },
+  {
+    "code": "IBACR",
+    "name": "IB Acquisition Corp.",
+    "market": "US",
+    "aliases": [
+      "IB Acquisition Corp.",
+      "IBACR"
     ]
   },
   {
@@ -114290,6 +114224,22 @@
     ]
   },
   {
+    "code": "IEAG",
+    "name": "IEAG",
+    "market": "US",
+    "aliases": [
+      "IEAG"
+    ]
+  },
+  {
+    "code": "IEAGR",
+    "name": "IEAGR",
+    "market": "US",
+    "aliases": [
+      "IEAGR"
+    ]
+  },
+  {
     "code": "IEAGU",
     "name": "IEAGU",
     "market": "US",
@@ -114556,6 +114506,15 @@
     ]
   },
   {
+    "code": "IINNW",
+    "name": "Inspira Technologies OXY B.H.N. Ltd",
+    "market": "US",
+    "aliases": [
+      "Inspira Technologies OXY B.H.N. Ltd",
+      "IINNW"
+    ]
+  },
+  {
     "code": "IIPR",
     "name": "INNOVATIVE INDUSTRIAL PROPERTIES INC",
     "market": "US",
@@ -114580,6 +114539,14 @@
     "aliases": [
       "Intelligent Living Application Group Inc.",
       "ILAG"
+    ]
+  },
+  {
+    "code": "ILLUU",
+    "name": "ILLUU",
+    "market": "US",
+    "aliases": [
+      "ILLUU"
     ]
   },
   {
@@ -114641,15 +114608,6 @@
     "market": "US",
     "aliases": [
       "IMDX"
-    ]
-  },
-  {
-    "code": "IMG",
-    "name": "CIMG Inc.",
-    "market": "US",
-    "aliases": [
-      "CIMG Inc.",
-      "IMG"
     ]
   },
   {
@@ -114839,14 +114797,6 @@
     ]
   },
   {
-    "code": "INACR",
-    "name": "INACR",
-    "market": "US",
-    "aliases": [
-      "INACR"
-    ]
-  },
-  {
     "code": "INBK",
     "name": "First Internet Bancorp",
     "market": "US",
@@ -114951,6 +114901,14 @@
     "market": "US",
     "aliases": [
       "INEO"
+    ]
+  },
+  {
+    "code": "INFQ",
+    "name": "INFQ",
+    "market": "US",
+    "aliases": [
+      "INFQ"
     ]
   },
   {
@@ -115507,14 +115465,6 @@
     ]
   },
   {
-    "code": "IPODU",
-    "name": "IPODU",
-    "market": "US",
-    "aliases": [
-      "IPODU"
-    ]
-  },
-  {
     "code": "IPODW",
     "name": "IPODW",
     "market": "US",
@@ -115612,6 +115562,14 @@
     ]
   },
   {
+    "code": "IRAB",
+    "name": "IRAB",
+    "market": "US",
+    "aliases": [
+      "IRAB"
+    ]
+  },
+  {
     "code": "IRD",
     "name": "Opus Genetics, Inc.",
     "market": "US",
@@ -115644,14 +115602,6 @@
     "market": "US",
     "aliases": [
       "IRHO"
-    ]
-  },
-  {
-    "code": "IRHOR",
-    "name": "IRHOR",
-    "market": "US",
-    "aliases": [
-      "IRHOR"
     ]
   },
   {
@@ -115696,15 +115646,6 @@
     "aliases": [
       "Disc Medicine, Inc.",
       "IRON"
-    ]
-  },
-  {
-    "code": "IROQ",
-    "name": "IF Bancorp, Inc.",
-    "market": "US",
-    "aliases": [
-      "IF Bancorp, Inc.",
-      "IROQ"
     ]
   },
   {
@@ -116080,6 +116021,14 @@
     ]
   },
   {
+    "code": "JAGU",
+    "name": "JAGU",
+    "market": "US",
+    "aliases": [
+      "JAGU"
+    ]
+  },
+  {
     "code": "JAGX",
     "name": "Jaguar Health, Inc.",
     "market": "US",
@@ -116095,6 +116044,14 @@
     "aliases": [
       "JAKKS PACIFIC INC",
       "JAKK"
+    ]
+  },
+  {
+    "code": "JAN",
+    "name": "JAN",
+    "market": "US",
+    "aliases": [
+      "JAN"
     ]
   },
   {
@@ -116922,6 +116879,14 @@
     ]
   },
   {
+    "code": "KCHVU",
+    "name": "KCHVU",
+    "market": "US",
+    "aliases": [
+      "KCHVU"
+    ]
+  },
+  {
     "code": "KD",
     "name": "Kyndryl Holdings, Inc.",
     "market": "US",
@@ -117069,14 +117034,6 @@
     "market": "US",
     "aliases": [
       "KFIIR"
-    ]
-  },
-  {
-    "code": "KFIIU",
-    "name": "KFIIU",
-    "market": "US",
-    "aliases": [
-      "KFIIU"
     ]
   },
   {
@@ -117288,24 +117245,6 @@
     "market": "US",
     "aliases": [
       "KLRS"
-    ]
-  },
-  {
-    "code": "KLTO",
-    "name": "Klotho Neurosciences, Inc.",
-    "market": "US",
-    "aliases": [
-      "Klotho Neurosciences, Inc.",
-      "KLTO"
-    ]
-  },
-  {
-    "code": "KLTOW",
-    "name": "Klotho Neurosciences, Inc.",
-    "market": "US",
-    "aliases": [
-      "Klotho Neurosciences, Inc.",
-      "KLTOW"
     ]
   },
   {
@@ -117584,14 +117523,6 @@
     ]
   },
   {
-    "code": "KOYNW",
-    "name": "KOYNW",
-    "market": "US",
-    "aliases": [
-      "KOYNW"
-    ]
-  },
-  {
     "code": "KPLT",
     "name": "Katapult Holdings, Inc.",
     "market": "US",
@@ -117637,11 +117568,27 @@
     ]
   },
   {
+    "code": "KRAQ",
+    "name": "KRAQ",
+    "market": "US",
+    "aliases": [
+      "KRAQ"
+    ]
+  },
+  {
     "code": "KRAQU",
     "name": "KRAQU",
     "market": "US",
     "aliases": [
       "KRAQU"
+    ]
+  },
+  {
+    "code": "KRAQW",
+    "name": "KRAQW",
+    "market": "US",
+    "aliases": [
+      "KRAQW"
     ]
   },
   {
@@ -117886,12 +117833,19 @@
     ]
   },
   {
-    "code": "KTTAW",
-    "name": "Pasithea Therapeutics Corp.",
+    "code": "KTWO",
+    "name": "KTWO",
     "market": "US",
     "aliases": [
-      "Pasithea Therapeutics Corp.",
-      "KTTAW"
+      "KTWO"
+    ]
+  },
+  {
+    "code": "KTWOR",
+    "name": "KTWOR",
+    "market": "US",
+    "aliases": [
+      "KTWOR"
     ]
   },
   {
@@ -117989,14 +117943,6 @@
     "aliases": [
       "K Wave Media Ltd.",
       "KWM"
-    ]
-  },
-  {
-    "code": "KWMWW",
-    "name": "KWMWW",
-    "market": "US",
-    "aliases": [
-      "KWMWW"
     ]
   },
   {
@@ -118262,14 +118208,6 @@
     ]
   },
   {
-    "code": "LATAU",
-    "name": "LATAU",
-    "market": "US",
-    "aliases": [
-      "LATAU"
-    ]
-  },
-  {
     "code": "LAUR",
     "name": "LAUREATE EDUCATION, INC.",
     "market": "US",
@@ -118400,6 +118338,22 @@
     "market": "US",
     "aliases": [
       "LCCC"
+    ]
+  },
+  {
+    "code": "LCCCR",
+    "name": "LCCCR",
+    "market": "US",
+    "aliases": [
+      "LCCCR"
+    ]
+  },
+  {
+    "code": "LCCCU",
+    "name": "LCCCU",
+    "market": "US",
+    "aliases": [
+      "LCCCU"
     ]
   },
   {
@@ -118562,6 +118516,14 @@
     "aliases": [
       "Legend Biotech Corp",
       "LEGN"
+    ]
+  },
+  {
+    "code": "LEGO",
+    "name": "LEGO",
+    "market": "US",
+    "aliases": [
+      "LEGO"
     ]
   },
   {
@@ -119071,15 +119033,6 @@
     ]
   },
   {
-    "code": "LITM",
-    "name": "Snow Lake Resources Ltd.",
-    "market": "US",
-    "aliases": [
-      "Snow Lake Resources Ltd.",
-      "LITM"
-    ]
-  },
-  {
     "code": "LITS",
     "name": "LITS",
     "market": "US",
@@ -119434,14 +119387,6 @@
     ]
   },
   {
-    "code": "LOKVU",
-    "name": "LOKVU",
-    "market": "US",
-    "aliases": [
-      "LOKVU"
-    ]
-  },
-  {
     "code": "LOKVW",
     "name": "LOKVW",
     "market": "US",
@@ -119491,15 +119436,6 @@
     "aliases": [
       "Lotus Technology Inc.",
       "LOT"
-    ]
-  },
-  {
-    "code": "LOTWW",
-    "name": "Lotus Technology Inc.",
-    "market": "US",
-    "aliases": [
-      "Lotus Technology Inc.",
-      "LOTWW"
     ]
   },
   {
@@ -119575,11 +119511,27 @@
     ]
   },
   {
+    "code": "LPCV",
+    "name": "LPCV",
+    "market": "US",
+    "aliases": [
+      "LPCV"
+    ]
+  },
+  {
     "code": "LPCVU",
     "name": "LPCVU",
     "market": "US",
     "aliases": [
       "LPCVU"
+    ]
+  },
+  {
+    "code": "LPCVW",
+    "name": "LPCVW",
+    "market": "US",
+    "aliases": [
+      "LPCVW"
     ]
   },
   {
@@ -119977,24 +119929,6 @@
     ]
   },
   {
-    "code": "LVRO",
-    "name": "Lavoro Ltd",
-    "market": "US",
-    "aliases": [
-      "Lavoro Ltd",
-      "LVRO"
-    ]
-  },
-  {
-    "code": "LVROW",
-    "name": "Lavoro Ltd",
-    "market": "US",
-    "aliases": [
-      "Lavoro Ltd",
-      "LVROW"
-    ]
-  },
-  {
     "code": "LVS",
     "name": "LAS VEGAS SANDS CORP",
     "market": "US",
@@ -120019,6 +119953,22 @@
     "aliases": [
       "Lamb Weston Holdings, Inc.",
       "LW"
+    ]
+  },
+  {
+    "code": "LWAC",
+    "name": "LWAC",
+    "market": "US",
+    "aliases": [
+      "LWAC"
+    ]
+  },
+  {
+    "code": "LWACU",
+    "name": "LWACU",
+    "market": "US",
+    "aliases": [
+      "LWACU"
     ]
   },
   {
@@ -120144,15 +120094,6 @@
     "aliases": [
       "Lloyds Banking Group plc",
       "LYG"
-    ]
-  },
-  {
-    "code": "LYRA",
-    "name": "Lyra Therapeutics, Inc.",
-    "market": "US",
-    "aliases": [
-      "Lyra Therapeutics, Inc.",
-      "LYRA"
     ]
   },
   {
@@ -120576,15 +120517,6 @@
     ]
   },
   {
-    "code": "MBCN",
-    "name": "MIDDLEFIELD BANC CORP",
-    "market": "US",
-    "aliases": [
-      "MIDDLEFIELD BANC CORP",
-      "MBCN"
-    ]
-  },
-  {
     "code": "MBI",
     "name": "MBIA INC",
     "market": "US",
@@ -120932,6 +120864,14 @@
     "aliases": [
       "Pediatrix Medical Group, Inc.",
       "MD"
+    ]
+  },
+  {
+    "code": "MDA",
+    "name": "MDA",
+    "market": "US",
+    "aliases": [
+      "MDA"
     ]
   },
   {
@@ -121287,11 +121227,27 @@
     ]
   },
   {
+    "code": "MEVO",
+    "name": "MEVO",
+    "market": "US",
+    "aliases": [
+      "MEVO"
+    ]
+  },
+  {
     "code": "MEVOU",
     "name": "MEVOU",
     "market": "US",
     "aliases": [
       "MEVOU"
+    ]
+  },
+  {
+    "code": "MEVOW",
+    "name": "MEVOW",
+    "market": "US",
+    "aliases": [
+      "MEVOW"
     ]
   },
   {
@@ -121418,15 +121374,6 @@
     "aliases": [
       "MFS GOVERNMENT MARKETS INCOME TRUST",
       "MGF"
-    ]
-  },
-  {
-    "code": "MGIC",
-    "name": "MAGIC SOFTWARE ENTERPRISES LTD",
-    "market": "US",
-    "aliases": [
-      "MAGIC SOFTWARE ENTERPRISES LTD",
-      "MGIC"
     ]
   },
   {
@@ -121642,15 +121589,6 @@
     "aliases": [
       "Maiden Holdings, Ltd.",
       "MHLA"
-    ]
-  },
-  {
-    "code": "MHN",
-    "name": "BLACKROCK MUNIHOLDINGS NEW YORK QUALITY FUND, INC.",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNIHOLDINGS NEW YORK QUALITY FUND, INC.",
-      "MHN"
     ]
   },
   {
@@ -121884,6 +121822,14 @@
     ]
   },
   {
+    "code": "MKLYR",
+    "name": "MKLYR",
+    "market": "US",
+    "aliases": [
+      "MKLYR"
+    ]
+  },
+  {
     "code": "MKLYU",
     "name": "MKLYU",
     "market": "US",
@@ -121928,11 +121874,27 @@
     ]
   },
   {
+    "code": "MLAA",
+    "name": "MLAA",
+    "market": "US",
+    "aliases": [
+      "MLAA"
+    ]
+  },
+  {
     "code": "MLAAU",
     "name": "MLAAU",
     "market": "US",
     "aliases": [
       "MLAAU"
+    ]
+  },
+  {
+    "code": "MLAAW",
+    "name": "MLAAW",
+    "market": "US",
+    "aliases": [
+      "MLAAW"
     ]
   },
   {
@@ -122101,6 +122063,14 @@
     "aliases": [
       "NYLI MacKay DefinedTerm Muni Opportunities Fund",
       "MMD"
+    ]
+  },
+  {
+    "code": "MMED",
+    "name": "MMED",
+    "market": "US",
+    "aliases": [
+      "MMED"
     ]
   },
   {
@@ -122425,15 +122395,6 @@
     ]
   },
   {
-    "code": "MOFG",
-    "name": "MidWestOne Financial Group, Inc.",
-    "market": "US",
-    "aliases": [
-      "MidWestOne Financial Group, Inc.",
-      "MOFG"
-    ]
-  },
-  {
     "code": "MOGU",
     "name": "MOGU Inc.",
     "market": "US",
@@ -122630,15 +122591,6 @@
     ]
   },
   {
-    "code": "MQT",
-    "name": "BLACKROCK MUNIYIELD QUALITY FUND II, INC.",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNIYIELD QUALITY FUND II, INC.",
-      "MQT"
-    ]
-  },
-  {
     "code": "MQY",
     "name": "BLACKROCK MUNIYIELD QUALITY FUND, INC.",
     "market": "US",
@@ -122684,6 +122636,14 @@
     ]
   },
   {
+    "code": "MRDN",
+    "name": "MRDN",
+    "market": "US",
+    "aliases": [
+      "MRDN"
+    ]
+  },
+  {
     "code": "MREO",
     "name": "Mereo BioPharma Group plc",
     "market": "US",
@@ -122708,6 +122668,14 @@
     "aliases": [
       "Marker Therapeutics, Inc.",
       "MRKR"
+    ]
+  },
+  {
+    "code": "MRLN",
+    "name": "MRLN",
+    "market": "US",
+    "aliases": [
+      "MRLN"
     ]
   },
   {
@@ -123284,15 +123252,6 @@
     ]
   },
   {
-    "code": "MUE",
-    "name": "BLACKROCK MUNIHOLDINGS QUALITY FUND II, INC.",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNIHOLDINGS QUALITY FUND II, INC.",
-      "MUE"
-    ]
-  },
-  {
     "code": "MUFG",
     "name": "MITSUBISHI UFJ FINANCIAL GROUP INC",
     "market": "US",
@@ -123338,11 +123297,27 @@
     ]
   },
   {
+    "code": "MUZE",
+    "name": "MUZE",
+    "market": "US",
+    "aliases": [
+      "MUZE"
+    ]
+  },
+  {
     "code": "MUZEU",
     "name": "MUZEU",
     "market": "US",
     "aliases": [
       "MUZEU"
+    ]
+  },
+  {
+    "code": "MUZEW",
+    "name": "MUZEW",
+    "market": "US",
+    "aliases": [
+      "MUZEW"
     ]
   },
   {
@@ -123352,15 +123327,6 @@
     "aliases": [
       "MVB FINANCIAL CORP",
       "MVBF"
-    ]
-  },
-  {
-    "code": "MVF",
-    "name": "BLACKROCK MUNIVEST FUND, INC.",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNIVEST FUND, INC.",
-      "MVF"
     ]
   },
   {
@@ -123400,15 +123366,6 @@
     ]
   },
   {
-    "code": "MVT",
-    "name": "BLACKROCK MUNIVEST FUND II, INC.",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNIVEST FUND II, INC.",
-      "MVT"
-    ]
-  },
-  {
     "code": "MWA",
     "name": "Mueller Water Products, Inc.",
     "market": "US",
@@ -123424,6 +123381,14 @@
     "aliases": [
       "Multi Ways Holdings Ltd",
       "MWG"
+    ]
+  },
+  {
+    "code": "MWH",
+    "name": "MWH",
+    "market": "US",
+    "aliases": [
+      "MWH"
     ]
   },
   {
@@ -123490,15 +123455,6 @@
     ]
   },
   {
-    "code": "MYD",
-    "name": "BLACKROCK MUNIYIELD FUND, INC.",
-    "market": "US",
-    "aliases": [
-      "BLACKROCK MUNIYIELD FUND, INC.",
-      "MYD"
-    ]
-  },
-  {
     "code": "MYE",
     "name": "MYERS INDUSTRIES INC",
     "market": "US",
@@ -123553,15 +123509,6 @@
     ]
   },
   {
-    "code": "MYNZ",
-    "name": "MAINZ BIOMED N.V.",
-    "market": "US",
-    "aliases": [
-      "MAINZ BIOMED N.V.",
-      "MYNZ"
-    ]
-  },
-  {
     "code": "MYO",
     "name": "MYOMO, INC.",
     "market": "US",
@@ -123580,6 +123527,15 @@
     ]
   },
   {
+    "code": "MYPSW",
+    "name": "PLAYSTUDIOS, Inc.",
+    "market": "US",
+    "aliases": [
+      "PLAYSTUDIOS, Inc.",
+      "MYPSW"
+    ]
+  },
+  {
     "code": "MYRG",
     "name": "MYR GROUP INC.",
     "market": "US",
@@ -123594,14 +123550,6 @@
     "market": "US",
     "aliases": [
       "MYSE"
-    ]
-  },
-  {
-    "code": "MYSEW",
-    "name": "MYSEW",
-    "market": "US",
-    "aliases": [
-      "MYSEW"
     ]
   },
   {
@@ -123918,6 +123866,22 @@
     "aliases": [
       "NABORS INDUSTRIES LTD",
       "NBR"
+    ]
+  },
+  {
+    "code": "NBRG",
+    "name": "NBRG",
+    "market": "US",
+    "aliases": [
+      "NBRG"
+    ]
+  },
+  {
+    "code": "NBRGR",
+    "name": "NBRGR",
+    "market": "US",
+    "aliases": [
+      "NBRGR"
     ]
   },
   {
@@ -124501,15 +124465,6 @@
     ]
   },
   {
-    "code": "NGD",
-    "name": "New Gold Inc. /FI",
-    "market": "US",
-    "aliases": [
-      "New Gold Inc. /FI",
-      "NGD"
-    ]
-  },
-  {
     "code": "NGEN",
     "name": "NGEN",
     "market": "US",
@@ -124596,6 +124551,14 @@
     "aliases": [
       "NewHold Investment Corp. III",
       "NHIC"
+    ]
+  },
+  {
+    "code": "NHICW",
+    "name": "NHICW",
+    "market": "US",
+    "aliases": [
+      "NHICW"
     ]
   },
   {
@@ -124712,24 +124675,6 @@
     "market": "US",
     "aliases": [
       "NIQ"
-    ]
-  },
-  {
-    "code": "NISN",
-    "name": "Nisun International Enterprise Development Group Co., Ltd",
-    "market": "US",
-    "aliases": [
-      "Nisun International Enterprise Development Group Co., Ltd",
-      "NISN"
-    ]
-  },
-  {
-    "code": "NITO",
-    "name": "N2OFF, Inc.",
-    "market": "US",
-    "aliases": [
-      "N2OFF, Inc.",
-      "NITO"
     ]
   },
   {
@@ -124956,19 +124901,19 @@
     ]
   },
   {
+    "code": "NMP",
+    "name": "NMP",
+    "market": "US",
+    "aliases": [
+      "NMP"
+    ]
+  },
+  {
     "code": "NMPAR",
     "name": "NMPAR",
     "market": "US",
     "aliases": [
       "NMPAR"
-    ]
-  },
-  {
-    "code": "NMPAU",
-    "name": "NMPAU",
-    "market": "US",
-    "aliases": [
-      "NMPAU"
     ]
   },
   {
@@ -125531,6 +125476,15 @@
     ]
   },
   {
+    "code": "NRSNW",
+    "name": "NeuroSense Therapeutics Ltd.",
+    "market": "US",
+    "aliases": [
+      "NeuroSense Therapeutics Ltd.",
+      "NRSNW"
+    ]
+  },
+  {
     "code": "NRT",
     "name": "NORTH EUROPEAN OIL ROYALTY TRUST",
     "market": "US",
@@ -125844,6 +125798,24 @@
     ]
   },
   {
+    "code": "NTWO",
+    "name": "Newbury Street II Acquisition Corp",
+    "market": "US",
+    "aliases": [
+      "Newbury Street II Acquisition Corp",
+      "NTWO"
+    ]
+  },
+  {
+    "code": "NTWOW",
+    "name": "Newbury Street II Acquisition Corp",
+    "market": "US",
+    "aliases": [
+      "Newbury Street II Acquisition Corp",
+      "NTWOW"
+    ]
+  },
+  {
     "code": "NTZ",
     "name": "NATUZZI S P A",
     "market": "US",
@@ -125878,30 +125850,28 @@
     ]
   },
   {
+    "code": "NUCL",
+    "name": "NUCL",
+    "market": "US",
+    "aliases": [
+      "NUCL"
+    ]
+  },
+  {
+    "code": "NUCLW",
+    "name": "NUCLW",
+    "market": "US",
+    "aliases": [
+      "NUCLW"
+    ]
+  },
+  {
     "code": "NUE",
     "name": "NUCOR CORP",
     "market": "US",
     "aliases": [
       "NUCOR CORP",
       "NUE"
-    ]
-  },
-  {
-    "code": "NUKK",
-    "name": "Nukkleus Inc.",
-    "market": "US",
-    "aliases": [
-      "Nukkleus Inc.",
-      "NUKK"
-    ]
-  },
-  {
-    "code": "NUKKW",
-    "name": "Nukkleus Inc.",
-    "market": "US",
-    "aliases": [
-      "Nukkleus Inc.",
-      "NUKKW"
     ]
   },
   {
@@ -126154,15 +126124,6 @@
     "aliases": [
       "Nuvve Holding Corp.",
       "NVVE"
-    ]
-  },
-  {
-    "code": "NVVEW",
-    "name": "Nuvve Holding Corp.",
-    "market": "US",
-    "aliases": [
-      "Nuvve Holding Corp.",
-      "NVVEW"
     ]
   },
   {
@@ -126433,6 +126394,14 @@
     ]
   },
   {
+    "code": "NXTS",
+    "name": "NXTS",
+    "market": "US",
+    "aliases": [
+      "NXTS"
+    ]
+  },
+  {
     "code": "NXTT",
     "name": "Next Technology Holding Inc.",
     "market": "US",
@@ -126513,15 +126482,6 @@
     ]
   },
   {
-    "code": "OABIW",
-    "name": "OmniAb, Inc.",
-    "market": "US",
-    "aliases": [
-      "OmniAb, Inc.",
-      "OABIW"
-    ]
-  },
-  {
     "code": "OACC",
     "name": "Oaktree Acquisition Corp. III Life Sciences",
     "market": "US",
@@ -126531,12 +126491,12 @@
     ]
   },
   {
-    "code": "OACCU",
+    "code": "OACCW",
     "name": "Oaktree Acquisition Corp. III Life Sciences",
     "market": "US",
     "aliases": [
       "Oaktree Acquisition Corp. III Life Sciences",
-      "OACCU"
+      "OACCW"
     ]
   },
   {
@@ -126557,6 +126517,33 @@
     ]
   },
   {
+    "code": "OAKUR",
+    "name": "Oak Woods Acquisition Corp",
+    "market": "US",
+    "aliases": [
+      "Oak Woods Acquisition Corp",
+      "OAKUR"
+    ]
+  },
+  {
+    "code": "OAKUU",
+    "name": "Oak Woods Acquisition Corp",
+    "market": "US",
+    "aliases": [
+      "Oak Woods Acquisition Corp",
+      "OAKUU"
+    ]
+  },
+  {
+    "code": "OAKUW",
+    "name": "Oak Woods Acquisition Corp",
+    "market": "US",
+    "aliases": [
+      "Oak Woods Acquisition Corp",
+      "OAKUW"
+    ]
+  },
+  {
     "code": "OBA",
     "name": "OBA",
     "market": "US",
@@ -126570,14 +126557,6 @@
     "market": "US",
     "aliases": [
       "OBAI"
-    ]
-  },
-  {
-    "code": "OBAWW",
-    "name": "OBAWW",
-    "market": "US",
-    "aliases": [
-      "OBAWW"
     ]
   },
   {
@@ -126974,11 +126953,35 @@
     ]
   },
   {
+    "code": "OIM",
+    "name": "OIM",
+    "market": "US",
+    "aliases": [
+      "OIM"
+    ]
+  },
+  {
     "code": "OIMAU",
     "name": "OIMAU",
     "market": "US",
     "aliases": [
       "OIMAU"
+    ]
+  },
+  {
+    "code": "OIMAW",
+    "name": "OIMAW",
+    "market": "US",
+    "aliases": [
+      "OIMAW"
+    ]
+  },
+  {
+    "code": "OIO",
+    "name": "OIO",
+    "market": "US",
+    "aliases": [
+      "OIO"
     ]
   },
   {
@@ -127698,14 +127701,6 @@
     ]
   },
   {
-    "code": "ORIQW",
-    "name": "ORIQW",
-    "market": "US",
-    "aliases": [
-      "ORIQW"
-    ]
-  },
-  {
     "code": "ORIS",
     "name": "ORIENTAL RISE HOLDINGS Ltd",
     "market": "US",
@@ -127986,15 +127981,6 @@
     ]
   },
   {
-    "code": "OUSTZ",
-    "name": "Ouster, Inc.",
-    "market": "US",
-    "aliases": [
-      "Ouster, Inc.",
-      "OUSTZ"
-    ]
-  },
-  {
     "code": "OUT",
     "name": "OUTFRONT Media Inc.",
     "market": "US",
@@ -128119,6 +128105,14 @@
     ]
   },
   {
+    "code": "OXLCM",
+    "name": "OXLCM",
+    "market": "US",
+    "aliases": [
+      "OXLCM"
+    ]
+  },
+  {
     "code": "OXLCN",
     "name": "Oxford Lane Capital Corp.",
     "market": "US",
@@ -128204,6 +128198,14 @@
     "market": "US",
     "aliases": [
       "OYSE"
+    ]
+  },
+  {
+    "code": "OYSER",
+    "name": "OYSER",
+    "market": "US",
+    "aliases": [
+      "OYSER"
     ]
   },
   {
@@ -128294,11 +128296,11 @@
     ]
   },
   {
-    "code": "PACHU",
-    "name": "PACHU",
+    "code": "PACHW",
+    "name": "PACHW",
     "market": "US",
     "aliases": [
-      "PACHU"
+      "PACHW"
     ]
   },
   {
@@ -128388,6 +128390,14 @@
     "aliases": [
       "PALISADE BIO, INC.",
       "PALI"
+    ]
+  },
+  {
+    "code": "PALOU",
+    "name": "PALOU",
+    "market": "US",
+    "aliases": [
+      "PALOU"
     ]
   },
   {
@@ -128557,6 +128567,14 @@
     "aliases": [
       "Payoneer Global Inc.",
       "PAYO"
+    ]
+  },
+  {
+    "code": "PAYP",
+    "name": "PAYP",
+    "market": "US",
+    "aliases": [
+      "PAYP"
     ]
   },
   {
@@ -129383,14 +129401,6 @@
     "market": "US",
     "aliases": [
       "PGACR"
-    ]
-  },
-  {
-    "code": "PGACU",
-    "name": "PGACU",
-    "market": "US",
-    "aliases": [
-      "PGACU"
     ]
   },
   {
@@ -130343,6 +130353,14 @@
     ]
   },
   {
+    "code": "PONOU",
+    "name": "PONOU",
+    "market": "US",
+    "aliases": [
+      "PONOU"
+    ]
+  },
+  {
     "code": "PONY",
     "name": "Pony AI Inc.",
     "market": "US",
@@ -130474,6 +130492,14 @@
     "aliases": [
       "PPL Corp",
       "PPL"
+    ]
+  },
+  {
+    "code": "PPLC",
+    "name": "PPLC",
+    "market": "US",
+    "aliases": [
+      "PPLC"
     ]
   },
   {
@@ -131165,11 +131191,27 @@
     ]
   },
   {
+    "code": "PTOR",
+    "name": "PTOR",
+    "market": "US",
+    "aliases": [
+      "PTOR"
+    ]
+  },
+  {
     "code": "PTORU",
     "name": "PTORU",
     "market": "US",
     "aliases": [
       "PTORU"
+    ]
+  },
+  {
+    "code": "PTORW",
+    "name": "PTORW",
+    "market": "US",
+    "aliases": [
+      "PTORW"
     ]
   },
   {
@@ -131285,15 +131327,6 @@
     "aliases": [
       "QUANTA SERVICES, INC.",
       "PWR"
-    ]
-  },
-  {
-    "code": "PX",
-    "name": "P10, Inc.",
-    "market": "US",
-    "aliases": [
-      "P10, Inc.",
-      "PX"
     ]
   },
   {
@@ -131474,15 +131507,6 @@
     ]
   },
   {
-    "code": "QIPT",
-    "name": "Quipt Home Medical Corp.",
-    "market": "US",
-    "aliases": [
-      "Quipt Home Medical Corp.",
-      "QIPT"
-    ]
-  },
-  {
     "code": "QLYS",
     "name": "QUALYS, INC.",
     "market": "US",
@@ -131498,6 +131522,14 @@
     "aliases": [
       "QUANTUM CORP /DE/",
       "QMCO"
+    ]
+  },
+  {
+    "code": "QNC",
+    "name": "QNC",
+    "market": "US",
+    "aliases": [
+      "QNC"
     ]
   },
   {
@@ -131670,6 +131702,14 @@
     ]
   },
   {
+    "code": "QUCY",
+    "name": "QUCY",
+    "market": "US",
+    "aliases": [
+      "QUCY"
+    ]
+  },
+  {
     "code": "QUIK",
     "name": "QUICKLOGIC Corp",
     "market": "US",
@@ -131684,6 +131724,22 @@
     "market": "US",
     "aliases": [
       "QUMS"
+    ]
+  },
+  {
+    "code": "QUMSR",
+    "name": "QUMSR",
+    "market": "US",
+    "aliases": [
+      "QUMSR"
+    ]
+  },
+  {
+    "code": "QUMSU",
+    "name": "QUMSU",
+    "market": "US",
+    "aliases": [
+      "QUMSU"
     ]
   },
   {
@@ -131762,6 +131818,14 @@
     "market": "US",
     "aliases": [
       "RAAQ"
+    ]
+  },
+  {
+    "code": "RAAQU",
+    "name": "RAAQU",
+    "market": "US",
+    "aliases": [
+      "RAAQU"
     ]
   },
   {
@@ -131888,15 +131952,6 @@
     ]
   },
   {
-    "code": "RAPT",
-    "name": "RAPT Therapeutics, Inc.",
-    "market": "US",
-    "aliases": [
-      "RAPT Therapeutics, Inc.",
-      "RAPT"
-    ]
-  },
-  {
     "code": "RARE",
     "name": "Ultragenyx Pharmaceutical Inc.",
     "market": "US",
@@ -132004,15 +132059,6 @@
     ]
   },
   {
-    "code": "RBOT",
-    "name": "Vicarious Surgical Inc.",
-    "market": "US",
-    "aliases": [
-      "Vicarious Surgical Inc.",
-      "RBOT"
-    ]
-  },
-  {
     "code": "RBRK",
     "name": "Rubrik, Inc.",
     "market": "US",
@@ -132046,15 +132092,6 @@
     "aliases": [
       "Ready Capital Corp",
       "RCB"
-    ]
-  },
-  {
-    "code": "RCC",
-    "name": "Ready Capital Corp",
-    "market": "US",
-    "aliases": [
-      "Ready Capital Corp",
-      "RCC"
     ]
   },
   {
@@ -132583,15 +132620,6 @@
     ]
   },
   {
-    "code": "REVBW",
-    "name": "REVELATION BIOSCIENCES, INC.",
-    "market": "US",
-    "aliases": [
-      "REVELATION BIOSCIENCES, INC.",
-      "REVBW"
-    ]
-  },
-  {
     "code": "REX",
     "name": "REX AMERICAN RESOURCES Corp",
     "market": "US",
@@ -132652,6 +132680,22 @@
     "aliases": [
       "RF Acquisition Corp II",
       "RFAIR"
+    ]
+  },
+  {
+    "code": "RFAM",
+    "name": "RFAM",
+    "market": "US",
+    "aliases": [
+      "RFAM"
+    ]
+  },
+  {
+    "code": "RFAMU",
+    "name": "RFAMU",
+    "market": "US",
+    "aliases": [
+      "RFAMU"
     ]
   },
   {
@@ -133433,6 +133477,14 @@
     ]
   },
   {
+    "code": "ROC",
+    "name": "ROC",
+    "market": "US",
+    "aliases": [
+      "ROC"
+    ]
+  },
+  {
     "code": "ROCK",
     "name": "GIBRALTAR INDUSTRIES, INC.",
     "market": "US",
@@ -133538,6 +133590,14 @@
     "aliases": [
       "Repay Holdings Corp",
       "RPAY"
+    ]
+  },
+  {
+    "code": "RPC",
+    "name": "RPC",
+    "market": "US",
+    "aliases": [
+      "RPC"
     ]
   },
   {
@@ -133824,6 +133884,14 @@
     ]
   },
   {
+    "code": "RVI",
+    "name": "RVI",
+    "market": "US",
+    "aliases": [
+      "RVI"
+    ]
+  },
+  {
     "code": "RVLV",
     "name": "Revolve Group, Inc.",
     "market": "US",
@@ -133946,15 +134014,6 @@
     "aliases": [
       "Runway Growth Finance Corp.",
       "RWAYL"
-    ]
-  },
-  {
-    "code": "RWAYZ",
-    "name": "Runway Growth Finance Corp.",
-    "market": "US",
-    "aliases": [
-      "Runway Growth Finance Corp.",
-      "RWAYZ"
     ]
   },
   {
@@ -134091,15 +134150,6 @@
     ]
   },
   {
-    "code": "RYI",
-    "name": "Ryerson Holding Corp",
-    "market": "US",
-    "aliases": [
-      "Ryerson Holding Corp",
-      "RYI"
-    ]
-  },
-  {
     "code": "RYM",
     "name": "RYM",
     "market": "US",
@@ -134132,6 +134182,14 @@
     "aliases": [
       "RHYTHM PHARMACEUTICALS, INC.",
       "RYTM"
+    ]
+  },
+  {
+    "code": "RYZ",
+    "name": "RYZ",
+    "market": "US",
+    "aliases": [
+      "RYZ"
     ]
   },
   {
@@ -134198,11 +134256,27 @@
     ]
   },
   {
+    "code": "SAAQ",
+    "name": "SAAQ",
+    "market": "US",
+    "aliases": [
+      "SAAQ"
+    ]
+  },
+  {
     "code": "SAAQU",
     "name": "SAAQU",
     "market": "US",
     "aliases": [
       "SAAQU"
+    ]
+  },
+  {
+    "code": "SAAQW",
+    "name": "SAAQW",
+    "market": "US",
+    "aliases": [
+      "SAAQW"
     ]
   },
   {
@@ -134327,15 +134401,6 @@
     "aliases": [
       "SAIHEAT Ltd",
       "SAIH"
-    ]
-  },
-  {
-    "code": "SAIHW",
-    "name": "SAIHEAT Ltd",
-    "market": "US",
-    "aliases": [
-      "SAIHEAT Ltd",
-      "SAIHW"
     ]
   },
   {
@@ -134482,12 +134547,11 @@
     ]
   },
   {
-    "code": "SAVA",
-    "name": "CASSAVA SCIENCES INC",
+    "code": "SAV",
+    "name": "SAV",
     "market": "US",
     "aliases": [
-      "CASSAVA SCIENCES INC",
-      "SAVA"
+      "SAV"
     ]
   },
   {
@@ -134714,20 +134778,20 @@
     ]
   },
   {
+    "code": "SBXE",
+    "name": "SBXE",
+    "market": "US",
+    "aliases": [
+      "SBXE"
+    ]
+  },
+  {
     "code": "SCAG",
     "name": "Scage Future",
     "market": "US",
     "aliases": [
       "Scage Future",
       "SCAG"
-    ]
-  },
-  {
-    "code": "SCAGW",
-    "name": "SCAGW",
-    "market": "US",
-    "aliases": [
-      "SCAGW"
     ]
   },
   {
@@ -134828,14 +134892,6 @@
     ]
   },
   {
-    "code": "SCIIR",
-    "name": "SCIIR",
-    "market": "US",
-    "aliases": [
-      "SCIIR"
-    ]
-  },
-  {
     "code": "SCIIU",
     "name": "SCIIU",
     "market": "US",
@@ -134916,11 +134972,27 @@
     ]
   },
   {
+    "code": "SCPQ",
+    "name": "SCPQ",
+    "market": "US",
+    "aliases": [
+      "SCPQ"
+    ]
+  },
+  {
     "code": "SCPQU",
     "name": "SCPQU",
     "market": "US",
     "aliases": [
       "SCPQU"
+    ]
+  },
+  {
+    "code": "SCPQW",
+    "name": "SCPQW",
+    "market": "US",
+    "aliases": [
+      "SCPQW"
     ]
   },
   {
@@ -135026,14 +135098,6 @@
     "market": "US",
     "aliases": [
       "SDHIR"
-    ]
-  },
-  {
-    "code": "SDHIU",
-    "name": "SDHIU",
-    "market": "US",
-    "aliases": [
-      "SDHIU"
     ]
   },
   {
@@ -135528,15 +135592,6 @@
     ]
   },
   {
-    "code": "SGN",
-    "name": "Signing Day Sports, Inc.",
-    "market": "US",
-    "aliases": [
-      "Signing Day Sports, Inc.",
-      "SGN"
-    ]
-  },
-  {
     "code": "SGP",
     "name": "SGP",
     "market": "US",
@@ -135578,6 +135633,14 @@
     "aliases": [
       "Shake Shack Inc.",
       "SHAK"
+    ]
+  },
+  {
+    "code": "SHAZ",
+    "name": "SHAZ",
+    "market": "US",
+    "aliases": [
+      "SHAZ"
     ]
   },
   {
@@ -135623,6 +135686,15 @@
     "aliases": [
       "SHF Holdings, Inc.",
       "SHFS"
+    ]
+  },
+  {
+    "code": "SHFSW",
+    "name": "SHF Holdings, Inc.",
+    "market": "US",
+    "aliases": [
+      "SHF Holdings, Inc.",
+      "SHFSW"
     ]
   },
   {
@@ -136663,15 +136735,6 @@
     ]
   },
   {
-    "code": "SNCR",
-    "name": "SYNCHRONOSS TECHNOLOGIES INC",
-    "market": "US",
-    "aliases": [
-      "SYNCHRONOSS TECHNOLOGIES INC",
-      "SNCR"
-    ]
-  },
-  {
     "code": "SNCY",
     "name": "Sun Country Airlines Holdings, Inc.",
     "market": "US",
@@ -136932,14 +136995,6 @@
     ]
   },
   {
-    "code": "SOCAW",
-    "name": "SOCAW",
-    "market": "US",
-    "aliases": [
-      "SOCAW"
-    ]
-  },
-  {
     "code": "SOFI",
     "name": "SoFi Technologies, Inc.",
     "market": "US",
@@ -136955,15 +137010,6 @@
     "aliases": [
       "Sound Group Inc.",
       "SOGP"
-    ]
-  },
-  {
-    "code": "SOHO",
-    "name": "Sotherly Hotels Inc.",
-    "market": "US",
-    "aliases": [
-      "Sotherly Hotels Inc.",
-      "SOHO"
     ]
   },
   {
@@ -137135,11 +137181,27 @@
     ]
   },
   {
+    "code": "SORN",
+    "name": "SORN",
+    "market": "US",
+    "aliases": [
+      "SORN"
+    ]
+  },
+  {
     "code": "SORNU",
     "name": "SORNU",
     "market": "US",
     "aliases": [
       "SORNU"
+    ]
+  },
+  {
+    "code": "SORNW",
+    "name": "SORNW",
+    "market": "US",
+    "aliases": [
+      "SORNW"
     ]
   },
   {
@@ -137726,11 +137788,35 @@
     ]
   },
   {
+    "code": "SSAC",
+    "name": "SSAC",
+    "market": "US",
+    "aliases": [
+      "SSAC"
+    ]
+  },
+  {
+    "code": "SSACR",
+    "name": "SSACR",
+    "market": "US",
+    "aliases": [
+      "SSACR"
+    ]
+  },
+  {
     "code": "SSACU",
     "name": "SSACU",
     "market": "US",
     "aliases": [
       "SSACU"
+    ]
+  },
+  {
+    "code": "SSACW",
+    "name": "SSACW",
+    "market": "US",
+    "aliases": [
+      "SSACW"
     ]
   },
   {
@@ -137776,21 +137862,20 @@
     ]
   },
   {
+    "code": "SSEAU",
+    "name": "SSEAU",
+    "market": "US",
+    "aliases": [
+      "SSEAU"
+    ]
+  },
+  {
     "code": "SSII",
     "name": "SS Innovations International, Inc.",
     "market": "US",
     "aliases": [
       "SS Innovations International, Inc.",
       "SSII"
-    ]
-  },
-  {
-    "code": "SSKN",
-    "name": "STRATA Skin Sciences, Inc.",
-    "market": "US",
-    "aliases": [
-      "STRATA Skin Sciences, Inc.",
-      "SSKN"
     ]
   },
   {
@@ -137916,15 +138001,6 @@
     "aliases": [
       "STAG Industrial, Inc.",
       "STAG"
-    ]
-  },
-  {
-    "code": "STAI",
-    "name": "ScanTech AI Systems Inc.",
-    "market": "US",
-    "aliases": [
-      "ScanTech AI Systems Inc.",
-      "STAI"
     ]
   },
   {
@@ -138405,12 +138481,36 @@
     ]
   },
   {
+    "code": "SUIS",
+    "name": "SUIS",
+    "market": "US",
+    "aliases": [
+      "SUIS"
+    ]
+  },
+  {
+    "code": "SUMAU",
+    "name": "SUMAU",
+    "market": "US",
+    "aliases": [
+      "SUMAU"
+    ]
+  },
+  {
     "code": "SUN",
     "name": "Sunoco LP",
     "market": "US",
     "aliases": [
       "Sunoco LP",
       "SUN"
+    ]
+  },
+  {
+    "code": "SUNB",
+    "name": "SUNB",
+    "market": "US",
+    "aliases": [
+      "SUNB"
     ]
   },
   {
@@ -138517,11 +138617,27 @@
     ]
   },
   {
+    "code": "SVAQ",
+    "name": "SVAQ",
+    "market": "US",
+    "aliases": [
+      "SVAQ"
+    ]
+  },
+  {
     "code": "SVAQU",
     "name": "SVAQU",
     "market": "US",
     "aliases": [
       "SVAQU"
+    ]
+  },
+  {
+    "code": "SVAQW",
+    "name": "SVAQW",
+    "market": "US",
+    "aliases": [
+      "SVAQW"
     ]
   },
   {
@@ -138543,6 +138659,14 @@
     ]
   },
   {
+    "code": "SVCCU",
+    "name": "SVCCU",
+    "market": "US",
+    "aliases": [
+      "SVCCU"
+    ]
+  },
+  {
     "code": "SVCCW",
     "name": "SVCCW",
     "market": "US",
@@ -138557,6 +138681,30 @@
     "aliases": [
       "Silvaco Group, Inc.",
       "SVCO"
+    ]
+  },
+  {
+    "code": "SVIV",
+    "name": "SVIV",
+    "market": "US",
+    "aliases": [
+      "SVIV"
+    ]
+  },
+  {
+    "code": "SVIVU",
+    "name": "SVIVU",
+    "market": "US",
+    "aliases": [
+      "SVIVU"
+    ]
+  },
+  {
+    "code": "SVIVW",
+    "name": "SVIVW",
+    "market": "US",
+    "aliases": [
+      "SVIVW"
     ]
   },
   {
@@ -138584,15 +138732,6 @@
     "aliases": [
       "SaverOne 2014 Ltd.",
       "SVRE"
-    ]
-  },
-  {
-    "code": "SVREW",
-    "name": "SaverOne 2014 Ltd.",
-    "market": "US",
-    "aliases": [
-      "SaverOne 2014 Ltd.",
-      "SVREW"
     ]
   },
   {
@@ -138691,6 +138830,14 @@
     "aliases": [
       "SKYWORKS SOLUTIONS, INC.",
       "SWKS"
+    ]
+  },
+  {
+    "code": "SWMR",
+    "name": "SWMR",
+    "market": "US",
+    "aliases": [
+      "SWMR"
     ]
   },
   {
@@ -138878,14 +139025,6 @@
     "market": "US",
     "aliases": [
       "SZZLR"
-    ]
-  },
-  {
-    "code": "SZZLU",
-    "name": "SZZLU",
-    "market": "US",
-    "aliases": [
-      "SZZLU"
     ]
   },
   {
@@ -139086,6 +139225,24 @@
     "aliases": [
       "Tavia Acquisition Corp.",
       "TAVI"
+    ]
+  },
+  {
+    "code": "TAVIR",
+    "name": "Tavia Acquisition Corp.",
+    "market": "US",
+    "aliases": [
+      "Tavia Acquisition Corp.",
+      "TAVIR"
+    ]
+  },
+  {
+    "code": "TAVIU",
+    "name": "Tavia Acquisition Corp.",
+    "market": "US",
+    "aliases": [
+      "Tavia Acquisition Corp.",
+      "TAVIU"
     ]
   },
   {
@@ -139478,14 +139635,6 @@
     ]
   },
   {
-    "code": "TDWD",
-    "name": "TDWD",
-    "market": "US",
-    "aliases": [
-      "TDWD"
-    ]
-  },
-  {
     "code": "TDWDR",
     "name": "TDWDR",
     "market": "US",
@@ -139543,15 +139692,6 @@
     "aliases": [
       "TECK RESOURCES LTD",
       "TECK"
-    ]
-  },
-  {
-    "code": "TECTP",
-    "name": "Tectonic Financial, Inc.",
-    "market": "US",
-    "aliases": [
-      "Tectonic Financial, Inc.",
-      "TECTP"
     ]
   },
   {
@@ -139806,15 +139946,6 @@
     ]
   },
   {
-    "code": "TGNA",
-    "name": "TEGNA INC",
-    "market": "US",
-    "aliases": [
-      "TEGNA INC",
-      "TGNA"
-    ]
-  },
-  {
     "code": "TGS",
     "name": "GAS TRANSPORTER OF THE SOUTH INC",
     "market": "US",
@@ -139848,15 +139979,6 @@
     "aliases": [
       "Target Hospitality Corp.",
       "TH"
-    ]
-  },
-  {
-    "code": "THAR",
-    "name": "Tharimmune, Inc.",
-    "market": "US",
-    "aliases": [
-      "Tharimmune, Inc.",
-      "THAR"
     ]
   },
   {
@@ -139958,15 +140080,6 @@
     ]
   },
   {
-    "code": "THS",
-    "name": "TreeHouse Foods, Inc.",
-    "market": "US",
-    "aliases": [
-      "TreeHouse Foods, Inc.",
-      "THS"
-    ]
-  },
-  {
     "code": "THW",
     "name": "abrdn World Healthcare Fund",
     "market": "US",
@@ -140043,15 +140156,6 @@
     "aliases": [
       "TIPTREE INC.",
       "TIPT"
-    ]
-  },
-  {
-    "code": "TIRX",
-    "name": "TIAN RUIXIANG HOLDINGS LTD",
-    "market": "US",
-    "aliases": [
-      "TIAN RUIXIANG HOLDINGS LTD",
-      "TIRX"
     ]
   },
   {
@@ -140829,6 +140933,14 @@
     ]
   },
   {
+    "code": "TRGSU",
+    "name": "TRGSU",
+    "market": "US",
+    "aliases": [
+      "TRGSU"
+    ]
+  },
+  {
     "code": "TRI",
     "name": "THOMSON REUTERS CORP /CAN/",
     "market": "US",
@@ -141142,15 +141254,6 @@
     ]
   },
   {
-    "code": "TSE",
-    "name": "Trinseo PLC",
-    "market": "US",
-    "aliases": [
-      "Trinseo PLC",
-      "TSE"
-    ]
-  },
-  {
     "code": "TSEM",
     "name": "TOWER SEMICONDUCTOR LTD",
     "market": "US",
@@ -141229,6 +141332,14 @@
     "aliases": [
       "TSS, Inc.",
       "TSSI"
+    ]
+  },
+  {
+    "code": "TSUI",
+    "name": "TSUI",
+    "market": "US",
+    "aliases": [
+      "TSUI"
     ]
   },
   {
@@ -141433,14 +141544,6 @@
     ]
   },
   {
-    "code": "TVAIU",
-    "name": "TVAIU",
-    "market": "US",
-    "aliases": [
-      "TVAIU"
-    ]
-  },
-  {
     "code": "TVC",
     "name": "Tennessee Valley Authority",
     "market": "US",
@@ -141564,11 +141667,11 @@
     ]
   },
   {
-    "code": "TWLVU",
-    "name": "TWLVU",
+    "code": "TWLVR",
+    "name": "TWLVR",
     "market": "US",
     "aliases": [
-      "TWLVU"
+      "TWLVR"
     ]
   },
   {
@@ -141757,6 +141860,14 @@
     "aliases": [
       "Under Armour, Inc.",
       "UAA"
+    ]
+  },
+  {
+    "code": "UAC",
+    "name": "UAC",
+    "market": "US",
+    "aliases": [
+      "UAC"
     ]
   },
   {
@@ -142138,15 +142249,6 @@
     ]
   },
   {
-    "code": "ULY",
-    "name": "Urgent.ly Inc.",
-    "market": "US",
-    "aliases": [
-      "Urgent.ly Inc.",
-      "ULY"
-    ]
-  },
-  {
     "code": "UMAC",
     "name": "Unusual Machines, Inc.",
     "market": "US",
@@ -142278,15 +142380,6 @@
     "aliases": [
       "UNITY BANCORP INC /NJ/",
       "UNTY"
-    ]
-  },
-  {
-    "code": "UOKA",
-    "name": "MDJM LTD",
-    "market": "US",
-    "aliases": [
-      "MDJM LTD",
-      "UOKA"
     ]
   },
   {
@@ -142728,6 +142821,14 @@
     ]
   },
   {
+    "code": "UYSCR",
+    "name": "UYSCR",
+    "market": "US",
+    "aliases": [
+      "UYSCR"
+    ]
+  },
+  {
     "code": "UZD",
     "name": "UNITED STATES CELLULAR CORP",
     "market": "US",
@@ -142791,11 +142892,21 @@
     ]
   },
   {
-    "code": "VACI",
-    "name": "VACI",
+    "code": "VACHU",
+    "name": "Voyager Acquisition Corp./Cayman Islands",
     "market": "US",
     "aliases": [
-      "VACI"
+      "Voyager Acquisition Corp./Cayman Islands",
+      "VACHU"
+    ]
+  },
+  {
+    "code": "VACHW",
+    "name": "Voyager Acquisition Corp./Cayman Islands",
+    "market": "US",
+    "aliases": [
+      "Voyager Acquisition Corp./Cayman Islands",
+      "VACHW"
     ]
   },
   {
@@ -142951,6 +143062,14 @@
     ]
   },
   {
+    "code": "VCX",
+    "name": "VCX",
+    "market": "US",
+    "aliases": [
+      "VCX"
+    ]
+  },
+  {
     "code": "VCYT",
     "name": "VERACYTE, INC.",
     "market": "US",
@@ -142975,15 +143094,6 @@
     "aliases": [
       "VEEA INC.",
       "VEEA"
-    ]
-  },
-  {
-    "code": "VEEAW",
-    "name": "VEEA INC.",
-    "market": "US",
-    "aliases": [
-      "VEEA INC.",
-      "VEEAW"
     ]
   },
   {
@@ -143055,15 +143165,6 @@
     "aliases": [
       "Veritone, Inc.",
       "VERI"
-    ]
-  },
-  {
-    "code": "VERO",
-    "name": "Venus Concept Inc.",
-    "market": "US",
-    "aliases": [
-      "Venus Concept Inc.",
-      "VERO"
     ]
   },
   {
@@ -143199,6 +143300,14 @@
     "aliases": [
       "VirnetX Holding Corp",
       "VHC"
+    ]
+  },
+  {
+    "code": "VHCP",
+    "name": "VHCP",
+    "market": "US",
+    "aliases": [
+      "VHCP"
     ]
   },
   {
@@ -143369,6 +143478,14 @@
     ]
   },
   {
+    "code": "VIVO",
+    "name": "VIVO",
+    "market": "US",
+    "aliases": [
+      "VIVO"
+    ]
+  },
+  {
     "code": "VIVS",
     "name": "VIVS",
     "market": "US",
@@ -143521,6 +143638,14 @@
     ]
   },
   {
+    "code": "VMET",
+    "name": "VMET",
+    "market": "US",
+    "aliases": [
+      "VMET"
+    ]
+  },
+  {
     "code": "VMI",
     "name": "VALMONT INDUSTRIES INC",
     "market": "US",
@@ -143579,14 +143704,6 @@
     "market": "US",
     "aliases": [
       "VNMEU"
-    ]
-  },
-  {
-    "code": "VNMEW",
-    "name": "VNMEW",
-    "market": "US",
-    "aliases": [
-      "VNMEW"
     ]
   },
   {
@@ -143711,15 +143828,6 @@
     "aliases": [
       "Vera Bradley, Inc.",
       "VRA"
-    ]
-  },
-  {
-    "code": "VRAR",
-    "name": "Glimpse Group, Inc.",
-    "market": "US",
-    "aliases": [
-      "Glimpse Group, Inc.",
-      "VRAR"
     ]
   },
   {
@@ -144085,15 +144193,6 @@
     ]
   },
   {
-    "code": "VTYX",
-    "name": "Ventyx Biosciences, Inc.",
-    "market": "US",
-    "aliases": [
-      "Ventyx Biosciences, Inc.",
-      "VTYX"
-    ]
-  },
-  {
     "code": "VUZI",
     "name": "Vuzix Corp",
     "market": "US",
@@ -144109,15 +144208,6 @@
     "aliases": [
       "Vivos Therapeutics, Inc.",
       "VVOS"
-    ]
-  },
-  {
-    "code": "VVPR",
-    "name": "VivoPower International PLC",
-    "market": "US",
-    "aliases": [
-      "VivoPower International PLC",
-      "VVPR"
     ]
   },
   {
@@ -144188,6 +144278,15 @@
     "aliases": [
       "NCR Voyix Corp",
       "VYX"
+    ]
+  },
+  {
+    "code": "VZ",
+    "name": "VERIZON COMMUNICATIONS INC",
+    "market": "US",
+    "aliases": [
+      "VERIZON COMMUNICATIONS INC",
+      "VZ"
     ]
   },
   {
@@ -144278,15 +144377,6 @@
     "aliases": [
       "Waldencast plc",
       "WALD"
-    ]
-  },
-  {
-    "code": "WALDW",
-    "name": "Waldencast plc",
-    "market": "US",
-    "aliases": [
-      "Waldencast plc",
-      "WALDW"
     ]
   },
   {
@@ -145157,6 +145247,14 @@
     ]
   },
   {
+    "code": "WPAC",
+    "name": "WPAC",
+    "market": "US",
+    "aliases": [
+      "WPAC"
+    ]
+  },
+  {
     "code": "WPC",
     "name": "W. P. Carey Inc.",
     "market": "US",
@@ -145418,6 +145516,14 @@
     "market": "US",
     "aliases": [
       "WTFCN"
+    ]
+  },
+  {
+    "code": "WTG",
+    "name": "WTG",
+    "market": "US",
+    "aliases": [
+      "WTG"
     ]
   },
   {
@@ -145688,11 +145794,27 @@
     ]
   },
   {
+    "code": "XCBE",
+    "name": "XCBE",
+    "market": "US",
+    "aliases": [
+      "XCBE"
+    ]
+  },
+  {
     "code": "XCBEU",
     "name": "XCBEU",
     "market": "US",
     "aliases": [
       "XCBEU"
+    ]
+  },
+  {
+    "code": "XCBEW",
+    "name": "XCBEW",
+    "market": "US",
+    "aliases": [
+      "XCBEW"
     ]
   },
   {
@@ -145755,6 +145877,14 @@
     "aliases": [
       "Xeris Biopharma Holdings, Inc.",
       "XERS"
+    ]
+  },
+  {
+    "code": "XFLH",
+    "name": "XFLH",
+    "market": "US",
+    "aliases": [
+      "XFLH"
     ]
   },
   {
@@ -146000,6 +146130,14 @@
     ]
   },
   {
+    "code": "XRN",
+    "name": "XRN",
+    "market": "US",
+    "aliases": [
+      "XRN"
+    ]
+  },
+  {
     "code": "XRPN",
     "name": "XRPN",
     "market": "US",
@@ -146042,11 +146180,35 @@
     ]
   },
   {
+    "code": "XRXDW",
+    "name": "XRXDW",
+    "market": "US",
+    "aliases": [
+      "XRXDW"
+    ]
+  },
+  {
+    "code": "XSLL",
+    "name": "XSLL",
+    "market": "US",
+    "aliases": [
+      "XSLL"
+    ]
+  },
+  {
     "code": "XSLLU",
     "name": "XSLLU",
     "market": "US",
     "aliases": [
       "XSLLU"
+    ]
+  },
+  {
+    "code": "XSLLW",
+    "name": "XSLLW",
+    "market": "US",
+    "aliases": [
+      "XSLLW"
     ]
   },
   {
@@ -146291,6 +146453,15 @@
     "aliases": [
       "YHN Acquisition I Ltd",
       "YHNA"
+    ]
+  },
+  {
+    "code": "YHNAR",
+    "name": "YHN Acquisition I Ltd",
+    "market": "US",
+    "aliases": [
+      "YHN Acquisition I Ltd",
+      "YHNAR"
     ]
   },
   {
@@ -146578,15 +146749,6 @@
     ]
   },
   {
-    "code": "ZENV",
-    "name": "Zenvia Inc.",
-    "market": "US",
-    "aliases": [
-      "Zenvia Inc.",
-      "ZENV"
-    ]
-  },
-  {
     "code": "ZEO",
     "name": "Zeo Energy Corp.",
     "market": "US",
@@ -146620,15 +146782,6 @@
     "aliases": [
       "Zeta Global Holdings Corp.",
       "ZETA"
-    ]
-  },
-  {
-    "code": "ZEUS",
-    "name": "OLYMPIC STEEL INC",
-    "market": "US",
-    "aliases": [
-      "OLYMPIC STEEL INC",
-      "ZEUS"
     ]
   },
   {
@@ -146745,14 +146898,6 @@
     "market": "US",
     "aliases": [
       "ZKP"
-    ]
-  },
-  {
-    "code": "ZKPU",
-    "name": "ZKPU",
-    "market": "US",
-    "aliases": [
-      "ZKPU"
     ]
   },
   {
