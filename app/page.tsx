@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ErrorBoundary } from '@/components/error-boundary';
 import { PlatformActions } from '@/components/platform-actions';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
@@ -450,18 +451,21 @@ export default function HomePage() {
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
-        <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
-              <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
+        <ErrorBoundary>
+          <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h1 className="text-lg font-semibold text-slate-900">PromptDock</h1>
+                <p className="mt-1 text-xs text-slate-500">配置一套提示词，在所有 AI 平台快速调用</p>
+              </div>
+              <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
             </div>
-            <p className="min-h-4 text-xs text-teal-700">{notice || ' '}</p>
-          </div>
-        </header>
+          </header>
+        </ErrorBoundary>
 
         <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit">
+            <ErrorBoundary>
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-slate-800">模板列表</h2>
@@ -516,9 +520,11 @@ export default function HomePage() {
                 ) : null}
               </div>
             </section>
+            </ErrorBoundary>
           </aside>
 
           <section className="space-y-3">
+            <ErrorBoundary>
             <VariableForm
               variables={parsed?.variables ?? []}
               values={values}
@@ -531,9 +537,13 @@ export default function HomePage() {
                 }));
               }}
             />
+            </ErrorBoundary>
 
+            <ErrorBoundary>
             <PlatformActions content={rendered} />
+            </ErrorBoundary>
 
+            <ErrorBoundary>
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <h3 className="text-sm font-semibold text-slate-800">模板与预览</h3>
@@ -608,6 +618,7 @@ export default function HomePage() {
                 </p>
               </details>
             </section>
+            </ErrorBoundary>
           </section>
         </div>
 
