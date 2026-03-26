@@ -595,6 +595,15 @@ export default function HomePage() {
     showNotice(t('shareNotice'));
   }
 
+  function handleShowQR() {
+    if (!parsed) {
+      return;
+    }
+    const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
+    const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
+    setQrModalText(url);
+  }
+
   function handleDeleteTemplate() {
     if (!selectedTemplate) {
       return;
@@ -866,6 +875,13 @@ export default function HomePage() {
                     >
                       {t('shareLink')}
                     </button>
+                    <button
+                      type="button"
+                      onClick={handleShowQR}
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                    >
+                      二维码
+                    </button>
                     <span className="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400">
                       已生成 {shareCount} 个分享链接
                     </span>
@@ -963,6 +979,9 @@ export default function HomePage() {
             </a>
           </p>
         </footer>
+        {qrModalText && (
+          <QRModal text={qrModalText} onClose={() => setQrModalText('')} />
+        )}
       </div>
     </main>
   );
