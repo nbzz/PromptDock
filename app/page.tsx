@@ -471,8 +471,8 @@ export default function HomePage() {
           </div>
         </header>
 
-        <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit lg:w-[280px]">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
+          <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[280px]">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-slate-800">模板列表</h2>
@@ -546,7 +546,7 @@ export default function HomePage() {
             />
           </aside>
 
-          <section className="space-y-3">
+          <section className="flex-1 space-y-3">
             <VariableForm
               variables={parsed?.variables ?? []}
               values={values}
