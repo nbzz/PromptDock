@@ -96,6 +96,10 @@ const I18N = {
     exportedNotice: '模板已导出为 Markdown',
     builtinNoDeleteNotice: '内置模板不支持删除',
     confirmDelete: '确认删除本地模板「{title}」？',
+    batchDeleteConfirm: '确认删除选中的 {count} 个本地模板？此操作不可恢复。',
+    batchDelete: '批量删除',
+    selectAll: '全选',
+    deselectAll: '取消全选',
     sharedLoadedNotice: '已加载分享的模板',
     shareInvalidNotice: '分享链接无效',
     tagManage: '标签管理',
@@ -152,6 +156,10 @@ const I18N = {
     exportedNotice: 'Template exported as Markdown',
     builtinNoDeleteNotice: 'Built-in templates cannot be deleted',
     confirmDelete: 'Delete local template "{title}"?',
+    batchDeleteConfirm: 'Delete {count} selected local templates? This cannot be undone.',
+    batchDelete: 'Batch Delete',
+    selectAll: 'Select All',
+    deselectAll: 'Deselect All',
     sharedLoadedNotice: 'Shared template loaded',
     shareInvalidNotice: 'Invalid share link',
     tagManage: 'Tags',
@@ -235,8 +243,10 @@ export default function HomePage() {
   const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterTab, setFilterTab] = useState<'all' | 'builtin' | 'local'>('all');
   const [selectedId, setSelectedId] = useState('');
   const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(-1);
+  const [batchSelectedIds, setBatchSelectedIds] = useState<Set<string>>(new Set());
   const templateListRef = useRef<HTMLDivElement>(null);
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
@@ -278,16 +288,20 @@ export default function HomePage() {
   }, [selectedTemplate, draftMarkdown]);
 
   const filteredTemplates = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return templates;
+    let result = templates;
+    if (filterTab !== 'all') {
+      result = result.filter((t) => t.source === filterTab);
     }
-    const q = searchQuery.toLowerCase();
-    return templates.filter(
-      (t) =>
-        t.title.toLowerCase().includes(q) ||
-        t.rawMarkdown.toLowerCase().includes(q)
-    );
-  }, [templates, searchQuery]);
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (t) =>
+          t.title.toLowerCase().includes(q) ||
+          t.rawMarkdown.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [templates, searchQuery, filterTab]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -860,6 +874,23 @@ export default function HomePage() {
                   placeholder={t('searchPlaceholder')}
                   className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400"
                 />
+              </div>
+
+              <div className="mb-3 flex gap-1">
+                {(['all', 'builtin', 'local'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setFilterTab(tab)}
+                    className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
+                      filterTab === tab
+                        ? 'border-b-2 border-teal-500 bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'
+                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    {tab === 'all' ? '全部' : tab === 'builtin' ? '内置' : '本地'}
+                  </button>
+                ))}
               </div>
 
               <div
