@@ -632,6 +632,40 @@ export default function HomePage() {
     showNotice(t('deletedNotice'));
   }
 
+  async function copyAndOpenAction(platformKey: string, url: string) {
+    if (!rendered.trim()) return;
+    try {
+      await navigator.clipboard.writeText(rendered);
+    } catch {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = rendered;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } catch {
+        return;
+      }
+    }
+    window.open(url, '_blank', 'noopener,noreferrer');
+    const entry: PromptHistoryEntry = {
+      id: crypto.randomUUID(),
+      createdAt: Date.now(),
+      templateId: selectedId,
+      templateTitle: selectedTemplate?.title ?? '',
+      values: { ...values },
+      rendered,
+      action: 'copy_and_open',
+      platformKey
+    };
+    setHistory(pushHistory(entry));
+    const platform = PLATFORMS.find((p) => p.key === platformKey);
+    notifyBrowser('已复制到 ' + (platform?.name ?? '剪贴板'), '「' + (selectedTemplate?.title ?? '') + '」');
+  }
+
   function getCurrentTags() {
     if (!selectedId) return [];
     return templateTags[selectedId] ?? [];
@@ -770,6 +804,7 @@ export default function HomePage() {
 
             <HistoryPanel
               entries={history}
+              platforms={PLATFORMS}
               onReuse={(entry) => {
                 const template = templates.find((t) => t.id === entry.templateId);
                 if (!template) {
@@ -778,6 +813,9 @@ export default function HomePage() {
                 setSelectedId(template.id);
                 setDraftMarkdown(template.rawMarkdown);
                 setValues(entry.values);
+              }}
+              onCopyAndOpen={(platformKey, url) => {
+                void copyAndOpenAction(platformKey, url);
               }}
               onClear={() => {
                 clearHistory();
@@ -820,8 +858,9 @@ export default function HomePage() {
                 const platformName = action.platformKey
                   ? PLATFORMS.find((p) => p.key === action.platformKey)?.name ?? ''
                   : '剪贴板';
-                notifyBrowser('已复制到' + platformName, `「${selectedTemplate.title}」已${action.type === 'copy_only' ? '复制' : '复制并准备跳转'}`);
+                notifyBrowser('已复制到 ' + platformName, '「' + selectedTemplate.title + '」');
               }}
+              onCopyAndOpen={copyAndOpenAction}
             />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
