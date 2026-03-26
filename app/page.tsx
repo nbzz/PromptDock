@@ -270,6 +270,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [selectedId, setSelectedId] = useState('');
   const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(-1);
   const [batchSelectedIds, setBatchSelectedIds] = useState<Set<string>>(new Set());
+  const batchStartRef = useRef<number>(-1);
   const templateListRef = useRef<HTMLDivElement>(null);
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
@@ -582,25 +583,104 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   function handleTemplateListKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (filteredTemplates.length === 0) return;
 
-    if (event.key === 'ArrowDown') {
+    const isMac =
+      typeof window !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const isCtrlOrCmd = isMac ? event.metaKey : event.ctrlKey;
+
+    // Escape - deselect all when batch bar is showing
+    if (event.key === 'Escape') {
       event.preventDefault();
-      const nextIndex = Math.min(selectedTemplateIndex + 1, filteredTemplates.length - 1);
-      setSelectedTemplateIndex(nextIndex);
-      setSelectedId(filteredTemplates[nextIndex].id);
-      const buttons = templateListRef.current?.querySelectorAll<HTMLButtonElement>('[data-template-btn]');
-      buttons?.[nextIndex]?.focus();
+      setBatchSelectedIds(new Set());
+      batchStartRef.current = -1;
       return;
     }
 
-    if (event.key === 'ArrowUp') {
+    // Delete/Backspace - delete selected templates
+    if ((event.key === 'Delete' || event.key === 'Backspace') && batchSelectedIds.size > 0) {
       event.preventDefault();
-      const prevIndex = Math.max(selectedTemplateIndex - 1, 0);
-      setSelectedTemplateIndex(prevIndex);
-      setSelectedId(filteredTemplates[prevIndex].id);
-      const buttons = templateListRef.current?.querySelectorAll<HTMLButtonElement>('[data-template-btn]');
-      buttons?.[prevIndex]?.focus();
+      handleBatchDelete();
       return;
     }
+
+    // Ctrl/Cmd+A - select all local templates in current filter
+    if (event.key === 'a' && isCtrlOrCmd) {
+      event.preventDefault();
+      const localIds = filteredTemplates.filter((t) => t.source === 'local').map((t) => t.id);
+      setBatchSelectedIds(new Set(localIds));
+      return;
+    }
+
+    // Space - toggle selection of focused template
+    if (event.key === ' ') {
+      event.preventDefault();
+      const item = filteredTemplates[selectedTemplateIndex];
+      if (item?.source === 'local') {
+        handleBatchSelect(item.id);
+      }
+      return;
+    }
+
+    const direction = event.key === 'ArrowDown' ? 1 : -1;
+    const isArrowKey = event.key === 'ArrowDown' || event.key === 'ArrowUp';
+    if (!isArrowKey) return;
+
+    event.preventDefault();
+
+    const prevIdx = selectedTemplateIndex;
+    let nextIdx = prevIdx + direction;
+
+    // Find next local template in direction
+    while (nextIdx >= 0 && nextIdx < filteredTemplates.length) {
+      if (filteredTemplates[nextIdx].source === 'local') break;
+      nextIdx += direction;
+    }
+
+    if (nextIdx < 0 || nextIdx >= filteredTemplates.length) return;
+
+    if (event.shiftKey) {
+      // Range selection: Shift+Arrow
+      if (batchStartRef.current === -1) {
+        batchStartRef.current = prevIdx;
+      }
+
+      const start = Math.min(batchStartRef.current, nextIdx);
+      const end = Math.max(batchStartRef.current, nextIdx);
+
+      setBatchSelectedIds((prev) => {
+        const next = new Set(prev);
+        for (let i = start; i <= end; i++) {
+          if (filteredTemplates[i].source === 'local') {
+            next.add(filteredTemplates[i].id);
+          }
+        }
+        return next;
+      });
+    } else {
+      // Navigation without Shift - reset range anchor
+      batchStartRef.current = -1;
+
+      const prevItem = filteredTemplates[prevIdx];
+      const nextItem = filteredTemplates[nextIdx];
+
+      if (prevItem?.source === 'local' && nextItem?.source === 'local') {
+        setBatchSelectedIds((prev) => {
+          const next = new Set(prev);
+          const start = Math.min(prevIdx, nextIdx);
+          const end = Math.max(prevIdx, nextIdx);
+          for (let i = start; i <= end; i++) {
+            if (filteredTemplates[i].source === 'local') {
+              next.add(filteredTemplates[i].id);
+            }
+          }
+          return next;
+        });
+      }
+    }
+
+    setSelectedTemplateIndex(nextIdx);
+    setSelectedId(filteredTemplates[nextIdx].id);
+    const buttons = templateListRef.current?.querySelectorAll<HTMLButtonElement>('[data-template-btn]');
+    buttons?.[nextIdx]?.focus();
   }
 
   function handleUploadClick() {
@@ -1017,7 +1097,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => handleBatchSelect(item.id)}
-                          className="h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:ring-teal-400 dark:border-slate-600"
+                          className="h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600"
                         />
                       ) : (
                         <span className="h-4 w-4 shrink-0 rounded border border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-700" />
@@ -1027,7 +1107,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                         data-template-btn
                         tabIndex={0}
                         onClick={() => handleTemplateSelect(item.id)}
-                        className="min-w-0 flex-1 text-left"
+                        className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 rounded"
                       >
                         <p className={`truncate text-sm font-medium ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
                           {item.title}
