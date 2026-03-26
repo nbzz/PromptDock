@@ -9,6 +9,14 @@ interface PlatformActionsProps {
   content: string;
   onAction?: (action: { type: 'copy_only' | 'copy_and_open'; platformKey?: string }) => void;
   onCopyAndOpen?: (platformKey: string, url: string) => void;
+  labels?: {
+    title: string;
+    copyOnly: string;
+    copiedNotice: string;
+    copyFailedNotice: string;
+    copiedAndOpenNotice: string;
+    openWithoutCopyNotice: string;
+  };
 }
 
 async function copyText(text: string): Promise<boolean> {
@@ -36,7 +44,17 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
-export function PlatformActions({ content, onAction, onCopyAndOpen }: PlatformActionsProps) {
+const DEFAULT_LABELS = {
+  title: '快捷动作（复制并跳转）',
+  copyOnly: '仅复制',
+  copiedNotice: '已复制',
+  copyFailedNotice: '复制失败，请手动复制',
+  copiedAndOpenNotice: '已复制并跳转',
+  openWithoutCopyNotice: '已跳转（复制失败）',
+};
+
+export function PlatformActions({ content, onAction, onCopyAndOpen, labels }: PlatformActionsProps) {
+  const t = { ...DEFAULT_LABELS, ...labels };
   const [notice, setNotice] = useState('');
 
   function showNotice(text: string) {
@@ -49,7 +67,7 @@ export function PlatformActions({ content, onAction, onCopyAndOpen }: PlatformAc
     if (ok) {
       onAction?.({ type: 'copy_only' });
     }
-    showNotice(ok ? '已复制' : '复制失败，请手动复制');
+    showNotice(ok ? t.copiedNotice : t.copyFailedNotice);
   }
 
   async function copyAndOpenAction(platformKey: string, url: string) {
@@ -58,7 +76,7 @@ export function PlatformActions({ content, onAction, onCopyAndOpen }: PlatformAc
     if (ok) {
       onAction?.({ type: 'copy_and_open', platformKey });
     }
-    showNotice(ok ? '已复制并跳转' : '已跳转（复制失败）');
+    showNotice(ok ? t.copiedAndOpenNotice : t.openWithoutCopyNotice);
   }
 
   function handleCopyAndOpen(platformKey: string, url: string) {
@@ -72,13 +90,13 @@ export function PlatformActions({ content, onAction, onCopyAndOpen }: PlatformAc
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">快捷动作（复制并跳转）</h3>
+        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t.title}</h3>
         <button
           type="button"
           onClick={copyOnly}
           className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:py-1.5 sm:text-xs"
         >
-          <span>仅复制</span>
+          <span>{t.copyOnly}</span>
         </button>
       </div>
 

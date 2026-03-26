@@ -12,7 +12,22 @@ interface VariableFormProps {
   stocks: StockItem[];
   stockStatusText?: string;
   onChange: (name: string, value: string) => void;
+  labels?: {
+    sectionTitle: string;
+    noVariables: string;
+    bookmarkFill: string;
+    addBookmark: string;
+    removeBookmark: string;
+  };
 }
+
+const DEFAULT_VARIABLE_FORM_LABELS = {
+  sectionTitle: '变量填写',
+  noVariables: '这个模板没有变量，直接可用。',
+  bookmarkFill: '书签快速填充',
+  addBookmark: '添加书签',
+  removeBookmark: '移除书签',
+};
 
 function focusNextField(index: number) {
   const fields = document.querySelectorAll<HTMLElement>('[data-field-index]');
@@ -54,7 +69,8 @@ function BookmarkIcon({ filled }: { filled: boolean }) {
   );
 }
 
-export function VariableForm({ variables, values, stocks, stockStatusText, onChange }: VariableFormProps) {
+export function VariableForm({ variables, values, stocks, stockStatusText, onChange, labels }: VariableFormProps) {
+  const t = { ...DEFAULT_VARIABLE_FORM_LABELS, ...labels };
   const [bookmarks, setBookmarks] = useState<BookmarkMap>(() => loadBookmarks());
 
   const handleSaveBookmark = (name: string, val: string) => {
@@ -77,8 +93,8 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
   if (variables.length === 0) {
     return (
       <section className="variable-form-section rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-        <h3 className="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-200">变量填写</h3>
-        <p className="text-base text-slate-500 sm:text-sm dark:text-slate-400">这个模板没有变量，直接可用。</p>
+        <h3 className="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-200">{t.sectionTitle}</h3>
+        <p className="text-base text-slate-500 sm:text-sm dark:text-slate-400">{t.noVariables}</p>
       </section>
     );
   }
@@ -86,13 +102,13 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
   return (
     <section className="variable-form-section rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
       <div className="mb-3 flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">变量填写</h3>
+        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t.sectionTitle}</h3>
         {stockStatusText ? <p className="text-xs text-slate-500 dark:text-slate-400">{stockStatusText}</p> : null}
       </div>
 
       {bookmarkedVars.length > 0 && (
         <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-700 dark:bg-amber-900/30">
-          <p className="mb-2 text-xs font-medium text-amber-700 dark:text-amber-400">书签快速填充</p>
+          <p className="mb-2 text-xs font-medium text-amber-700 dark:text-amber-400">{t.bookmarkFill}</p>
           <div className="flex flex-wrap gap-2">
             {bookmarkedVars.map((v) => (
               <button
@@ -127,7 +143,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                     type="button"
                     onClick={() => isBookmarked ? handleRemoveBookmark(variable.name) : handleSaveBookmark(variable.name, value)}
                     className="flex items-center gap-1 rounded-md p-1 transition hover:bg-slate-100 dark:hover:bg-slate-700"
-                    title={isBookmarked ? '移除书签' : '添加书签'}
+                    title={isBookmarked ? t.removeBookmark : t.addBookmark}
                   >
                     <BookmarkIcon filled={isBookmarked} />
                   </button>

@@ -73,6 +73,7 @@ const I18N = {
     save: '保存模板',
     exportMd: '导出 Markdown',
     shareLink: '分享链接',
+    qrCode: '二维码',
     delete: '删除本地模板',
     shareNotice: '分享链接已复制',
     savedNotice: '模板已保存',
@@ -86,9 +87,26 @@ const I18N = {
     noHistory: '还没有历史记录。',
     copyOnlyAction: '仅复制',
     copyAndOpenAction: '复制并打开',
-    autoFillTip: '仅以下变量名会自动填充',
+    autoFillTip: '仅以下变量名会自动填充：',
+    autoFillSuffix: '。其他所有 [] 都按手动输入处理。',
     templateNotice1: '上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。',
     templateNotice2: '模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。',
+    importedNotice: '模板已导入',
+    savedAsCopyNotice: '已另存为本地模板副本',
+    exportedNotice: '模板已导出为 Markdown',
+    builtinNoDeleteNotice: '内置模板不支持删除',
+    confirmDelete: '确认删除本地模板「{title}」？',
+    sharedLoadedNotice: '已加载分享的模板',
+    shareInvalidNotice: '分享链接无效',
+    tagManage: '标签管理',
+    addTag: '添加',
+    tagInputPlaceholder: '输入标签后按回车',
+    scanQRTitle: '扫码使用模板',
+    scanQRTip: '截图保存',
+    close: '关闭',
+    bookmarkFill: '书签快速填充',
+    addBookmark: '添加书签',
+    removeBookmark: '移除书签',
   },
   en: {
     appTitle: 'PromptDock',
@@ -111,6 +129,7 @@ const I18N = {
     save: 'Save',
     exportMd: 'Export Markdown',
     shareLink: 'Share Link',
+    qrCode: 'QR Code',
     delete: 'Delete Local',
     shareNotice: 'Share link copied',
     savedNotice: 'Template saved',
@@ -124,9 +143,26 @@ const I18N = {
     noHistory: 'No history yet.',
     copyOnlyAction: 'Copy',
     copyAndOpenAction: 'Copy & Open',
-    autoFillTip: 'Only the following variable names are auto-filled',
+    autoFillTip: 'Only the following variable names are auto-filled:',
+    autoFillSuffix: ' All other [] are treated as manual input.',
     templateNotice1: '.md templates are stored in browser local storage only.',
     templateNotice2: 'Use [] as variable placeholders. No prefix syntax needed.',
+    importedNotice: 'Template imported',
+    savedAsCopyNotice: 'Saved as local template copy',
+    exportedNotice: 'Template exported as Markdown',
+    builtinNoDeleteNotice: 'Built-in templates cannot be deleted',
+    confirmDelete: 'Delete local template "{title}"?',
+    sharedLoadedNotice: 'Shared template loaded',
+    shareInvalidNotice: 'Invalid share link',
+    tagManage: 'Tags',
+    addTag: 'Add',
+    tagInputPlaceholder: 'Type tag and press Enter',
+    scanQRTitle: 'Scan to use template',
+    scanQRTip: 'Screenshot to save',
+    close: 'Close',
+    bookmarkFill: 'Bookmark Quick Fill',
+    addBookmark: 'Add Bookmark',
+    removeBookmark: 'Remove Bookmark',
   },
 } as const;
 
@@ -309,7 +345,7 @@ export default function HomePage() {
         try {
           const markdown = decompressFromEncodedURIComponent(shareData);
           if (!markdown) {
-            showNotice('分享链接无效');
+            showNotice(t('shareInvalidNotice'));
             return;
           }
           const sharedTemplate: StoredTemplate = {
@@ -322,12 +358,12 @@ export default function HomePage() {
           setTemplates((prev) => mergeTemplates([], [sharedTemplate, ...prev]));
           setSelectedId(sharedTemplate.id);
           setDraftMarkdown(markdown);
-          showNotice('已加载分享的模板');
+          showNotice(t('sharedLoadedNotice'));
           // Clear URL param
           window.history.replaceState({}, '', window.location.pathname);
           return;
         } catch {
-          showNotice('分享链接无效');
+          showNotice(t('shareInvalidNotice'));
         }
       }
 
@@ -527,7 +563,7 @@ export default function HomePage() {
     setSelectedId(localTemplate.id);
     setDraftMarkdown(text);
     event.target.value = '';
-    showNotice('模板已导入');
+    showNotice(t('importedNotice'));
   }
 
   function handleSaveTemplate() {
@@ -550,7 +586,7 @@ export default function HomePage() {
         return next;
       });
       setSelectedId(copied.id);
-      showNotice('已另存为本地模板副本');
+      showNotice(t('savedAsCopyNotice'));
       return;
     }
 
@@ -569,7 +605,7 @@ export default function HomePage() {
       saveLocalTemplates(getLocalTemplates(next));
       return next;
     });
-    showNotice('模板已保存');
+    showNotice(t('savedNotice'));
   }
 
   function handleExportTemplate() {
@@ -585,7 +621,7 @@ export default function HomePage() {
     link.download = `${parsed.title || 'prompt-template'}.md`;
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 200);
-    showNotice('模板已导出为 Markdown');
+    showNotice(t('exportedNotice'));
   }
 
   async function handleShareViaUrl() {
@@ -633,11 +669,11 @@ export default function HomePage() {
     }
 
     if (selectedTemplate.source !== 'local') {
-      showNotice('内置模板不支持删除');
+      showNotice(t('builtinNoDeleteNotice'));
       return;
     }
 
-    const ok = window.confirm(`确认删除本地模板「${selectedTemplate.title}」？`);
+    const ok = window.confirm(t('confirmDelete').replace('{title}', selectedTemplate.title));
     if (!ok) {
       return;
     }
@@ -731,7 +767,7 @@ export default function HomePage() {
         <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">PromptDock</h1>
+              <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('appTitle')}</h1>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t('appDesc')}</p>
             </div>
             <div className="flex items-center gap-2">
@@ -742,9 +778,10 @@ export default function HomePage() {
                   setLang(next);
                   localStorage.setItem('lang', next);
                 }}
-                className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="rounded-lg border border-slate-200 bg-white p-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                title={lang === 'zh' ? 'Switch to English' : '切换到中文'}
               >
-                {lang === 'zh' ? 'EN' : '中'}
+                <span className="inline-block w-4 text-center">{lang === 'zh' ? 'EN' : '中'}</span>
               </button>
               <ThemeToggle />
               <p key={noticeKey} className={`h-4 overflow-hidden text-xs text-teal-700 dark:text-teal-400 ${notice ? 'notice-pop' : ''}`}>
@@ -778,10 +815,10 @@ export default function HomePage() {
               </div>
 
               <p className="mb-3 break-words text-xs leading-5 text-slate-500">
-                上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。
+                {t('templateNotice1')}
               </p>
               <p className="mb-3 break-words text-xs leading-5 text-slate-500">
-                模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。
+                {t('templateNotice2')}
               </p>
 
               <div className="mb-3">
@@ -844,6 +881,13 @@ export default function HomePage() {
                 clearHistory();
                 setHistory([]);
               }}
+              labels={{
+                title: t('recentHistory'),
+                clear: t('clearHistory'),
+                noHistory: t('noHistory'),
+                copyOnly: t('copyOnlyAction'),
+                copyAndOpen: t('copyAndOpenAction'),
+              }}
             />
           </aside>
 
@@ -858,6 +902,13 @@ export default function HomePage() {
                   ...previous,
                   [name]: value
                 }));
+              }}
+              labels={{
+                sectionTitle: t('variableSection'),
+                noVariables: t('noVariables'),
+                bookmarkFill: t('bookmarkFill'),
+                addBookmark: t('addBookmark'),
+                removeBookmark: t('removeBookmark'),
               }}
             />
 
@@ -881,9 +932,17 @@ export default function HomePage() {
                 const platformName = action.platformKey
                   ? PLATFORMS.find((p) => p.key === action.platformKey)?.name ?? ''
                   : '剪贴板';
-                notifyBrowser('已复制到 ' + platformName, '「' + selectedTemplate.title + '」');
+                notifyBrowser(lang === 'zh' ? ('已复制到 ' + platformName) : ('Copied to ' + platformName), '「' + selectedTemplate.title + '」');
               }}
               onCopyAndOpen={copyAndOpenAction}
+              labels={{
+                title: t('platformActions'),
+                copyOnly: t('copyOnly'),
+                copiedNotice: '已复制',
+                copyFailedNotice: '复制失败，请手动复制',
+                copiedAndOpenNotice: '已复制并跳转',
+                openWithoutCopyNotice: '已跳转（复制失败）',
+              }}
             />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
@@ -945,7 +1004,7 @@ export default function HomePage() {
                       二维码
                     </button>
                     <span className="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400">
-                      已生成 {shareCount} 个分享链接
+                      {lang === 'zh' ? `已生成 ${shareCount} 个分享链接` : `${shareCount} share links generated`}
                     </span>
                     <button
                       type="button"
@@ -960,7 +1019,7 @@ export default function HomePage() {
 
                   {selectedId && (
                     <div className="mt-3 space-y-2">
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">标签管理</p>
+                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">{t('tagManage')}</p>
                       <div className="flex flex-wrap gap-1.5">
                         {getCurrentTags().map((tag) => (
                           <span
@@ -984,7 +1043,7 @@ export default function HomePage() {
                           value={tagInput}
                           onChange={(e) => setTagInput(e.target.value)}
                           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); }}}
-                          placeholder="输入标签后按回车"
+                          placeholder={t('tagInputPlaceholder')}
                           className="flex-1 rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none transition focus:border-teal-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500"
                         />
                         <button
@@ -992,7 +1051,7 @@ export default function HomePage() {
                           onClick={addTag}
                           className="rounded-lg border border-teal-200 bg-teal-50 px-2 py-1 text-xs text-teal-700 transition hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
                         >
-                          添加
+                          {t('addTag')}
                         </button>
                       </div>
                     </div>
@@ -1011,9 +1070,9 @@ export default function HomePage() {
               <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                 <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">{t('advancedTip')}</summary>
                 <p className="mt-2 leading-5">
-                  仅以下变量名会自动填充：
+                  {t('autoFillTip')}
                   {AUTO_FILL_NAMES.map((name) => ` [${name}]`).join('')}
-                  。其他所有 [] 都按手动输入处理。
+                  {t('autoFillSuffix')}
                 </p>
               </details>
             </section>
@@ -1021,9 +1080,9 @@ export default function HomePage() {
         </div>
 
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500 dark:text-slate-400">
-          <p>© 2026 cyberteng. All rights reserved.</p>
+          <p>{t('footer')}</p>
           <p>
-            公共模板投稿：Pull Request（
+            {t('pr')}（
             <a
               href="https://github.com/nbzz/PromptDock"
               target="_blank"
@@ -1032,7 +1091,7 @@ export default function HomePage() {
             >
               GitHub: PromptDock
             </a>
-            ），或联系
+            ）{t('contact')}
             <a
               href="mailto:tz@ittz.top"
               className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700 dark:text-slate-300"
@@ -1042,7 +1101,13 @@ export default function HomePage() {
           </p>
         </footer>
         {qrModalText && (
-          <QRModal text={qrModalText} onClose={() => setQrModalText('')} />
+          <QRModal
+            text={qrModalText}
+            onClose={() => setQrModalText('')}
+            title={t('scanQRTitle')}
+            tip={t('scanQRTip')}
+            close={t('close')}
+          />
         )}
       </div>
     </main>
