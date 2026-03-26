@@ -494,10 +494,10 @@ export default function HomePage() {
                 />
               </div>
 
-              <p className="mb-3 text-xs leading-5 text-slate-500">
+              <p className="mb-3 break-words text-xs leading-5 text-slate-500">
                 上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。
               </p>
-              <p className="mb-3 text-xs leading-5 text-slate-500">
+              <p className="mb-3 break-words text-xs leading-5 text-slate-500">
                 模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。
               </p>
 
