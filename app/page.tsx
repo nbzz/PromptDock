@@ -191,6 +191,7 @@ export default function HomePage() {
     }
     return 'zh';
   });
+  const t = (key: keyof typeof I18N.zh) => I18N[lang][key];
   const [tagInput, setTagInput] = useState('');
   const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
@@ -651,7 +652,7 @@ export default function HomePage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">PromptDock</h1>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">配置一套提示词，在所有 AI 平台快速调用</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t('appDesc')}</p>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -677,13 +678,13 @@ export default function HomePage() {
           <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[280px]">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">模板列表</h2>
+                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
                 <button
                   type="button"
                   onClick={handleUploadClick}
                   className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
                 >
-                  上传 .md
+                  {t('upload')}
                 </button>
                 <input
                   ref={inputRef}
@@ -708,7 +709,7 @@ export default function HomePage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="搜索模板..."
+                  placeholder={t('searchPlaceholder')}
                   className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:placeholder:text-slate-400"
                 />
               </div>
@@ -727,18 +728,18 @@ export default function HomePage() {
                   >
                     <p className="truncate text-sm font-medium">{item.title}</p>
                     <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                      {item.source === 'builtin' ? '内置模板' : '本地模板'}
+                      {item.source === 'builtin' ? t('builtIn') : t('local')}
                     </p>
                   </button>
                 ))}
 
                 {templates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
-                    先上传一个 .md 模板
+                    {t('noTemplates')}
                   </p>
                 ) : filteredTemplates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
-                    未找到匹配的模板
+                    {t('noResults')}
                   </p>
                 ) : null}
               </div>
@@ -802,8 +803,8 @@ export default function HomePage() {
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">模板与预览</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">高亮部分为已填充变量</p>
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templatePreview')}</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t('highlightTip')}</p>
               </div>
 
               <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
@@ -825,7 +826,7 @@ export default function HomePage() {
 
               <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                 <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">
-                  高级设置：编辑模板 / 保存 / 导出 / 删除
+                  {t('advancedSettings')}
                 </summary>
 
                 <div className="mt-3 space-y-2">
@@ -835,21 +836,21 @@ export default function HomePage() {
                       onClick={handleSaveTemplate}
                       className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
-                      保存模板
+                      {t('save')}
                     </button>
                     <button
                       type="button"
                       onClick={handleExportTemplate}
                       className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
-                      导出 Markdown
+                      {t('exportMd')}
                     </button>
                     <button
                       type="button"
                       onClick={handleShareViaUrl}
                       className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
                     >
-                      分享链接
+                      {t('shareLink')}
                     </button>
                     <button
                       type="button"
@@ -858,7 +859,7 @@ export default function HomePage() {
                       disabled={selectedTemplate?.source !== 'local'}
                       title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
                     >
-                      删除本地模板
+                      {t('delete')}
                     </button>
                   </div>
 
@@ -913,7 +914,7 @@ export default function HomePage() {
               </details>
 
               <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">自动变量（可选）</summary>
+                <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">{t('advancedTip')}</summary>
                 <p className="mt-2 leading-5">
                   仅以下变量名会自动填充：
                   {AUTO_FILL_NAMES.map((name) => ` [${name}]`).join('')}
