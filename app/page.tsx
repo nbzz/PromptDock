@@ -588,20 +588,33 @@ export default function HomePage() {
     }
     const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
     const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
-    await navigator.clipboard.writeText(url);
-    const next = shareCount + 1;
-    setShareCount(next);
-    localStorage.setItem('shareCount', String(next));
-    showNotice(t('shareNotice'));
+    try {
+      await navigator.clipboard.writeText(url);
+      const next = shareCount + 1;
+      setShareCount(next);
+      localStorage.setItem('shareCount', String(next));
+      showNotice(t('shareNotice'));
+    } catch {
+      showNotice('复制失败，请手动复制');
+    }
   }
 
   function handleShowQR() {
     if (!parsed) {
       return;
     }
-    const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
-    const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
-    setQrModalText(url);
+    try {
+      const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
+      const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
+      // QR code has a ~4296 char limit; if URL too long, show warning
+      if (url.length > 2000) {
+        showNotice('模板内容过长，无法生成二维码，请使用分享链接');
+        return;
+      }
+      setQrModalText(url);
+    } catch {
+      showNotice('生成二维码失败');
+    }
   }
 
   function handleDeleteTemplate() {
