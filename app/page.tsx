@@ -236,6 +236,8 @@ export default function HomePage() {
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedId, setSelectedId] = useState('');
+  const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(-1);
+  const templateListRef = useRef<HTMLDivElement>(null);
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
@@ -458,6 +460,11 @@ export default function HomePage() {
   }, [parsed]);
 
   useEffect(() => {
+    const index = filteredTemplates.findIndex((t) => t.id === selectedId);
+    setSelectedTemplateIndex(index);
+  }, [selectedId, filteredTemplates]);
+
+  useEffect(() => {
     if (!selectedTemplate) {
       return;
     }
@@ -533,6 +540,30 @@ export default function HomePage() {
 
   function handleTemplateSelect(id: string) {
     setSelectedId(id);
+  }
+
+  function handleTemplateListKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (filteredTemplates.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      const nextIndex = Math.min(selectedTemplateIndex + 1, filteredTemplates.length - 1);
+      setSelectedTemplateIndex(nextIndex);
+      setSelectedId(filteredTemplates[nextIndex].id);
+      const buttons = templateListRef.current?.querySelectorAll<HTMLButtonElement>('[data-template-btn]');
+      buttons?.[nextIndex]?.focus();
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      const prevIndex = Math.max(selectedTemplateIndex - 1, 0);
+      setSelectedTemplateIndex(prevIndex);
+      setSelectedId(filteredTemplates[prevIndex].id);
+      const buttons = templateListRef.current?.querySelectorAll<HTMLButtonElement>('[data-template-btn]');
+      buttons?.[prevIndex]?.focus();
+      return;
+    }
   }
 
   function handleUploadClick() {
@@ -778,7 +809,7 @@ export default function HomePage() {
                   setLang(next);
                   localStorage.setItem('lang', next);
                 }}
-                className="rounded-lg border border-slate-200 bg-white p-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="rounded-lg border border-slate-200 bg-white p-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                 title={lang === 'zh' ? 'Switch to English' : '切换到中文'}
               >
                 <span className="inline-block w-4 text-center">{lang === 'zh' ? 'EN' : '中'}</span>
@@ -799,7 +830,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handleUploadClick}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100"
+                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1"
                 >
                   {t('upload')}
                 </button>
@@ -827,17 +858,25 @@ export default function HomePage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('searchPlaceholder')}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:placeholder:text-slate-400"
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400"
                 />
               </div>
 
-              <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
-                {filteredTemplates.map((item) => (
+              <div
+                ref={templateListRef}
+                className="max-h-[70vh] space-y-2 overflow-auto pr-1"
+                onKeyDown={handleTemplateListKeyDown}
+                role="listbox"
+                aria-label="模板列表"
+              >
+                {filteredTemplates.map((item, idx) => (
                   <button
                     key={item.id}
                     type="button"
+                    data-template-btn
+                    tabIndex={0}
                     onClick={() => handleTemplateSelect(item.id)}
-                    className={`w-full rounded-xl border px-3 py-2 text-left transition ${
+                    className={`w-full rounded-xl border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
                       selectedId === item.id
                         ? 'border-teal-400 bg-teal-50 text-teal-900 dark:bg-teal-900/30 dark:text-teal-300'
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
@@ -978,28 +1017,28 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={handleSaveTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                       {t('save')}
                     </button>
                     <button
                       type="button"
                       onClick={handleExportTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                       {t('exportMd')}
                     </button>
                     <button
                       type="button"
                       onClick={handleShareViaUrl}
-                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
                     >
                       {t('shareLink')}
                     </button>
                     <button
                       type="button"
                       onClick={handleShowQR}
-                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
                     >
                       二维码
                     </button>
@@ -1009,7 +1048,7 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={handleDeleteTemplate}
-                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={selectedTemplate?.source !== 'local'}
                       title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
                     >
@@ -1030,7 +1069,7 @@ export default function HomePage() {
                             <button
                               type="button"
                               onClick={() => removeTag(tag)}
-                              className="ml-0.5 rounded-full hover:text-rose-500"
+                              className="ml-0.5 rounded-full hover:text-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
                             >
                               ×
                             </button>
@@ -1044,12 +1083,12 @@ export default function HomePage() {
                           onChange={(e) => setTagInput(e.target.value)}
                           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); }}}
                           placeholder={t('tagInputPlaceholder')}
-                          className="flex-1 rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none transition focus:border-teal-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500"
+                          className="flex-1 rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400"
                         />
                         <button
                           type="button"
                           onClick={addTag}
-                          className="rounded-lg border border-teal-200 bg-teal-50 px-2 py-1 text-xs text-teal-700 transition hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                          className="rounded-lg border border-teal-200 bg-teal-50 px-2 py-1 text-xs text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
                         >
                           {t('addTag')}
                         </button>
@@ -1060,7 +1099,7 @@ export default function HomePage() {
                   <textarea
                     value={draftMarkdown}
                     rows={14}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:focus:ring-teal-900/50"
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:text-sm"
                     placeholder="在这里临时调整模板内容"
                     onChange={(event) => setDraftMarkdown(event.target.value)}
                   />

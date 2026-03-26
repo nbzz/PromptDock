@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 import { QRCodeSVG } from 'qrcode.react';
 
 interface QRModalProps {
@@ -11,6 +13,23 @@ interface QRModalProps {
 }
 
 export function QRModal({ text, onClose, title, tip, close }: QRModalProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
@@ -29,9 +48,10 @@ export function QRModal({ text, onClose, title, tip, close }: QRModalProps) {
         </div>
         <p className="text-xs text-slate-500 dark:text-slate-400">{tip}</p>
         <button
+          ref={closeButtonRef}
           type="button"
           onClick={onClose}
-          className="mt-1 rounded-lg border border-slate-300 px-4 py-1.5 text-sm text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+          className="mt-1 rounded-lg border border-slate-300 px-4 py-1.5 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           {close}
         </button>
