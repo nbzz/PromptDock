@@ -472,8 +472,8 @@ export default function HomePage() {
         </header>
 
         <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit">
-            <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft">
+          <aside className="space-y-3 lg:sticky lg:top-3 lg:h-fit lg:w-[280px]">
+            <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-slate-800">模板列表</h2>
                 <button
