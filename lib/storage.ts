@@ -4,6 +4,7 @@ const KEY = 'promptpage.templates.v1';
 const BOOKMARK_KEY = 'promptpage.bookmarks.v1';
 
 export type BookmarkMap = Record<string, string>;
+export type TagMap = Record<string, string[]>; // templateId -> tags[]
 
 export function loadLocalTemplates(): StoredTemplate[] {
   if (typeof window === 'undefined') {
@@ -63,4 +64,50 @@ export function removeBookmark(variableName: string): void {
   const bookmarks = loadBookmarks();
   delete bookmarks[variableName];
   window.localStorage.setItem(BOOKMARK_KEY, JSON.stringify(bookmarks));
+}
+
+const TAG_KEY = 'promptpage.tags.v1';
+
+export function loadTags(): TagMap {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = window.localStorage.getItem(TAG_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw) as TagMap;
+  } catch {
+    return {};
+  }
+}
+
+export function saveTags(tags: TagMap): void {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(TAG_KEY, JSON.stringify(tags));
+}
+
+export function setTemplateTags(templateId: string, tagList: string[]): void {
+  const tags = loadTags();
+  tags[templateId] = tagList;
+  saveTags(tags);
+}
+
+export function getTemplateTags(templateId: string): string[] {
+  const tags = loadTags();
+  return tags[templateId] ?? [];
+}
+
+export function addTemplateTag(templateId: string, tag: string): void {
+  const tags = loadTags();
+  if (!tags[templateId]) tags[templateId] = [];
+  if (!tags[templateId].includes(tag)) {
+    tags[templateId].push(tag);
+    saveTags(tags);
+  }
+}
+
+export function removeTemplateTag(templateId: string, tag: string): void {
+  const tags = loadTags();
+  if (tags[templateId]) {
+    tags[templateId] = tags[templateId].filter((t) => t !== tag);
+    saveTags(tags);
+  }
 }

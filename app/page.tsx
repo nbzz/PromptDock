@@ -10,7 +10,7 @@ import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { PLATFORMS } from '@/lib/platforms';
 import { clearHistory, loadHistory, pushHistory } from '@/lib/history';
 import { createClientFallbackStocks } from '@/lib/stocks';
-import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
+import { loadLocalTemplates, saveLocalTemplates, loadTags, saveTags } from '@/lib/storage';
 import {
   buildMarkdownExport,
   parseTemplate,
@@ -191,6 +191,8 @@ export default function HomePage() {
     }
     return 'zh';
   });
+  const [tagInput, setTagInput] = useState('');
+  const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedId, setSelectedId] = useState('');
@@ -606,6 +608,42 @@ export default function HomePage() {
     showNotice('本地模板已删除');
   }
 
+  function getCurrentTags() {
+    if (!selectedId) return [];
+    return templateTags[selectedId] ?? [];
+  }
+
+  function addTag() {
+    const tag = tagInput.trim();
+    if (!tag || !selectedId) return;
+    const current = getCurrentTags();
+    if (current.includes(tag)) {
+      setTagInput('');
+      return;
+    }
+    const next = { ...templateTags, [selectedId]: [...current, tag] };
+    setTemplateTags(next);
+    setTemplateTags((prev) => {
+      const updated = { ...prev, [selectedId]: [...(prev[selectedId] ?? []), tag] };
+      const allTags = loadTags();
+      allTags[selectedId] = updated[selectedId];
+      saveTags(allTags);
+      return updated;
+    });
+    setTagInput('');
+  }
+
+  function removeTag(tag: string) {
+    if (!selectedId) return;
+    setTemplateTags((prev) => {
+      const updated = { ...prev, [selectedId]: (prev[selectedId] ?? []).filter((t) => t !== tag) };
+      const allTags = loadTags();
+      allTags[selectedId] = updated[selectedId];
+      saveTags(allTags);
+      return updated;
+    });
+  }
+
   return (
     <main className="px-3 py-4 sm:px-5 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
@@ -795,15 +833,10 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={handleSaveTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                       保存模板
                     </button>
-                    <button
-                      type="button"
-                      onClick={handleExportTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
-                    >
                       导出 Markdown
                     </button>
                     <button
@@ -824,6 +857,46 @@ export default function HomePage() {
                     </button>
                   </div>
 
+                  {selectedId && (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">标签管理</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {getCurrentTags().map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center gap-1 rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-xs text-teal-700 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                          >
+                            {tag}
+                            <button
+                              type="button"
+                              onClick={() => removeTag(tag)}
+                              className="ml-0.5 rounded-full hover:text-rose-500"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex gap-1">
+                        <input
+                          type="text"
+                          value={tagInput}
+                          onChange={(e) => setTagInput(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); }}}
+                          placeholder="输入标签后按回车"
+                          className="flex-1 rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none transition focus:border-teal-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={addTag}
+                          className="rounded-lg border border-teal-200 bg-teal-50 px-2 py-1 text-xs text-teal-700 transition hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                        >
+                          添加
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   <textarea
                     value={draftMarkdown}
                     rows={14}
@@ -834,8 +907,8 @@ export default function HomePage() {
                 </div>
               </details>
 
-              <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-                <summary className="cursor-pointer select-none font-medium">自动变量（可选）</summary>
+              <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+                <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">自动变量（可选）</summary>
                 <p className="mt-2 leading-5">
                   仅以下变量名会自动填充：
                   {AUTO_FILL_NAMES.map((name) => ` [${name}]`).join('')}
