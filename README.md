@@ -140,6 +140,45 @@ npm run dev
 - PR: [https://github.com/nbzz/PromptDock/pulls](https://github.com/nbzz/PromptDock/pulls)
 - 公共模板投稿邮箱: [tz@ittz.top](mailto:tz@ittz.top)
 
+## AI Usage
+
+PromptDock can be used by AI agents to dynamically fetch and fill prompts.
+
+### List templates
+
+```
+GET /api/prompt?search=股票
+```
+
+### Get template details
+
+```
+GET /api/prompt?id=个股分析
+```
+
+### Fill variables
+
+```
+POST /api/prompt/fill
+Content-Type: application/json
+
+{
+  "id": "个股分析",
+  "values": {
+    "股票名称": "贵州茅台",
+    "日期": "2026-03-26"
+  }
+}
+```
+
+Response:
+```
+{
+  "rendered": "你是一位顶级券商分析师...",
+  "template": { "id": "...", "title": "..." }
+}
+```
+
 ## License
 
 [MIT](./LICENSE)
