@@ -113,6 +113,12 @@ const I18N = {
     addBookmark: '添加书签',
     removeBookmark: '移除书签',
     exportAllData: '导出全部数据',
+    importFromUrl: '从链接导入',
+    importUrlPlaceholder: '粘贴分享链接...',
+    importUrlCancel: '取消',
+    importUrlConfirm: '导入',
+    importSuccessNotice: '已从分享链接导入模板',
+    importFailNotice: '链接无效或已过期',
   },
   en: {
     appTitle: 'PromptDock',
@@ -174,6 +180,12 @@ const I18N = {
     addBookmark: 'Add Bookmark',
     removeBookmark: 'Remove Bookmark',
     exportAllData: 'Export All Data',
+    importFromUrl: 'Import from URL',
+    importUrlPlaceholder: 'Paste share URL...',
+    importUrlCancel: 'Cancel',
+    importUrlConfirm: 'Import',
+    importSuccessNotice: 'Template imported from share URL',
+    importFailNotice: 'Invalid or expired share link',
   },
 } as const;
 
@@ -273,6 +285,17 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [selectedId, setSelectedId] = useState('');
   const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(-1);
   const [batchSelectedIds, setBatchSelectedIds] = useState<Set<string>>(new Set());
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('promptpage.favorites');
+        return stored ? JSON.parse(stored) : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
   const batchStartRef = useRef<number>(-1);
   const templateListRef = useRef<HTMLDivElement>(null);
   const variableFormRef = useRef<VariableFormRef>(null);
@@ -286,6 +309,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [shareCount, setShareCount] = useState<number>(0);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
   const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
+  const [showImportUrl, setShowImportUrl] = useState(false);
+  const [importUrlInput, setImportUrlInput] = useState('');
 
   const [stockMeta, setStockMeta] = useState<{
     count: number;
@@ -319,6 +344,14 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
   const filteredTemplates = useMemo(() => {
     let result = templates;
+    // Sort favorites to top (preserving original relative order within each group)
+    result = [...result].sort((a, b) => {
+      const aFav = favorites.includes(a.id);
+      const bFav = favorites.includes(b.id);
+      if (aFav && !bFav) return -1;
+      if (!aFav && bFav) return 1;
+      return 0;
+    });
     if (filterTab !== 'all') {
       result = result.filter((t) => getTemplateCategory(t) === filterTab);
     }
@@ -331,7 +364,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       );
     }
     return result;
-  }, [templates, searchQuery, filterTab]);
+  }, [templates, searchQuery, filterTab, favorites]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -903,6 +936,14 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
     showNotice(t('deletedNotice'));
   }
 
+  function toggleFavorite(id: string) {
+    setFavorites((prev) => {
+      const next = prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id];
+      localStorage.setItem('promptpage.favorites', JSON.stringify(next));
+      return next;
+    });
+  }
+
   async function copyAndOpenAction(platformKey: string, url: string) {
     if (!rendered.trim()) return;
 
@@ -1138,12 +1179,32 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                         onClick={() => handleTemplateSelect(item.id)}
                         className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 rounded"
                       >
-                        <p className={`truncate text-sm font-medium ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
-                          {item.title}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <p className={`truncate text-sm font-medium ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                            {item.title}
+                          </p>
+                          {favorites.includes(item.id) && (
+                            <span className="shrink-0 text-amber-400 dark:text-amber-300" aria-label="已收藏">
+                              ★
+                            </span>
+                          )}
+                        </div>
                         <p className={`mt-0.5 text-xs ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
                           {item.source === 'builtin' ? t('builtIn') : t('local')}
                         </p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => toggleFavorite(item.id)}
+                        className="shrink-0 self-start rounded-md p-1.5 text-base leading-none transition hover:bg-slate-100 dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+                        aria-label={favorites.includes(item.id) ? '取消收藏' : '收藏'}
+                        title={favorites.includes(item.id) ? '取消收藏' : '收藏'}
+                      >
+                        {favorites.includes(item.id) ? (
+                          <span className="text-amber-400 dark:text-amber-300">★</span>
+                        ) : (
+                          <span className="text-slate-300 dark:text-slate-600">☆</span>
+                        )}
                       </button>
                     </div>
                   );
