@@ -578,7 +578,7 @@ export default function HomePage() {
     const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
     const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
     await navigator.clipboard.writeText(url);
-    showNotice('分享链接已复制');
+    showNotice(t('shareNotice'));
   }
 
   function handleDeleteTemplate() {
@@ -606,7 +606,7 @@ export default function HomePage() {
 
       return next;
     });
-    showNotice('本地模板已删除');
+    showNotice(t('deletedNotice'));
   }
 
   function getCurrentTags() {
