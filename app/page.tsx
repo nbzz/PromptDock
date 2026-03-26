@@ -576,8 +576,8 @@ export default function HomePage() {
     }
     const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
     const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
-    const ok = await navigator.clipboard.writeText(url);
-    showNotice(ok ? '分享链接已复制' : '复制失败，请手动复制');
+    await navigator.clipboard.writeText(url);
+    showNotice('分享链接已复制');
   }
 
   function handleDeleteTemplate() {
@@ -837,6 +837,11 @@ export default function HomePage() {
                     >
                       保存模板
                     </button>
+                    <button
+                      type="button"
+                      onClick={handleExportTemplate}
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                    >
                       导出 Markdown
                     </button>
                     <button
