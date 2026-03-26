@@ -111,3 +111,32 @@ export function removeTemplateTag(templateId: string, tag: string): void {
     saveTags(tags);
   }
 }
+
+export interface BackupData {
+  version: number;
+  exportedAt: string;
+  templates: StoredTemplate[];
+  bookmarks: BookmarkMap;
+  tags: TagMap;
+}
+
+export function exportAllData(): BackupData {
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    templates: loadLocalTemplates(),
+    bookmarks: loadBookmarks(),
+    tags: loadTags(),
+  };
+}
+
+export function downloadBackup(data: BackupData): void {
+  const filename = `promptdock-backup-${data.exportedAt.slice(0, 10)}.json`;
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 200);
+}

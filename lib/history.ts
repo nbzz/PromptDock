@@ -1,7 +1,7 @@
 import { PromptHistoryEntry } from '@/lib/types';
 
 const KEY = 'promptpage.history.v1';
-const LIMIT = 20;
+const LIMIT = 50;
 
 export function loadHistory(): PromptHistoryEntry[] {
   if (typeof window === 'undefined') {

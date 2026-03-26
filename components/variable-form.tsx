@@ -1,6 +1,6 @@
 'use client';
 
-import { KeyboardEvent, useState } from 'react';
+import { forwardRef, KeyboardEvent, useImperativeHandle, useState } from 'react';
 
 import { StockInput } from '@/components/stock-input';
 import { BookmarkMap, loadBookmarks, removeBookmark, saveBookmark } from '@/lib/storage';
@@ -19,6 +19,11 @@ interface VariableFormProps {
     addBookmark: string;
     removeBookmark: string;
   };
+}
+
+export interface VariableFormRef {
+  validate: () => string[];
+  clearValidation: () => void;
 }
 
 const DEFAULT_VARIABLE_FORM_LABELS = {
@@ -69,9 +74,24 @@ function BookmarkIcon({ filled }: { filled: boolean }) {
   );
 }
 
-export function VariableForm({ variables, values, stocks, stockStatusText, onChange, labels }: VariableFormProps) {
+export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(function VariableForm({ variables, values, stocks, stockStatusText, onChange, labels }, ref) {
   const t = { ...DEFAULT_VARIABLE_FORM_LABELS, ...labels };
   const [bookmarks, setBookmarks] = useState<BookmarkMap>(() => loadBookmarks());
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
+
+  useImperativeHandle(ref, () => ({
+    validate: () => {
+      const missing: string[] = [];
+      for (const v of variables) {
+        if (v.required && !values[v.name]?.trim()) {
+          missing.push(v.name);
+        }
+      }
+      setInvalidFields(new Set(missing));
+      return missing;
+    },
+    clearValidation: () => setInvalidFields(new Set()),
+  }), [variables, values]);
 
   const handleSaveBookmark = (name: string, val: string) => {
     if (!val.trim()) return;
@@ -131,6 +151,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
           const value = values[variable.name] ?? '';
           const label = variable.required ? `${variable.name} *` : variable.name;
           const isBookmarked = !!bookmarks[variable.name];
+          const isInvalid = invalidFields.has(variable.name);
 
           return (
             <div key={variable.id} className="space-y-1.5">

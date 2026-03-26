@@ -13,7 +13,7 @@ import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { PLATFORMS } from '@/lib/platforms';
 import { clearHistory, loadHistory, pushHistory } from '@/lib/history';
 import { createClientFallbackStocks } from '@/lib/stocks';
-import { loadLocalTemplates, saveLocalTemplates, loadTags, saveTags } from '@/lib/storage';
+import { loadLocalTemplates, saveLocalTemplates, loadTags, saveTags, exportAllData, downloadBackup } from '@/lib/storage';
 import {
   buildMarkdownExport,
   parseTemplate,
@@ -111,6 +111,7 @@ const I18N = {
     bookmarkFill: '书签快速填充',
     addBookmark: '添加书签',
     removeBookmark: '移除书签',
+    exportAllData: '导出全部数据',
   },
   en: {
     appTitle: 'PromptDock',
@@ -171,6 +172,7 @@ const I18N = {
     bookmarkFill: 'Bookmark Quick Fill',
     addBookmark: 'Add Bookmark',
     removeBookmark: 'Remove Bookmark',
+    exportAllData: 'Export All Data',
   },
 } as const;
 
@@ -772,6 +774,11 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
     showNotice(t('exportedNotice'));
   }
 
+  function handleExportAllData() {
+    const data = exportAllData();
+    downloadBackup(data);
+  }
+
   async function handleShareViaUrl() {
     if (!parsed) {
       return;
@@ -1284,6 +1291,13 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                       title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
                     >
                       {t('delete')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleExportAllData}
+                      className="min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:text-xs sm:py-1.5 sm:min-h-0"
+                    >
+                      {t('exportAllData')}
                     </button>
                   </div>
 
