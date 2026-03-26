@@ -7,6 +7,7 @@ import { PlatformActions } from '@/components/platform-actions';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
+import { PLATFORMS } from '@/lib/platforms';
 import { clearHistory, loadHistory, pushHistory } from '@/lib/history';
 import { createClientFallbackStocks } from '@/lib/stocks';
 import { loadLocalTemplates, saveLocalTemplates } from '@/lib/storage';
@@ -461,6 +462,19 @@ export default function HomePage() {
     window.setTimeout(() => setNotice(''), 1800);
   }
 
+  function notifyBrowser(title: string, body: string) {
+    if (typeof window === 'undefined') return;
+    if (Notification.permission === 'granted') {
+      new Notification(title, { body, icon: '/icon.svg' });
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then((perm) => {
+        if (perm === 'granted') {
+          new Notification(title, { body, icon: '/icon.svg' });
+        }
+      });
+    }
+  }
+
   function handleTemplateSelect(id: string) {
     setSelectedId(id);
   }
@@ -741,6 +755,10 @@ export default function HomePage() {
                   platformKey: action.platformKey
                 };
                 setHistory(pushHistory(entry));
+                const platformName = action.platformKey
+                  ? PLATFORMS.find((p) => p.key === action.platformKey)?.name ?? ''
+                  : '剪贴板';
+                notifyBrowser('已复制到' + platformName, `「${selectedTemplate.title}」已${action.type === 'copy_only' ? '复制' : '复制并准备跳转'}`);
               }}
             />
 
