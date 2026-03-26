@@ -52,7 +52,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+    <section className="variable-form-section rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
       <div className="mb-3 flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <h3 className="text-sm font-semibold text-slate-800">变量填写</h3>
         {stockStatusText ? <p className="text-xs text-slate-500">{stockStatusText}</p> : null}

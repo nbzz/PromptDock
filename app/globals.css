@@ -39,6 +39,11 @@ body {
 
 main {
   min-height: 100vh;
+  contain: layout;
+}
+
+.variable-form-section {
+  contain: layout;
 }
 
 textarea,
