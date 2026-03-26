@@ -15,6 +15,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}var l=localStorage.getItem('lang');if(l==='en'){document.documentElement.lang='en';}})()`
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
