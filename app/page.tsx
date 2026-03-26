@@ -243,7 +243,30 @@ export default function HomePage() {
   const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterTab, setFilterTab] = useState<'all' | 'builtin' | 'local'>('all');
+  type FilterTab = 'all' | 'financial' | 'news' | 'writing' | 'other';
+const [filterTab, setFilterTab] = useState<FilterTab>('all');
+
+const CATEGORY_LABELS: Record<FilterTab, string> = {
+  all: '全部',
+  financial: '金融分析',
+  news: '新闻资讯',
+  writing: '写作创作',
+  other: '其他',
+};
+
+const FINANCIAL_KEYWORDS = ['审计', '财务', '竞争', 'comps', 'dcf', 'lbo', '杠杆', '宏观', '建模', '三表', '企业竞争', '个股', '分析报告', '现金流折现', '数据清洗'];
+const NEWS_KEYWORDS = ['新闻', '财经新闻'];
+const WRITING_KEYWORDS = ['报告转', '网页', '体育营销', '学术论文', '论文结构化', '西甲', '提示词生成', '提示词压缩', '品牌体育'];
+
+function getTemplateCategory(item: StoredTemplate): FilterTab {
+  const title = item.title.toLowerCase();
+  const desc = (item.rawMarkdown.match(/description:\s*(.+)/i)?.[1] ?? '').toLowerCase();
+
+  if (FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'financial';
+  if (NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'news';
+  if (WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'writing';
+  return 'other';
+}
   const [selectedId, setSelectedId] = useState('');
   const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(-1);
   const [batchSelectedIds, setBatchSelectedIds] = useState<Set<string>>(new Set());
@@ -290,7 +313,7 @@ export default function HomePage() {
   const filteredTemplates = useMemo(() => {
     let result = templates;
     if (filterTab !== 'all') {
-      result = result.filter((t) => t.source === filterTab);
+      result = result.filter((t) => getTemplateCategory(t) === filterTab);
     }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -947,21 +970,23 @@ export default function HomePage() {
                 />
               </div>
 
-              <div className="mb-3 flex gap-2">
-                {(['all', 'builtin', 'local'] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setFilterTab(tab)}
-                    className={`flex-1 min-h-[44px] rounded-lg px-3 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
-                      filterTab === tab
-                        ? 'border-b-2 border-teal-500 bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'
-                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    {tab === 'all' ? '全部' : tab === 'builtin' ? '内置' : '本地'}
-                  </button>
-                ))}
+              <div className="mb-3 -mx-1 overflow-x-auto px-1">
+                <div className="flex gap-1.5 min-w-max">
+                  {(Object.keys(CATEGORY_LABELS) as FilterTab[]).map((tab) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setFilterTab(tab)}
+                      className={`min-h-[44px] shrink-0 rounded-lg px-3 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
+                        filterTab === tab
+                          ? 'border-b-2 border-teal-500 bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'
+                          : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      {CATEGORY_LABELS[tab]}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div
