@@ -4,7 +4,7 @@ variables:
   目标公司:
     type: stock
     required: true
-    placeholder: 输入股票代码或名称，如：贵州茅台、腾讯、美国队长
+    placeholder: 输入股票代码或名称，如：贵州茅台
   可比公司列表:
     type: textarea
     required: true

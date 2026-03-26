@@ -4,7 +4,7 @@ variables:
   公司名称:
     type: stock
     required: true
-    placeholder: 输入股票代码或名称，如：贵州茅台、腾讯、美国队长
+    placeholder: 输入股票代码或名称，如：贵州茅台
   分析日期:
     autoFill: date
   预测年数:

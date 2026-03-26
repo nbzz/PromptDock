@@ -4,7 +4,7 @@ variables:
   收购标的:
     type: stock
     required: true
-    placeholder: 输入股票代码或名称，如：贵州茅台、腾讯、美国队长
+    placeholder: 输入股票代码或名称，如：贵州茅台
   收购价格:
     type: text
     required: true

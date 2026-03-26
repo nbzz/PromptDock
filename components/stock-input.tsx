@@ -77,7 +77,7 @@ export function StockInput({
         data-field-index={fieldIndex}
         value={value}
         placeholder={placeholder ?? '输入股票代码或名称，例如寒武纪，小米，nvda等'}
-        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-500"
+        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400"
         autoComplete="off"
         enterKeyHint="next"
         onFocus={() => setOpen(true)}
