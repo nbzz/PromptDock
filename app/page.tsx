@@ -2,6 +2,8 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
+import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
+
 import { HistoryPanel } from '@/components/history-panel';
 import { PlatformActions } from '@/components/platform-actions';
 import { QRModal } from '@/components/qr-modal';
@@ -305,7 +307,11 @@ export default function HomePage() {
       // If shared template in URL, load it
       if (shareData) {
         try {
-          const markdown = decodeURIComponent(escape(atob(shareData)));
+          const markdown = decompressFromEncodedURIComponent(shareData);
+          if (!markdown) {
+            showNotice('分享链接无效');
+            return;
+          }
           const sharedTemplate: StoredTemplate = {
             id: `shared:${Date.now()}`,
             title: '分享的模板',
@@ -586,8 +592,8 @@ export default function HomePage() {
     if (!parsed) {
       return;
     }
-    const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
-    const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
+    const compressed = compressToEncodedURIComponent(draftMarkdown);
+    const url = `${window.location.origin}${window.location.pathname}?t=${compressed}`;
     try {
       await navigator.clipboard.writeText(url);
       const next = shareCount + 1;
@@ -609,9 +615,8 @@ export default function HomePage() {
       return;
     }
     try {
-      const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
-      const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
-      // QR code has a ~4296 char limit; if URL too long, show warning
+      const compressed = compressToEncodedURIComponent(draftMarkdown);
+      const url = `${window.location.origin}${window.location.pathname}?t=${compressed}`;
       if (url.length > 2000) {
         alert('⚠️ 模板内容过长，无法生成二维码\n\n请改用「分享链接」功能，将链接复制给对方');
         return;

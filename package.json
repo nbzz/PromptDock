@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
+    "lz-string": "^1.5.0",
     "next": "^15.1.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
