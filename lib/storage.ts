@@ -2,9 +2,17 @@ import { StoredTemplate } from '@/lib/types';
 
 const KEY = 'promptpage.templates.v1';
 const BOOKMARK_KEY = 'promptpage.bookmarks.v1';
+const BOOKMARK_META_KEY = 'promptpage.bookmarks.meta.v1';
 
 export type BookmarkMap = Record<string, string>;
 export type TagMap = Record<string, string[]>; // templateId -> tags[]
+
+export interface BookmarkMeta {
+  value: string;
+  savedAt: number;
+}
+
+export type BookmarkMetaMap = Record<string, BookmarkMeta>;
 
 export function loadLocalTemplates(): StoredTemplate[] {
   if (typeof window === 'undefined') {
@@ -52,11 +60,31 @@ export function loadBookmarks(): BookmarkMap {
   }
 }
 
+export function loadBookmarkMeta(): BookmarkMetaMap {
+  if (typeof window === 'undefined') {
+    return {};
+  }
+  try {
+    const raw = window.localStorage.getItem(BOOKMARK_META_KEY);
+    if (!raw) {
+      return {};
+    }
+    return JSON.parse(raw) as BookmarkMetaMap;
+  } catch {
+    return {};
+  }
+}
+
 export function saveBookmark(variableName: string, value: string): void {
   if (typeof window === 'undefined') return;
   const bookmarks = loadBookmarks();
   bookmarks[variableName] = value;
   window.localStorage.setItem(BOOKMARK_KEY, JSON.stringify(bookmarks));
+
+  // Also save meta with timestamp
+  const meta = loadBookmarkMeta();
+  meta[variableName] = { value, savedAt: Date.now() };
+  window.localStorage.setItem(BOOKMARK_META_KEY, JSON.stringify(meta));
 }
 
 export function removeBookmark(variableName: string): void {
@@ -64,6 +92,10 @@ export function removeBookmark(variableName: string): void {
   const bookmarks = loadBookmarks();
   delete bookmarks[variableName];
   window.localStorage.setItem(BOOKMARK_KEY, JSON.stringify(bookmarks));
+
+  const meta = loadBookmarkMeta();
+  delete meta[variableName];
+  window.localStorage.setItem(BOOKMARK_META_KEY, JSON.stringify(meta));
 }
 
 const TAG_KEY = 'promptpage.tags.v1';

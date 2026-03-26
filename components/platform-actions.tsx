@@ -9,6 +9,7 @@ interface PlatformActionsProps {
   content: string;
   onAction?: (action: { type: 'copy_only' | 'copy_and_open'; platformKey?: string }) => void;
   onCopyAndOpen?: (platformKey: string, url: string) => void;
+  onBeforeCopy?: () => boolean;
   labels?: {
     title: string;
     copyOnly: string;
@@ -53,7 +54,7 @@ const DEFAULT_LABELS = {
   openWithoutCopyNotice: '已跳转（复制失败）',
 };
 
-export function PlatformActions({ content, onAction, onCopyAndOpen, labels }: PlatformActionsProps) {
+export function PlatformActions({ content, onAction, onCopyAndOpen, onBeforeCopy, labels }: PlatformActionsProps) {
   const t = { ...DEFAULT_LABELS, ...labels };
   const [notice, setNotice] = useState('');
 
@@ -63,6 +64,7 @@ export function PlatformActions({ content, onAction, onCopyAndOpen, labels }: Pl
   }
 
   async function copyOnly() {
+    if (onBeforeCopy && !onBeforeCopy()) return;
     const ok = await copyText(content);
     if (ok) {
       onAction?.({ type: 'copy_only' });
@@ -80,6 +82,7 @@ export function PlatformActions({ content, onAction, onCopyAndOpen, labels }: Pl
   }
 
   function handleCopyAndOpen(platformKey: string, url: string) {
+    if (onBeforeCopy && !onBeforeCopy()) return;
     if (onCopyAndOpen) {
       onCopyAndOpen(platformKey, url);
     } else {

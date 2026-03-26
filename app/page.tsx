@@ -4,11 +4,12 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
 
+import { BookmarkPanel } from '@/components/bookmark-panel';
 import { HistoryPanel } from '@/components/history-panel';
 import { PlatformActions } from '@/components/platform-actions';
 import { QRModal } from '@/components/qr-modal';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
-import { VariableForm } from '@/components/variable-form';
+import { VariableForm, VariableFormRef } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { PLATFORMS } from '@/lib/platforms';
 import { clearHistory, loadHistory, pushHistory } from '@/lib/history';
@@ -274,6 +275,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [batchSelectedIds, setBatchSelectedIds] = useState<Set<string>>(new Set());
   const batchStartRef = useRef<number>(-1);
   const templateListRef = useRef<HTMLDivElement>(null);
+  const variableFormRef = useRef<VariableFormRef>(null);
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
@@ -282,6 +284,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [qrModalText, setQrModalText] = useState('');
   const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
   const [shareCount, setShareCount] = useState<number>(0);
+  const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
+  const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
 
   const [stockMeta, setStockMeta] = useState<{
     count: number;
@@ -721,10 +725,19 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       return;
     }
 
-    if (selectedTemplate.source === 'builtin') {
+    // Show confirmation dialog first
+    setSaveConfirmDialog({ template: selectedTemplate, draftMarkdown });
+  }
+
+  function confirmSave() {
+    const dialog = saveConfirmDialog;
+    if (!dialog) return;
+    const { template } = dialog;
+
+    if (template.source === 'builtin') {
       const copied: StoredTemplate = {
         id: `local:${crypto.randomUUID()}`,
-        title: `${selectedTemplate.title}-副本`,
+        title: `${template.title}-副本`,
         rawMarkdown: draftMarkdown,
         source: 'local',
         updatedAt: Date.now()
@@ -737,12 +750,13 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       });
       setSelectedId(copied.id);
       showNotice(t('savedAsCopyNotice'));
+      setSaveConfirmDialog(null);
       return;
     }
 
     setTemplates((previous) => {
       const next = previous.map((item) => {
-        if (item.id !== selectedTemplate.id) {
+        if (item.id !== template.id) {
           return item;
         }
 
@@ -756,6 +770,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       return next;
     });
     showNotice(t('savedNotice'));
+    setSaveConfirmDialog(null);
   }
 
   function handleExportTemplate() {
@@ -890,6 +905,13 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
   async function copyAndOpenAction(platformKey: string, url: string) {
     if (!rendered.trim()) return;
+
+    // Validate required fields before copying
+    const missing = variableFormRef.current?.validate() ?? [];
+    if (missing.length > 0) {
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(rendered);
     } catch {
@@ -1170,6 +1192,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
           <section className="flex-1 space-y-3">
             <VariableForm
+              ref={variableFormRef}
               variables={parsed?.variables ?? []}
               values={values}
               stocks={stocks}
@@ -1191,6 +1214,10 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
             <PlatformActions
               content={rendered}
+              onBeforeCopy={() => {
+                const missing = variableFormRef.current?.validate() ?? [];
+                return missing.length === 0;
+              }}
               onAction={(action) => {
                 if (!selectedTemplate || !rendered.trim()) {
                   return;
@@ -1294,6 +1321,13 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                     </button>
                     <button
                       type="button"
+                      onClick={() => setBookmarkPanelOpen(true)}
+                      className="min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:text-xs sm:py-1.5 sm:min-h-0"
+                    >
+                      {lang === 'zh' ? '管理书签' : 'Manage Bookmarks'}
+                    </button>
+                    <button
+                      type="button"
                       onClick={handleExportAllData}
                       className="min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:text-xs sm:py-1.5 sm:min-h-0"
                     >
@@ -1393,6 +1427,55 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
             close={t('close')}
           />
         )}
+        {bookmarkPanelOpen && (
+          <BookmarkPanel
+            onClose={() => setBookmarkPanelOpen(false)}
+            onUpdate={() => {}}
+            lang={lang}
+          />
+        )}
+        {saveConfirmDialog && (() => {
+          const { template, draftMarkdown } = saveConfirmDialog;
+          const preview = draftMarkdown.slice(0, 100);
+          const varCount = parsed?.variables.length ?? 0;
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+                <h3 className="mb-4 text-base font-semibold text-slate-800 dark:text-slate-200">确认保存模板</h3>
+                <div className="mb-4 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <span className="shrink-0 rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">名称</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300">{template.title}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="shrink-0 rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">变量</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300">{varCount} 个变量</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="shrink-0 rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">预览</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300 break-all">{preview}{draftMarkdown.length > 100 ? '...' : ''}</span>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSaveConfirmDialog(null)}
+                    className="min-h-[44px] rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:text-xs sm:py-1.5 sm:min-h-0"
+                  >
+                    取消
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmSave}
+                    className="min-h-[44px] rounded-lg border border-teal-200 bg-teal-50 px-4 py-2 text-sm text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300 sm:text-xs sm:py-1.5 sm:min-h-0"
+                  >
+                    确认保存
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </main>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, KeyboardEvent, useImperativeHandle, useState } from 'react';
+import { forwardRef, KeyboardEvent, useEffect, useImperativeHandle, useState } from 'react';
 
 import { StockInput } from '@/components/stock-input';
 import { BookmarkMap, loadBookmarks, removeBookmark, saveBookmark } from '@/lib/storage';
@@ -79,6 +79,15 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
   const [bookmarks, setBookmarks] = useState<BookmarkMap>(() => loadBookmarks());
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
 
+  // Listen for bookmark changes from BookmarkPanel
+  useEffect(() => {
+    function handleBookmarksChanged() {
+      setBookmarks(loadBookmarks());
+    }
+    window.addEventListener('bookmarks-changed', handleBookmarksChanged);
+    return () => window.removeEventListener('bookmarks-changed', handleBookmarksChanged);
+  }, []);
+
   useImperativeHandle(ref, () => ({
     validate: () => {
       const missing: string[] = [];
@@ -97,11 +106,13 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
     if (!val.trim()) return;
     saveBookmark(name, val);
     setBookmarks(loadBookmarks());
+    window.dispatchEvent(new CustomEvent('bookmarks-changed'));
   };
 
   const handleRemoveBookmark = (name: string) => {
     removeBookmark(name);
     setBookmarks(loadBookmarks());
+    window.dispatchEvent(new CustomEvent('bookmarks-changed'));
   };
 
   const handleFillBookmark = (name: string, val: string) => {
@@ -190,7 +201,11 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                   rows={3}
                   value={value}
                   placeholder={variable.placeholder ?? ''}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
+                  className={`w-full rounded-xl border px-4 py-3 text-base outline-none transition sm:px-3 sm:py-2 sm:text-sm ${
+                    isInvalid
+                      ? 'border-rose-400 focus-visible:border-rose-500 focus-visible:ring-rose-200 dark:border-rose-500 dark:focus-visible:border-rose-400 dark:focus-visible:ring-rose-400'
+                      : 'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200'
+                  }`}
                   onKeyDown={(event) => handleEnterToNext(event, index, true)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
@@ -201,7 +216,11 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                   id={`var-${variable.id}`}
                   data-field-index={index}
                   value={value}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:py-2 sm:text-sm min-h-[48px]"
+                  className={`w-full rounded-xl border px-3 py-3 text-base outline-none transition sm:py-2 sm:text-sm min-h-[48px] ${
+                    isInvalid
+                      ? 'border-rose-400 focus-visible:border-rose-500 focus-visible:ring-rose-200 dark:border-rose-500 dark:focus-visible:border-rose-400 dark:focus-visible:ring-rose-400 dark:bg-slate-800 dark:text-slate-200'
+                      : 'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200'
+                  }`}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 >
                   <option value="">请选择</option>
@@ -224,7 +243,11 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                   value={value}
                   enterKeyHint="next"
                   placeholder={variable.placeholder ?? ''}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
+                  className={`w-full rounded-xl border px-4 py-3 text-base outline-none transition sm:px-3 sm:py-2 sm:text-sm ${
+                    isInvalid
+                      ? 'border-rose-400 focus-visible:border-rose-500 focus-visible:ring-rose-200 dark:border-rose-500 dark:focus-visible:border-rose-400 dark:focus-visible:ring-rose-400 dark:bg-slate-800 dark:text-slate-200'
+                      : 'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200'
+                  }`}
                   onKeyDown={(event) => handleEnterToNext(event, index)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
@@ -235,6 +258,12 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
           );
         })}
       </div>
+
+      {invalidFields.size > 0 && (
+        <p className="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700 dark:border-rose-700 dark:bg-rose-900/30 dark:text-rose-400">
+          请填写必填字段：{Array.from(invalidFields).join('、')}
+        </p>
+      )}
     </section>
   );
-}
+});
