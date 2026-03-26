@@ -189,6 +189,10 @@ export default function HomePage() {
     async function loadInitialData() {
       const localTemplates = loadLocalTemplates();
 
+      // Check for shared template in URL
+      const params = new URLSearchParams(window.location.search);
+      const shareData = params.get('t');
+
       let builtinTemplates: StoredTemplate[] = [];
       try {
         const response = await fetch('/api/builtin-templates');
@@ -204,6 +208,29 @@ export default function HomePage() {
 
       const merged = mergeTemplates(builtinTemplates, localTemplates);
       setTemplates(merged);
+
+      // If shared template in URL, load it
+      if (shareData) {
+        try {
+          const markdown = decodeURIComponent(escape(atob(shareData)));
+          const sharedTemplate: StoredTemplate = {
+            id: `shared:${Date.now()}`,
+            title: '分享的模板',
+            rawMarkdown: markdown,
+            source: 'local',
+            updatedAt: Date.now()
+          };
+          setTemplates((prev) => mergeTemplates([], [sharedTemplate, ...prev]));
+          setSelectedId(sharedTemplate.id);
+          setDraftMarkdown(markdown);
+          showNotice('已加载分享的模板');
+          // Clear URL param
+          window.history.replaceState({}, '', window.location.pathname);
+          return;
+        } catch {
+          showNotice('分享链接无效');
+        }
+      }
 
       const preferred = pickPreferredTemplate(merged);
       if (preferred) {
@@ -442,6 +469,16 @@ export default function HomePage() {
     showNotice('模板已导出为 Markdown');
   }
 
+  async function handleShareViaUrl() {
+    if (!parsed) {
+      return;
+    }
+    const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
+    const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
+    const ok = await navigator.clipboard.writeText(url);
+    showNotice(ok ? '分享链接已复制' : '复制失败，请手动复制');
+  }
+
   function handleDeleteTemplate() {
     if (!selectedTemplate) {
       return;
@@ -651,9 +688,16 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={handleExportTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                       导出 Markdown
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleShareViaUrl}
+                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                    >
+                      分享链接
                     </button>
                     <button
                       type="button"
