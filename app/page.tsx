@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { HistoryPanel } from '@/components/history-panel';
 import { PlatformActions } from '@/components/platform-actions';
+import { QRModal } from '@/components/qr-modal';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { VariableForm } from '@/components/variable-form';
 import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
@@ -202,7 +203,10 @@ export default function HomePage() {
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
   const [noticeKey, setNoticeKey] = useState(0);
+  const [qrModalText, setQrModalText] = useState('');
   const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
+  const [shareCount, setShareCount] = useState<number>(0);
+
   const [stockMeta, setStockMeta] = useState<{
     count: number;
     updatedAt: string;
@@ -376,6 +380,13 @@ export default function HomePage() {
 
   useEffect(() => {
     setHistory(loadHistory());
+  }, []);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('shareCount');
+    if (stored) {
+      setShareCount(parseInt(stored, 10));
+    }
   }, []);
 
   useEffect(() => {
@@ -578,6 +589,9 @@ export default function HomePage() {
     const data = btoa(unescape(encodeURIComponent(draftMarkdown)));
     const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
     await navigator.clipboard.writeText(url);
+    const next = shareCount + 1;
+    setShareCount(next);
+    localStorage.setItem('shareCount', String(next));
     showNotice(t('shareNotice'));
   }
 
@@ -852,6 +866,9 @@ export default function HomePage() {
                     >
                       {t('shareLink')}
                     </button>
+                    <span className="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                      已生成 {shareCount} 个分享链接
+                    </span>
                     <button
                       type="button"
                       onClick={handleDeleteTemplate}
