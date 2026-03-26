@@ -865,7 +865,7 @@ export default function HomePage() {
                   setLang(next);
                   localStorage.setItem('lang', next);
                 }}
-                className="rounded-lg border border-slate-200 bg-white p-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="min-h-[44px] min-w-[44px] rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                 title={lang === 'zh' ? 'Switch to English' : '切换到中文'}
               >
                 <span className="inline-block w-4 text-center">{lang === 'zh' ? 'EN' : '中'}</span>
@@ -886,10 +886,19 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handleUploadClick}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] min-w-[44px]"
+                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1"
                 >
                   {t('upload')}
                 </button>
+                <input
+                  ref={inputRef}
+                  type="file"
+                  accept=".md,text/markdown"
+                  className="hidden"
+                  onChange={(event) => {
+                    void handleFileUpload(event);
+                  }}
+                />
               </div>
 
               {batchSelectedIds.size > 0 && (
@@ -920,16 +929,6 @@ export default function HomePage() {
                   </button>
                 </div>
               )}
-                <input
-                  ref={inputRef}
-                  type="file"
-                  accept=".md,text/markdown"
-                  className="hidden"
-                  onChange={(event) => {
-                    void handleFileUpload(event);
-                  }}
-                />
-              </div>
 
               <p className="mb-3 break-words text-xs leading-5 text-slate-500">
                 {t('templateNotice1')}

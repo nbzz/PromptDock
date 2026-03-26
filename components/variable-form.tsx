@@ -180,7 +180,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   id={`var-${variable.id}`}
                   data-field-index={index}
                   value={value}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:text-sm"
+                  className="w-full rounded-xl border border-slate-300 px-3 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:py-2 sm:text-sm min-h-[48px]"
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 >
                   <option value="">请选择</option>
