@@ -120,7 +120,7 @@ export function StockInput({
       />
 
       {open && results.length > 0 ? (
-        <div className="absolute z-20 mt-2 max-h-80 w-full overflow-auto rounded-xl border border-slate-200 bg-white shadow-soft dark:border-slate-700 dark:bg-slate-900">
+        <div className="absolute z-20 mt-2 max-h-80 w-full overflow-auto rounded-xl border border-slate-200 bg-white shadow-soft dark:border-slate-700 dark:bg-slate-800">
           {results.map((entry, index) => (
             <button
               key={`${entry.item.market}:${entry.item.code}`}

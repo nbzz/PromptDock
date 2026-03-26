@@ -708,6 +708,48 @@ export default function HomePage() {
     }
   }
 
+  function handleBatchDelete() {
+    const count = batchSelectedIds.size;
+    if (count === 0) return;
+
+    const ok = window.confirm(
+      t('batchDeleteConfirm').replace('{count}', String(count))
+    );
+    if (!ok) return;
+
+    setTemplates((previous) => {
+      const next = previous.filter((item) => !batchSelectedIds.has(item.id));
+      saveLocalTemplates(getLocalTemplates(next));
+      return next;
+    });
+
+    setBatchSelectedIds(new Set());
+    showNotice(t('deletedNotice'));
+  }
+
+  function handleBatchSelect(id: string) {
+    setBatchSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  function handleBatchSelectAll() {
+    const localIds = filteredTemplates
+      .filter((t) => t.source === 'local')
+      .map((t) => t.id);
+    setBatchSelectedIds(new Set(localIds));
+  }
+
+  function handleBatchDeselectAll() {
+    setBatchSelectedIds(new Set());
+  }
+
   function handleDeleteTemplate() {
     if (!selectedTemplate) {
       return;
@@ -844,10 +886,40 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handleUploadClick}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1"
+                  className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] min-w-[44px]"
                 >
                   {t('upload')}
                 </button>
+              </div>
+
+              {batchSelectedIds.size > 0 && (
+                <div className="mb-3 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 dark:border-rose-800 dark:bg-rose-900/30">
+                  <span className="text-xs text-rose-700 dark:text-rose-300">
+                    {batchSelectedIds.size}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleBatchDeselectAll}
+                    className="text-xs text-slate-600 underline hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+                  >
+                    {t('deselectAll')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleBatchSelectAll}
+                    className="text-xs text-slate-600 underline hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+                  >
+                    {t('selectAll')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleBatchDelete}
+                    className="ml-auto rounded-lg border border-rose-300 bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-1 dark:border-rose-700 dark:bg-rose-900 dark:text-rose-300 dark:hover:bg-rose-800"
+                  >
+                    {t('batchDelete')}
+                  </button>
+                </div>
+              )}
                 <input
                   ref={inputRef}
                   type="file"
@@ -872,17 +944,17 @@ export default function HomePage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('searchPlaceholder')}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
                 />
               </div>
 
-              <div className="mb-3 flex gap-1">
+              <div className="mb-3 flex gap-2">
                 {(['all', 'builtin', 'local'] as const).map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setFilterTab(tab)}
-                    className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
+                    className={`flex-1 min-h-[44px] rounded-lg px-3 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
                       filterTab === tab
                         ? 'border-b-2 border-teal-500 bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'
                         : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
@@ -900,25 +972,49 @@ export default function HomePage() {
                 role="listbox"
                 aria-label="模板列表"
               >
-                {filteredTemplates.map((item, idx) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    data-template-btn
-                    tabIndex={0}
-                    onClick={() => handleTemplateSelect(item.id)}
-                    className={`w-full rounded-xl border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
-                      selectedId === item.id
-                        ? 'border-teal-400 bg-teal-50 text-teal-900 dark:bg-teal-900/30 dark:text-teal-300'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <p className="truncate text-sm font-medium">{item.title}</p>
-                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                      {item.source === 'builtin' ? t('builtIn') : t('local')}
-                    </p>
-                  </button>
-                ))}
+                {filteredTemplates.map((item, idx) => {
+                  const isLocal = item.source === 'local';
+                  const isChecked = batchSelectedIds.has(item.id);
+                  const isSelected = selectedId === item.id;
+
+                  return (
+                    <div
+                      key={item.id}
+                      className={`flex items-center gap-2 rounded-xl border px-3 py-2 min-h-[60px] transition focus-within:ring-2 focus-within:ring-teal-400 focus-within:ring-offset-1 ${
+                        isSelected
+                          ? 'border-teal-400 bg-teal-50 dark:bg-teal-900/30'
+                          : isChecked && isLocal
+                            ? 'border-teal-400 bg-teal-50/50 dark:bg-teal-900/20'
+                            : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800'
+                      }`}
+                    >
+                      {isLocal ? (
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => handleBatchSelect(item.id)}
+                          className="h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:ring-teal-400 dark:border-slate-600"
+                        />
+                      ) : (
+                        <span className="h-4 w-4 shrink-0 rounded border border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-700" />
+                      )}
+                      <button
+                        type="button"
+                        data-template-btn
+                        tabIndex={0}
+                        onClick={() => handleTemplateSelect(item.id)}
+                        className="min-w-0 flex-1 text-left"
+                      >
+                        <p className={`truncate text-sm font-medium ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                          {item.title}
+                        </p>
+                        <p className={`mt-0.5 text-xs ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                          {item.source === 'builtin' ? t('builtIn') : t('local')}
+                        </p>
+                      </button>
+                    </div>
+                  );
+                })}
 
                 {templates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">

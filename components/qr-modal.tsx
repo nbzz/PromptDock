@@ -37,7 +37,7 @@ export function QRModal({ text, onClose, title, tip, close }: QRModalProps) {
     >
       <div className="flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
         <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{title}</p>
-        <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
           <QRCodeSVG
             value={text}
             size={200}
