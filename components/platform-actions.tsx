@@ -61,13 +61,13 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold text-slate-800">快捷动作（复制并跳转）</h3>
+        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">快捷动作（复制并跳转）</h3>
         <button
           type="button"
           onClick={copyOnly}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 sm:py-1.5 sm:text-xs"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:py-1.5 sm:text-xs"
         >
           <span>仅复制</span>
         </button>
@@ -79,7 +79,7 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
             key={platform.key}
             type="button"
             title={`${platform.name}（复制并跳转）`}
-            className="group flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-1 py-2 text-xs transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 sm:text-[11px]"
+            className="group flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-1 py-2 text-xs transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-teal-600 dark:hover:bg-teal-900/30 sm:text-[11px]"
             onClick={() => {
               void copyAndOpen(platform.key, platform.url);
             }}
@@ -92,12 +92,12 @@ export function PlatformActions({ content, onAction }: PlatformActionsProps) {
               className="h-6 w-6 rounded"
               loading="lazy"
             />
-            <span className="max-w-full truncate text-slate-700">{platform.name}</span>
+            <span className="max-w-full truncate text-slate-700 dark:text-slate-300">{platform.name}</span>
           </button>
         ))}
       </div>
 
-      {notice ? <p className="mt-3 text-xs text-teal-700">{notice}</p> : null}
+      {notice ? <p className="mt-3 text-xs text-teal-700 dark:text-teal-400">{notice}</p> : null}
     </section>
   );
 }
