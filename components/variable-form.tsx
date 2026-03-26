@@ -115,7 +115,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                 key={v.name}
                 type="button"
                 onClick={() => handleFillBookmark(v.name, bookmarks[v.name])}
-                className="flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-2.5 py-1.5 text-xs text-slate-700 transition hover:border-amber-500 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 dark:border-amber-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-amber-900/50"
+                className="flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-3 py-2.5 text-xs text-slate-700 transition hover:border-amber-500 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 dark:border-amber-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-amber-900/50 min-h-[44px]"
               >
                 <BookmarkIcon filled />
                 <span className="font-medium">{v.name}:</span>
@@ -142,7 +142,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   <button
                     type="button"
                     onClick={() => isBookmarked ? handleRemoveBookmark(variable.name) : handleSaveBookmark(variable.name, value)}
-                    className="flex items-center gap-1 rounded-md p-1 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:hover:bg-slate-700"
+                    className="flex items-center gap-1 rounded-md p-2 min-h-[44px] min-w-[44px] transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:hover:bg-slate-700"
                     title={isBookmarked ? t.removeBookmark : t.addBookmark}
                   >
                     <BookmarkIcon filled={isBookmarked} />
@@ -169,7 +169,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   rows={3}
                   value={value}
                   placeholder={variable.placeholder ?? ''}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:text-sm"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
                   onKeyDown={(event) => handleEnterToNext(event, index, true)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
@@ -203,7 +203,7 @@ export function VariableForm({ variables, values, stocks, stockStatusText, onCha
                   value={value}
                   enterKeyHint="next"
                   placeholder={variable.placeholder ?? ''}
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:text-sm"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
                   onKeyDown={(event) => handleEnterToNext(event, index)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />

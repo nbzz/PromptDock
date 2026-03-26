@@ -886,7 +886,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handleUploadClick}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1"
+                  className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] min-w-[44px] sm:text-xs sm:py-1.5 sm:min-h-0 sm:w-auto"
                 >
                   {t('upload')}
                 </button>
@@ -1143,38 +1143,38 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={handleSaveTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                      className="min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:text-xs sm:py-1.5 sm:min-h-0"
                     >
                       {t('save')}
                     </button>
                     <button
                       type="button"
                       onClick={handleExportTemplate}
-                      className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                      className="min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:text-xs sm:py-1.5 sm:min-h-0"
                     >
                       {t('exportMd')}
                     </button>
                     <button
                       type="button"
                       onClick={handleShareViaUrl}
-                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                      className="min-h-[44px] rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300 sm:text-xs sm:py-1.5 sm:min-h-0"
                     >
                       {t('shareLink')}
                     </button>
                     <button
                       type="button"
                       onClick={handleShowQR}
-                      className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                      className="min-h-[44px] rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300 sm:text-xs sm:py-1.5 sm:min-h-0"
                     >
                       二维码
                     </button>
-                    <span className="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                    <span className="flex items-center rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400">
                       {lang === 'zh' ? `已生成 ${shareCount} 个分享链接` : `${shareCount} share links generated`}
                     </span>
                     <button
                       type="button"
                       onClick={handleDeleteTemplate}
-                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs text-rose-700 transition hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="min-h-[44px] rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 transition hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 sm:text-xs sm:py-1.5 sm:min-h-0"
                       disabled={selectedTemplate?.source !== 'local'}
                       title={selectedTemplate?.source === 'local' ? '删除当前本地模板' : '内置模板不可删除'}
                     >
@@ -1195,26 +1195,26 @@ export default function HomePage() {
                             <button
                               type="button"
                               onClick={() => removeTag(tag)}
-                              className="ml-0.5 rounded-full hover:text-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+                              className="ml-0.5 rounded-full p-1 min-h-[32px] min-w-[32px] flex items-center justify-center hover:text-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
                             >
                               ×
                             </button>
                           </span>
                         ))}
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2">
                         <input
                           type="text"
                           value={tagInput}
                           onChange={(e) => setTagInput(e.target.value)}
                           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); }}}
                           placeholder={t('tagInputPlaceholder')}
-                          className="flex-1 rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400"
+                          className="flex-1 min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:text-xs sm:py-1 sm:min-h-0"
                         />
                         <button
                           type="button"
                           onClick={addTag}
-                          className="rounded-lg border border-teal-200 bg-teal-50 px-2 py-1 text-xs text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                          className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300 min-h-[44px] sm:text-xs sm:py-1 sm:min-h-0"
                         >
                           {t('addTag')}
                         </button>
@@ -1225,7 +1225,7 @@ export default function HomePage() {
                   <textarea
                     value={draftMarkdown}
                     rows={14}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-base leading-6 outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:text-sm"
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base leading-6 outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
                     placeholder="在这里临时调整模板内容"
                     onChange={(event) => setDraftMarkdown(event.target.value)}
                   />

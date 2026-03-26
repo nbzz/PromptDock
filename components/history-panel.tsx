@@ -79,7 +79,7 @@ export function HistoryPanel({ entries, onReuse, onClear, onCopyAndOpen, platfor
                 key={entry.id}
                 type="button"
                 onClick={() => handleEntryClick(entry)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-left transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
+                className="w-full min-h-[60px] rounded-xl border border-slate-200 px-3 py-3 text-left transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
               >
                 <div className="flex items-center gap-2">
                   <p className="flex-1 truncate text-sm font-medium text-slate-800 dark:text-slate-200">{entry.templateTitle}</p>
