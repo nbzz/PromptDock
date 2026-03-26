@@ -47,6 +47,85 @@ const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股',
 const PINNED_BUILTIN_TITLES = ['个股分析', '由新闻分析个股板块影响', '枯燥报告转生动网页'];
 const DEFAULT_TEMPLATE_TITLE = '个股分析';
 
+const I18N = {
+  zh: {
+    appTitle: 'PromptDock',
+    appDesc: '配置一套提示词，在所有 AI 平台快速调用',
+    templateList: '模板列表',
+    upload: '上传 .md',
+    searchPlaceholder: '搜索模板...',
+    noTemplates: '先上传一个 .md 模板',
+    noResults: '未找到匹配的模板',
+    variableSection: '变量填写',
+    noVariables: '这个模板没有变量，直接可用。',
+    builtIn: '内置模板',
+    local: '本地模板',
+    required: '*',
+    platformActions: '快捷动作（复制并跳转）',
+    copyOnly: '仅复制',
+    templatePreview: '模板与预览',
+    highlightTip: '高亮部分为已填充变量',
+    advancedSettings: '高级设置：编辑模板 / 保存 / 导出 / 删除',
+    save: '保存模板',
+    exportMd: '导出 Markdown',
+    shareLink: '分享链接',
+    delete: '删除本地模板',
+    shareNotice: '分享链接已复制',
+    savedNotice: '模板已保存',
+    deletedNotice: '本地模板已删除',
+    advancedTip: '自动变量（可选）',
+    footer: '© 2026 cyberteng. All rights reserved.',
+    pr: '公共模板投稿：Pull Request',
+    contact: '，或联系',
+    recentHistory: '最近使用',
+    clearHistory: '清空',
+    noHistory: '还没有历史记录。',
+    copyOnlyAction: '仅复制',
+    copyAndOpenAction: '复制并打开',
+    autoFillTip: '仅以下变量名会自动填充',
+    templateNotice1: '上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。',
+    templateNotice2: '模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。',
+  },
+  en: {
+    appTitle: 'PromptDock',
+    appDesc: 'Configure prompts and invoke them across all AI platforms instantly',
+    templateList: 'Templates',
+    upload: 'Upload .md',
+    searchPlaceholder: 'Search templates...',
+    noTemplates: 'Upload a .md template first',
+    noResults: 'No matching templates found',
+    variableSection: 'Variables',
+    noVariables: 'This template has no variables and is ready to use.',
+    builtIn: 'Built-in',
+    local: 'Local',
+    required: '*',
+    platformActions: 'Quick Actions (Copy & Open)',
+    copyOnly: 'Copy Only',
+    templatePreview: 'Template & Preview',
+    highlightTip: 'Highlighted parts are filled variables',
+    advancedSettings: 'Advanced: Edit / Save / Export / Delete',
+    save: 'Save',
+    exportMd: 'Export Markdown',
+    shareLink: 'Share Link',
+    delete: 'Delete Local',
+    shareNotice: 'Share link copied',
+    savedNotice: 'Template saved',
+    deletedNotice: 'Local template deleted',
+    advancedTip: 'Auto Variables (Optional)',
+    footer: '© 2026 cyberteng. All rights reserved.',
+    pr: 'Submit templates via Pull Request',
+    contact: ', or contact',
+    recentHistory: 'Recent',
+    clearHistory: 'Clear',
+    noHistory: 'No history yet.',
+    copyOnlyAction: 'Copy',
+    copyAndOpenAction: 'Copy & Open',
+    autoFillTip: 'Only the following variable names are auto-filled',
+    templateNotice1: '.md templates are stored in browser local storage only.',
+    templateNotice2: 'Use [] as variable placeholders. No prefix syntax needed.',
+  },
+} as const;
+
 function getTemplateOrderRank(item: StoredTemplate): number {
   if (item.source !== 'builtin') {
     return Number.MAX_SAFE_INTEGER;
@@ -105,6 +184,12 @@ export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
+  const [lang, setLang] = useState<'zh' | 'en'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('lang') as 'zh' | 'en') ?? 'zh';
+    }
+    return 'zh';
+  });
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedId, setSelectedId] = useState('');
@@ -517,6 +602,17 @@ export default function HomePage() {
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">配置一套提示词，在所有 AI 平台快速调用</p>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const next = lang === 'zh' ? 'en' : 'zh';
+                  setLang(next);
+                  localStorage.setItem('lang', next);
+                }}
+                className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              >
+                {lang === 'zh' ? 'EN' : '中'}
+              </button>
               <ThemeToggle />
               <p key={noticeKey} className={`h-4 overflow-hidden text-xs text-teal-700 dark:text-teal-400 ${notice ? 'notice-pop' : ''}`}>
                 {notice || ''}
