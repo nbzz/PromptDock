@@ -594,8 +594,13 @@ export default function HomePage() {
       setShareCount(next);
       localStorage.setItem('shareCount', String(next));
       showNotice(t('shareNotice'));
+      alert(
+        '✅ 分享链接已复制到剪贴板！\n\n' +
+        '📋 粘贴给他人即可分享此模板\n' +
+        '🔗 对方打开链接后，模板会自动导入到他的 PromptDock'
+      );
     } catch {
-      showNotice('复制失败，请手动复制');
+      alert('❌ 复制失败，请手动复制地址栏链接');
     }
   }
 
@@ -608,12 +613,12 @@ export default function HomePage() {
       const url = `${window.location.origin}${window.location.pathname}?t=${data}`;
       // QR code has a ~4296 char limit; if URL too long, show warning
       if (url.length > 2000) {
-        showNotice('模板内容过长，无法生成二维码，请使用分享链接');
+        alert('⚠️ 模板内容过长，无法生成二维码\n\n请改用「分享链接」功能，将链接复制给对方');
         return;
       }
       setQrModalText(url);
     } catch {
-      showNotice('生成二维码失败');
+      alert('❌ 生成二维码失败，请使用分享链接');
     }
   }
 
