@@ -106,6 +106,7 @@ export default function HomePage() {
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedId, setSelectedId] = useState('');
   const [draftMarkdown, setDraftMarkdown] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
@@ -142,6 +143,18 @@ export default function HomePage() {
       rawMarkdown: draftMarkdown
     });
   }, [selectedTemplate, draftMarkdown]);
+
+  const filteredTemplates = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return templates;
+    }
+    const q = searchQuery.toLowerCase();
+    return templates.filter(
+      (t) =>
+        t.title.toLowerCase().includes(q) ||
+        t.rawMarkdown.toLowerCase().includes(q)
+    );
+  }, [templates, searchQuery]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -505,8 +518,18 @@ export default function HomePage() {
                 模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。
               </p>
 
+              <div className="mb-3">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="搜索模板..."
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-teal-500 dark:placeholder:text-slate-500"
+                />
+              </div>
+
               <div className="max-h-[70vh] space-y-2 overflow-auto pr-1">
-                {templates.map((item) => (
+                {filteredTemplates.map((item) => (
                   <button
                     key={item.id}
                     type="button"
@@ -525,8 +548,12 @@ export default function HomePage() {
                 ))}
 
                 {templates.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500">
+                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
                     先上传一个 .md 模板
+                  </p>
+                ) : filteredTemplates.length === 0 ? (
+                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
+                    未找到匹配的模板
                   </p>
                 ) : null}
               </div>
