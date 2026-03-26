@@ -753,6 +753,53 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
     showNotice(t('importedNotice'));
   }
 
+  function handleImportFromUrl() {
+    const url = importUrlInput.trim();
+    if (!url) return;
+
+    try {
+      const params = new URL(url);
+      const shareData = params.searchParams.get('t');
+      if (!shareData) {
+        showNotice(t('importFailNotice'));
+        setShowImportUrl(false);
+        setImportUrlInput('');
+        return;
+      }
+
+      const markdown = decompressFromEncodedURIComponent(shareData);
+      if (!markdown) {
+        showNotice(t('importFailNotice'));
+        setShowImportUrl(false);
+        setImportUrlInput('');
+        return;
+      }
+
+      const importedTemplate: StoredTemplate = {
+        id: `local:${crypto.randomUUID()}`,
+        title: '分享的模板',
+        rawMarkdown: markdown,
+        source: 'local',
+        updatedAt: Date.now()
+      };
+
+      setTemplates((previous) => {
+        const next = mergeTemplates([], [importedTemplate, ...previous]);
+        saveLocalTemplates(getLocalTemplates(next));
+        return next;
+      });
+
+      setSelectedId(importedTemplate.id);
+      setDraftMarkdown(markdown);
+      showNotice(t('importSuccessNotice'));
+    } catch {
+      showNotice(t('importFailNotice'));
+    }
+
+    setShowImportUrl(false);
+    setImportUrlInput('');
+  }
+
   function handleSaveTemplate() {
     if (!selectedTemplate) {
       return;
@@ -1054,15 +1101,24 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
           <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[280px]">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
-              <div className="mb-3 flex items-center justify-between">
+              <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
                 <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
-                <button
-                  type="button"
-                  onClick={handleUploadClick}
-                  className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] min-w-[44px] sm:text-xs sm:py-1.5 sm:min-h-0 sm:w-auto"
-                >
-                  {t('upload')}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleUploadClick}
+                    className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] min-w-[44px] sm:text-xs sm:py-1.5 sm:min-h-0 sm:w-auto"
+                  >
+                    {t('upload')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowImportUrl(true)}
+                    className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] min-w-[44px] sm:text-xs sm:py-1.5 sm:min-h-0 sm:w-auto dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  >
+                    {t('importFromUrl')}
+                  </button>
+                </div>
                 <input
                   ref={inputRef}
                   type="file"
@@ -1073,6 +1129,34 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   }}
                 />
               </div>
+
+              {showImportUrl && (
+                <div className="mb-3 flex gap-2">
+                  <input
+                    type="text"
+                    value={importUrlInput}
+                    onChange={(e) => setImportUrlInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleImportFromUrl(); }}
+                    placeholder={t('importUrlPlaceholder')}
+                    className="flex-1 min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:text-xs sm:py-1 sm:min-h-0"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleImportFromUrl}
+                    className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] sm:text-xs sm:py-1 sm:min-h-0 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                  >
+                    {t('importUrlConfirm')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setShowImportUrl(false); setImportUrlInput(''); }}
+                    className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] sm:text-xs sm:py-1 sm:min-h-0 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  >
+                    {t('importUrlCancel')}
+                  </button>
+                </div>
+              )}
 
               {batchSelectedIds.size > 0 && (
                 <div className="mb-3 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 dark:border-rose-800 dark:bg-rose-900/30">
