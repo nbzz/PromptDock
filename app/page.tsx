@@ -309,6 +309,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [shareCount, setShareCount] = useState<number>(0);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
   const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
+  const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ template: StoredTemplate } | null>(null);
+  const [batchDeleteConfirmDialog, setBatchDeleteConfirmDialog] = useState<{ count: number } | null>(null);
   const [showImportUrl, setShowImportUrl] = useState(false);
   const [importUrlInput, setImportUrlInput] = useState('');
 
@@ -916,19 +918,17 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   function handleBatchDelete() {
     const count = batchSelectedIds.size;
     if (count === 0) return;
+    setBatchDeleteConfirmDialog({ count });
+  }
 
-    const ok = window.confirm(
-      t('batchDeleteConfirm').replace('{count}', String(count))
-    );
-    if (!ok) return;
-
+  function confirmBatchDelete() {
     setTemplates((previous) => {
       const next = previous.filter((item) => !batchSelectedIds.has(item.id));
       saveLocalTemplates(getLocalTemplates(next));
       return next;
     });
-
     setBatchSelectedIds(new Set());
+    setBatchDeleteConfirmDialog(null);
     showNotice(t('deletedNotice'));
   }
 
@@ -965,13 +965,15 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       return;
     }
 
-    const ok = window.confirm(t('confirmDelete').replace('{title}', selectedTemplate.title));
-    if (!ok) {
-      return;
-    }
+    setDeleteConfirmDialog({ template: selectedTemplate });
+  }
+
+  function confirmDelete() {
+    const template = deleteConfirmDialog?.template;
+    if (!template) return;
 
     setTemplates((previous) => {
-      const next = previous.filter((item) => item.id !== selectedTemplate.id);
+      const next = previous.filter((item) => item.id !== template.id);
       saveLocalTemplates(getLocalTemplates(next));
 
       const nextSelected = pickPreferredTemplate(next);
@@ -980,6 +982,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
       return next;
     });
+    setDeleteConfirmDialog(null);
     showNotice(t('deletedNotice'));
   }
 
@@ -1615,6 +1618,90 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                     className="min-h-[44px] rounded-lg border border-teal-200 bg-teal-50 px-4 py-2 text-sm text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300 sm:text-xs sm:py-1.5 sm:min-h-0"
                   >
                     确认保存
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {deleteConfirmDialog && (() => {
+          const { template } = deleteConfirmDialog;
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-sm rounded-2xl border border-rose-200 bg-white p-5 shadow-2xl dark:border-rose-700 dark:bg-slate-900">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-100 dark:bg-rose-900/50">
+                    <svg className="h-5 w-5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{lang === 'zh' ? '删除模板' : 'Delete Template'}</p>
+                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{lang === 'zh' ? '此操作不可恢复' : 'This cannot be undone'}</p>
+                  </div>
+                </div>
+                <p className="mb-5 text-sm text-slate-600 dark:text-slate-300">
+                  {lang === 'zh'
+                    ? `确定要删除本地模板「${template.title}」吗？`
+                    : `Delete local template "${template.title}"?`}
+                </p>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteConfirmDialog(null)}
+                    className="min-h-[44px] rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                  >
+                    {lang === 'zh' ? '取消' : 'Cancel'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmDelete}
+                    className="min-h-[44px] rounded-lg border border-rose-300 bg-rose-100 px-4 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-1 dark:border-rose-700 dark:bg-rose-900 dark:text-rose-300 dark:hover:bg-rose-800"
+                  >
+                    {lang === 'zh' ? '确认删除' : 'Delete'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {batchDeleteConfirmDialog && (() => {
+          const { count } = batchDeleteConfirmDialog;
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-sm rounded-2xl border border-rose-200 bg-white p-5 shadow-2xl dark:border-rose-700 dark:bg-slate-900">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-100 dark:bg-rose-900/50">
+                    <svg className="h-5 w-5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{lang === 'zh' ? '批量删除' : 'Batch Delete'}</p>
+                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{lang === 'zh' ? '此操作不可恢复' : 'This cannot be undone'}</p>
+                  </div>
+                </div>
+                <p className="mb-5 text-sm text-slate-600 dark:text-slate-300">
+                  {lang === 'zh'
+                    ? `确定要删除选中的 ${count} 个本地模板吗？`
+                    : `Delete ${count} selected local templates?`}
+                </p>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setBatchDeleteConfirmDialog(null)}
+                    className="min-h-[44px] rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                  >
+                    {lang === 'zh' ? '取消' : 'Cancel'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmBatchDelete}
+                    className="min-h-[44px] rounded-lg border border-rose-300 bg-rose-100 px-4 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-1 dark:border-rose-700 dark:bg-rose-900 dark:text-rose-300 dark:hover:bg-rose-800"
+                  >
+                    {lang === 'zh' ? '确认删除' : 'Delete'}
                   </button>
                 </div>
               </div>
