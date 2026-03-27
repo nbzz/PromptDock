@@ -34,6 +34,16 @@ const DEFAULT_VARIABLE_FORM_LABELS = {
   removeBookmark: '移除书签',
 };
 
+// Shared field classes to avoid repetition
+const FIELD_BASE =
+  'w-full rounded-xl border text-base outline-none transition sm:text-sm';
+
+const FIELD_NORMAL_CLASSES =
+  'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200';
+
+const FIELD_INVALID_CLASSES =
+  'border-rose-400 focus-visible:border-rose-500 focus-visible:ring-rose-200 dark:border-rose-500 dark:focus-visible:border-rose-400 dark:focus-visible:ring-rose-400';
+
 function focusNextField(index: number) {
   const fields = document.querySelectorAll<HTMLElement>('[data-field-index]');
   const next = fields[index + 1] ?? fields[fields.length - 1];
@@ -202,10 +212,8 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                   rows={3}
                   value={value}
                   placeholder={variable.placeholder ?? ''}
-                  className={`w-full rounded-xl border px-4 py-3 text-base outline-none transition sm:px-3 sm:py-2 sm:text-sm ${
-                    isInvalid
-                      ? 'border-rose-400 focus-visible:border-rose-500 focus-visible:ring-rose-200 dark:border-rose-500 dark:focus-visible:border-rose-400 dark:focus-visible:ring-rose-400'
-                      : 'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200'
+                  className={`${FIELD_BASE} px-4 py-3 sm:px-3 sm:py-2 ${
+                    isInvalid ? FIELD_INVALID_CLASSES : FIELD_NORMAL_CLASSES
                   }`}
                   onKeyDown={(event) => handleEnterToNext(event, index, true)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
@@ -217,10 +225,10 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                   id={`var-${variable.id}`}
                   data-field-index={index}
                   value={value}
-                  className={`w-full rounded-xl border px-3 py-3 text-base outline-none transition sm:py-2 sm:text-sm min-h-[48px] ${
+                  className={`${FIELD_BASE} px-3 py-3 sm:py-2 min-h-[48px] ${
                     isInvalid
-                      ? 'border-rose-400 focus-visible:border-rose-500 focus-visible:ring-rose-200 dark:border-rose-500 dark:focus-visible:border-rose-400 dark:focus-visible:ring-rose-400 dark:bg-slate-800 dark:text-slate-200'
-                      : 'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200'
+                      ? `${FIELD_INVALID_CLASSES} dark:bg-slate-800 dark:text-slate-200`
+                      : FIELD_NORMAL_CLASSES
                   }`}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 >
@@ -244,10 +252,10 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                   value={value}
                   enterKeyHint="next"
                   placeholder={variable.placeholder ?? ''}
-                  className={`w-full rounded-xl border px-4 py-3 text-base outline-none transition sm:px-3 sm:py-2 sm:text-sm ${
+                  className={`${FIELD_BASE} px-4 py-3 sm:px-3 sm:py-2 ${
                     isInvalid
-                      ? 'border-rose-400 focus-visible:border-rose-500 focus-visible:ring-rose-200 dark:border-rose-500 dark:focus-visible:border-rose-400 dark:focus-visible:ring-rose-400 dark:bg-slate-800 dark:text-slate-200'
-                      : 'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200'
+                      ? `${FIELD_INVALID_CLASSES} dark:bg-slate-800 dark:text-slate-200`
+                      : FIELD_NORMAL_CLASSES
                   }`}
                   onKeyDown={(event) => handleEnterToNext(event, index)}
                   onChange={(event) => onChange(variable.name, event.target.value)}
