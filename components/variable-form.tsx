@@ -3,7 +3,7 @@
 import { forwardRef, KeyboardEvent, useEffect, useImperativeHandle, useState } from 'react';
 
 import { StockInput } from '@/components/stock-input';
-import { BookmarkMap, loadBookmarks, removeBookmark, saveBookmark } from '@/lib/storage';
+import { BookmarkMap, loadBookmarks, removeBookmark, saveBookmark, addBookmarkHistoryEntry } from '@/lib/storage';
 import { ParsedVariable, StockItem } from '@/lib/types';
 
 interface VariableFormProps {
@@ -117,6 +117,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
 
   const handleFillBookmark = (name: string, val: string) => {
     onChange(name, val);
+    addBookmarkHistoryEntry(name, val);
   };
 
   const bookmarkedVars = variables.filter((v) => bookmarks[v.name]);

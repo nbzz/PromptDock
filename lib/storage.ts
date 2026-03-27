@@ -100,6 +100,44 @@ export function removeBookmark(variableName: string): void {
 
 const TAG_KEY = 'promptpage.tags.v1';
 
+export interface BookmarkHistoryEntry {
+  variableName: string;
+  value: string;
+  filledAt: number;
+}
+
+const BOOKMARK_HISTORY_KEY = 'promptpage.bookmark.history.v1';
+const MAX_BOOKMARK_HISTORY = 50;
+
+export function loadBookmarkHistory(): BookmarkHistoryEntry[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(BOOKMARK_HISTORY_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw) as BookmarkHistoryEntry[];
+  } catch {
+    return [];
+  }
+}
+
+export function addBookmarkHistoryEntry(variableName: string, value: string): void {
+  if (typeof window === 'undefined') return;
+  const history = loadBookmarkHistory();
+  // Deduplicate: remove same variable+value pair, add to front
+  const filtered = history.filter(
+    (e) => !(e.variableName === variableName && e.value === value)
+  );
+  filtered.unshift({ variableName, value, filledAt: Date.now() });
+  // Keep only MAX_BOOKMARK_HISTORY entries
+  const trimmed = filtered.slice(0, MAX_BOOKMARK_HISTORY);
+  window.localStorage.setItem(BOOKMARK_HISTORY_KEY, JSON.stringify(trimmed));
+}
+
+export function clearBookmarkHistory(): void {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(BOOKMARK_HISTORY_KEY);
+}
+
 export function loadTags(): TagMap {
   if (typeof window === 'undefined') return {};
   try {
