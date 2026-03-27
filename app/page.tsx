@@ -1204,8 +1204,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 />
               </div>
 
-              <div className="mb-3 -mx-1 overflow-x-auto px-1">
-                <div className="flex gap-1.5 min-w-max">
+              <div className="mb-3 -mx-1 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex gap-1.5">
                   {(Object.keys(CATEGORY_LABELS) as FilterTab[]).map((tab) => (
                     <button
                       key={tab}

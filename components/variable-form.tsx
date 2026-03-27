@@ -132,9 +132,9 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
 
   return (
     <section className="variable-form-section rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-      <div className="mb-3 flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+      <div className="mb-3 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t.sectionTitle}</h3>
-        {stockStatusText ? <p className="text-xs text-slate-500 dark:text-slate-400">{stockStatusText}</p> : null}
+        {stockStatusText ? <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{stockStatusText}</p> : null}
       </div>
 
       {bookmarkedVars.length > 0 && (
@@ -146,11 +146,11 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                 key={v.name}
                 type="button"
                 onClick={() => handleFillBookmark(v.name, bookmarks[v.name])}
-                className="flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-3 py-2.5 text-xs text-slate-700 transition hover:border-amber-500 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 dark:border-amber-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-amber-900/50 min-h-[44px]"
+                className="flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-2 py-2 text-xs text-slate-700 transition hover:border-amber-500 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 dark:border-amber-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-amber-900/50 min-h-[44px]"
               >
                 <BookmarkIcon filled />
                 <span className="font-medium">{v.name}:</span>
-                <span className="max-w-[120px] truncate">{bookmarks[v.name]}</span>
+                <span className="max-w-[80px] truncate sm:max-w-[120px]">{bookmarks[v.name]}</span>
               </button>
             ))}
           </div>
