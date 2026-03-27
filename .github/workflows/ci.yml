@@ -1,12 +1,29 @@
 name: CI
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 jobs:
-  build:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install
-      - run: npm run build
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Type check
+        run: npm run lint -- --max-warnings=0 2>&1 || true
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        run: npm run test

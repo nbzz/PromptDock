@@ -360,7 +360,14 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       return 0;
     });
     if (filterTab !== 'all') {
-      result = result.filter((t) => getTemplateCategory(t) === filterTab);
+      result = result.filter((item) => {
+        const title = item.title.toLowerCase();
+        const desc = (item.rawMarkdown.match(/description:\s*(.+)/i)?.[1] ?? '').toLowerCase();
+        if (filterTab === 'financial' && FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
+        if (filterTab === 'news' && NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
+        if (filterTab === 'writing' && WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
+        return false;
+      });
     }
     if (searchQuery.trim()) {
       // Create search items that include template tags
@@ -382,7 +389,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       result = fuzzyResults.map((r) => r.item);
     }
     return result;
-  }, [templates, searchQuery, filterTab, favorites]);
+  }, [templates, searchQuery, filterTab, favorites, templateTags, FINANCIAL_KEYWORDS, NEWS_KEYWORDS, WRITING_KEYWORDS]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -425,9 +432,11 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
     return () => navigator.serviceWorker.removeEventListener('message', handleMessage);
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let cancelled = false;
 
+    const currentT = t; // capture at effect creation time
     async function loadInitialData() {
       const localTemplates = loadLocalTemplates();
 
@@ -456,7 +465,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
         try {
           const markdown = decompressFromEncodedURIComponent(shareData);
           if (!markdown) {
-            showNotice(t('shareInvalidNotice'));
+            showNotice(currentT('shareInvalidNotice'));
             return;
           }
           const sharedTemplate: StoredTemplate = {
@@ -469,12 +478,12 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
           setTemplates((prev) => mergeTemplates([], [sharedTemplate, ...prev]));
           setSelectedId(sharedTemplate.id);
           setDraftMarkdown(markdown);
-          showNotice(t('sharedLoadedNotice'));
+          showNotice(currentT('sharedLoadedNotice'));
           // Clear URL param
           window.history.replaceState({}, '', window.location.pathname);
           return;
         } catch {
-          showNotice(t('shareInvalidNotice'));
+          showNotice(currentT('shareInvalidNotice'));
         }
       }
 
@@ -1345,9 +1354,35 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 })}
 
                 {templates.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
-                    {t('noTemplates')}
-                  </p>
+                  <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center dark:border-slate-600">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+                      <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{lang === 'zh' ? '还没有模板' : 'No templates yet'}</p>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        {lang === 'zh' ? '上传 .md 或导入分享链接开始' : 'Upload .md or import a share link to start'}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={handleUploadClick}
+                        className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300 dark:hover:bg-teal-900/50 min-h-[44px]"
+                      >
+                        {t('upload')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowImportUrl(true)}
+                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 min-h-[44px]"
+                      >
+                        {t('importFromUrl')}
+                      </button>
+                    </div>
+                  </div>
                 ) : filteredTemplates.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
                     {t('noResults')}
