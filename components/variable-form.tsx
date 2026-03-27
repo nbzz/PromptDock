@@ -18,6 +18,8 @@ interface VariableFormProps {
     bookmarkFill: string;
     addBookmark: string;
     removeBookmark: string;
+    selectPlaceholder?: string;
+    validationFailed?: string;
   };
 }
 
@@ -32,6 +34,8 @@ const DEFAULT_VARIABLE_FORM_LABELS = {
   bookmarkFill: '书签快速填充',
   addBookmark: '添加书签',
   removeBookmark: '移除书签',
+  selectPlaceholder: '请选择',
+  validationFailed: '请填写必填字段：',
 };
 
 // Shared field classes to avoid repetition
@@ -232,7 +236,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                   }`}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 >
-                  <option value="">请选择</option>
+                  <option value="">{t.selectPlaceholder}</option>
                   {(variable.options ?? []).map((option) => (
                     <option key={option} value={option}>{option}</option>
                   ))}
@@ -270,7 +274,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
 
       {invalidFields.size > 0 && (
         <p className="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700 dark:border-rose-700 dark:bg-rose-900/30 dark:text-rose-400">
-          请填写必填字段：{Array.from(invalidFields).join('、')}
+          {t.validationFailed}{Array.from(invalidFields).join('、')}
         </p>
       )}
     </section>

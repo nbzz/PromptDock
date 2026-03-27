@@ -113,6 +113,8 @@ const I18N = {
     bookmarkFill: '书签快速填充',
     addBookmark: '添加书签',
     removeBookmark: '移除书签',
+    selectPlaceholder: '请选择',
+    validationFailed: '请填写必填字段：',
     exportAllData: '导出全部数据',
     importFromUrl: '从链接导入',
     importUrlPlaceholder: '粘贴分享链接...',
@@ -180,6 +182,8 @@ const I18N = {
     bookmarkFill: 'Bookmark Quick Fill',
     addBookmark: 'Add Bookmark',
     removeBookmark: 'Remove Bookmark',
+    selectPlaceholder: 'Select...',
+    validationFailed: 'Please fill required fields: ',
     exportAllData: 'Export All Data',
     importFromUrl: 'Import from URL',
     importUrlPlaceholder: 'Paste share URL...',
@@ -1404,6 +1408,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 bookmarkFill: t('bookmarkFill'),
                 addBookmark: t('addBookmark'),
                 removeBookmark: t('removeBookmark'),
+                selectPlaceholder: t('selectPlaceholder'),
+                validationFailed: t('validationFailed'),
               }}
             />
 
