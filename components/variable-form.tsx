@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, KeyboardEvent, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, KeyboardEvent, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
 import { StockInput } from '@/components/stock-input';
 import { BookmarkMap, loadBookmarks, removeBookmark, saveBookmark, addBookmarkHistoryEntry } from '@/lib/storage';
@@ -134,7 +134,10 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
     addBookmarkHistoryEntry(name, val);
   };
 
-  const bookmarkedVars = variables.filter((v) => bookmarks[v.name]);
+  const bookmarkedVars = useMemo(
+    () => variables.filter((v) => bookmarks[v.name]),
+    [variables, bookmarks]
+  );
 
   if (variables.length === 0) {
     return (

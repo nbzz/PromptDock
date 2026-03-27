@@ -8,9 +8,14 @@ import {
   VariableMeta
 } from '@/lib/types';
 
+// Matches [...] but not [...]( with negative lookahead to avoid Markdown links
 const PLACEHOLDER_RE = /\[([^\[\]\n]{1,40})\](?!\()/g;
+// Strips code fences entirely so placeholders inside code blocks are not extracted
 const CODE_FENCE_RE = /```[\s\S]*?```/g;
+// Strips inline code so placeholders in `backticks` are not extracted
 const INLINE_CODE_RE = /`[^`\n]+`/g;
+// These placeholder names are used as instruction metadata in prompt templates
+// (e.g., system prompts), not as user-fillable variables — skip them during parsing
 const IGNORED_PLACEHOLDER_NAMES = new Set([
   'google_search',
   'model_config',
@@ -79,8 +84,9 @@ function parseFrontmatter(markdown: string): {
         content
       };
     }
-  } catch {
+  } catch (err) {
     // YAML 格式有问题时，降级为无 frontmatter
+    console.warn('[PromptDock] Failed to parse frontmatter YAML:', err);
   }
 
   return { frontmatter: {}, content: markdown };

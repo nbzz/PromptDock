@@ -1,11 +1,53 @@
 import { StoredTemplate } from '@/lib/types';
 
-const KEY = 'promptpage.templates.v1';
-const BOOKMARK_KEY = 'promptpage.bookmarks.v1';
-const BOOKMARK_META_KEY = 'promptpage.bookmarks.meta.v1';
+// All localStorage keys in one place for maintainability
+export const STORAGE_KEYS = {
+  TEMPLATES: 'promptpage.templates.v1',
+  BOOKMARKS: 'promptpage.bookmarks.v1',
+  BOOKMARK_META: 'promptpage.bookmarks.meta.v1',
+  BOOKMARK_HISTORY: 'promptpage.bookmark.history.v1',
+  TAGS: 'promptpage.tags.v1',
+  FAVORITES: 'promptpage.favorites',
+  LANG: 'lang',
+  SHARE_COUNT: 'shareCount',
+} as const;
+
+export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
+
+// Centralized localStorage helpers with error handling
+export function safeGet<T>(key: StorageKey, fallback: T): T {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+export function safeSet(key: StorageKey, value: unknown): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // localStorage full or unavailable — fail silently
+  }
+}
+
+export function safeRemove(key: StorageKey): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // ignore
+  }
+}
+
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 export type BookmarkMap = Record<string, string>;
-export type TagMap = Record<string, string[]>; // templateId -> tags[]
+export type TagMap = Record<string, string[]>;
 
 export interface BookmarkMeta {
   value: string;
@@ -14,144 +56,82 @@ export interface BookmarkMeta {
 
 export type BookmarkMetaMap = Record<string, BookmarkMeta>;
 
-export function loadLocalTemplates(): StoredTemplate[] {
-  if (typeof window === 'undefined') {
-    return [];
-  }
-
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) {
-      return [];
-    }
-
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) {
-      return [];
-    }
-
-    return parsed as StoredTemplate[];
-  } catch {
-    return [];
-  }
-}
-
-export function saveLocalTemplates(templates: StoredTemplate[]): void {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  window.localStorage.setItem(KEY, JSON.stringify(templates));
-}
-
-export function loadBookmarks(): BookmarkMap {
-  if (typeof window === 'undefined') {
-    return {};
-  }
-
-  try {
-    const raw = window.localStorage.getItem(BOOKMARK_KEY);
-    if (!raw) {
-      return {};
-    }
-    return JSON.parse(raw) as BookmarkMap;
-  } catch {
-    return {};
-  }
-}
-
-export function loadBookmarkMeta(): BookmarkMetaMap {
-  if (typeof window === 'undefined') {
-    return {};
-  }
-  try {
-    const raw = window.localStorage.getItem(BOOKMARK_META_KEY);
-    if (!raw) {
-      return {};
-    }
-    return JSON.parse(raw) as BookmarkMetaMap;
-  } catch {
-    return {};
-  }
-}
-
-export function saveBookmark(variableName: string, value: string): void {
-  if (typeof window === 'undefined') return;
-  const bookmarks = loadBookmarks();
-  bookmarks[variableName] = value;
-  window.localStorage.setItem(BOOKMARK_KEY, JSON.stringify(bookmarks));
-
-  // Also save meta with timestamp
-  const meta = loadBookmarkMeta();
-  meta[variableName] = { value, savedAt: Date.now() };
-  window.localStorage.setItem(BOOKMARK_META_KEY, JSON.stringify(meta));
-}
-
-export function removeBookmark(variableName: string): void {
-  if (typeof window === 'undefined') return;
-  const bookmarks = loadBookmarks();
-  delete bookmarks[variableName];
-  window.localStorage.setItem(BOOKMARK_KEY, JSON.stringify(bookmarks));
-
-  const meta = loadBookmarkMeta();
-  delete meta[variableName];
-  window.localStorage.setItem(BOOKMARK_META_KEY, JSON.stringify(meta));
-}
-
-const TAG_KEY = 'promptpage.tags.v1';
-
 export interface BookmarkHistoryEntry {
   variableName: string;
   value: string;
   filledAt: number;
 }
 
-const BOOKMARK_HISTORY_KEY = 'promptpage.bookmark.history.v1';
+// ─── Templates ───────────────────────────────────────────────────────────────
+
+export function loadLocalTemplates(): StoredTemplate[] {
+  return safeGet<StoredTemplate[]>(STORAGE_KEYS.TEMPLATES, []);
+}
+
+export function saveLocalTemplates(templates: StoredTemplate[]): void {
+  safeSet(STORAGE_KEYS.TEMPLATES, templates);
+}
+
+// ─── Bookmarks ───────────────────────────────────────────────────────────────
+
+export function loadBookmarks(): BookmarkMap {
+  return safeGet<BookmarkMap>(STORAGE_KEYS.BOOKMARKS, {});
+}
+
+export function loadBookmarkMeta(): BookmarkMetaMap {
+  return safeGet<BookmarkMetaMap>(STORAGE_KEYS.BOOKMARK_META, {});
+}
+
+export function saveBookmark(variableName: string, value: string): void {
+  const bookmarks = loadBookmarks();
+  bookmarks[variableName] = value;
+  safeSet(STORAGE_KEYS.BOOKMARKS, bookmarks);
+
+  const meta = loadBookmarkMeta();
+  meta[variableName] = { value, savedAt: Date.now() };
+  safeSet(STORAGE_KEYS.BOOKMARK_META, meta);
+}
+
+export function removeBookmark(variableName: string): void {
+  const bookmarks = loadBookmarks();
+  delete bookmarks[variableName];
+  safeSet(STORAGE_KEYS.BOOKMARKS, bookmarks);
+
+  const meta = loadBookmarkMeta();
+  delete meta[variableName];
+  safeSet(STORAGE_KEYS.BOOKMARK_META, meta);
+}
+
+// ─── Bookmark History ─────────────────────────────────────────────────────────
+
 const MAX_BOOKMARK_HISTORY = 50;
 
 export function loadBookmarkHistory(): BookmarkHistoryEntry[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = window.localStorage.getItem(BOOKMARK_HISTORY_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw) as BookmarkHistoryEntry[];
-  } catch {
-    return [];
-  }
+  return safeGet<BookmarkHistoryEntry[]>(STORAGE_KEYS.BOOKMARK_HISTORY, []);
 }
 
 export function addBookmarkHistoryEntry(variableName: string, value: string): void {
-  if (typeof window === 'undefined') return;
   const history = loadBookmarkHistory();
-  // Deduplicate: remove same variable+value pair, add to front
   const filtered = history.filter(
     (e) => !(e.variableName === variableName && e.value === value)
   );
   filtered.unshift({ variableName, value, filledAt: Date.now() });
-  // Keep only MAX_BOOKMARK_HISTORY entries
   const trimmed = filtered.slice(0, MAX_BOOKMARK_HISTORY);
-  window.localStorage.setItem(BOOKMARK_HISTORY_KEY, JSON.stringify(trimmed));
+  safeSet(STORAGE_KEYS.BOOKMARK_HISTORY, trimmed);
 }
 
 export function clearBookmarkHistory(): void {
-  if (typeof window === 'undefined') return;
-  window.localStorage.removeItem(BOOKMARK_HISTORY_KEY);
+  safeRemove(STORAGE_KEYS.BOOKMARK_HISTORY);
 }
 
+// ─── Tags ───────────────────────────────────────────────────────────────────
+
 export function loadTags(): TagMap {
-  if (typeof window === 'undefined') return {};
-  try {
-    const raw = window.localStorage.getItem(TAG_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw) as TagMap;
-  } catch {
-    return {};
-  }
+  return safeGet<TagMap>(STORAGE_KEYS.TAGS, {});
 }
 
 export function saveTags(tags: TagMap): void {
-  if (typeof window === 'undefined') return;
-  window.localStorage.setItem(TAG_KEY, JSON.stringify(tags));
+  safeSet(STORAGE_KEYS.TAGS, tags);
 }
 
 export function setTemplateTags(templateId: string, tagList: string[]): void {
@@ -182,6 +162,8 @@ export function removeTemplateTag(templateId: string, tag: string): void {
   }
 }
 
+// ─── Backup ──────────────────────────────────────────────────────────────────
+
 export interface BackupData {
   version: number;
   exportedAt: string;
@@ -202,7 +184,9 @@ export function exportAllData(): BackupData {
 
 export function downloadBackup(data: BackupData): void {
   const filename = `promptdock-backup-${data.exportedAt.slice(0, 10)}.json`;
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: 'application/json',
+  });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

@@ -15,7 +15,7 @@ import { AUTO_FILL_NAMES } from '@/lib/auto-fill';
 import { PLATFORMS } from '@/lib/platforms';
 import { clearHistory, loadHistory, pushHistory } from '@/lib/history';
 import { createClientFallbackStocks } from '@/lib/stocks';
-import { loadLocalTemplates, saveLocalTemplates, loadTags, saveTags, exportAllData, downloadBackup } from '@/lib/storage';
+import { loadLocalTemplates, saveLocalTemplates, loadTags, saveTags, exportAllData, downloadBackup, STORAGE_KEYS, safeGet, safeSet } from '@/lib/storage';
 import {
   buildMarkdownExport,
   parseTemplate,
@@ -254,7 +254,7 @@ export default function HomePage() {
 
   const [lang, setLang] = useState<'zh' | 'en'>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('lang') as 'zh' | 'en') ?? 'zh';
+      return safeGet<'zh' | 'en'>(STORAGE_KEYS.LANG, 'zh');
     }
     return 'zh';
   });
@@ -293,8 +293,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [favorites, setFavorites] = useState<string[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const stored = localStorage.getItem('promptpage.favorites');
-        return stored ? JSON.parse(stored) : [];
+        return safeGet<string[]>(STORAGE_KEYS.FAVORITES, []);
       } catch {
         return [];
       }
@@ -537,10 +536,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   }, []);
 
   useEffect(() => {
-    const stored = localStorage.getItem('shareCount');
-    if (stored) {
-      setShareCount(parseInt(stored, 10));
-    }
+    setShareCount(safeGet<number>(STORAGE_KEYS.SHARE_COUNT, 0));
   }, []);
 
   useEffect(() => {
@@ -917,7 +913,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       await navigator.clipboard.writeText(url);
       const next = shareCount + 1;
       setShareCount(next);
-      localStorage.setItem('shareCount', String(next));
+      safeSet(STORAGE_KEYS.SHARE_COUNT, next);
       showNotice(t('shareNotice'));
       alert(
         '✅ 分享链接已复制到剪贴板！\n\n' +
@@ -1020,7 +1016,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   function toggleFavorite(id: string) {
     setFavorites((prev) => {
       const next = prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id];
-      localStorage.setItem('promptpage.favorites', JSON.stringify(next));
+      safeSet(STORAGE_KEYS.FAVORITES, next);
       return next;
     });
   }
@@ -1117,7 +1113,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 onClick={() => {
                   const next = lang === 'zh' ? 'en' : 'zh';
                   setLang(next);
-                  localStorage.setItem('lang', next);
+                  safeSet(STORAGE_KEYS.LANG, next);
                 }}
                 className="min-h-[44px] min-w-[44px] rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                 title={lang === 'zh' ? 'Switch to English' : '切换到中文'}
