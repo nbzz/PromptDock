@@ -307,6 +307,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [qrModalText, setQrModalText] = useState('');
   const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
   const [shareCount, setShareCount] = useState<number>(0);
+  const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
   const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
   const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ template: StoredTemplate } | null>(null);
@@ -393,6 +394,20 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
         }
       }
     }
+  }, []);
+
+  // Listen for SW update notifications
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
+
+    function handleMessage(event: MessageEvent) {
+      if (event.data?.type === 'SW_UPDATE_AVAILABLE') {
+        setSwUpdateAvailable(true);
+      }
+    }
+
+    navigator.serviceWorker.addEventListener('message', handleMessage);
+    return () => navigator.serviceWorker.removeEventListener('message', handleMessage);
   }, []);
 
   useEffect(() => {
@@ -1100,6 +1115,26 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
             </div>
           </div>
         </header>
+
+        {swUpdateAvailable && (
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-700 dark:bg-amber-900/30">
+            <p className="text-sm text-amber-800 dark:text-amber-200">
+              {lang === 'zh' ? '✨ 新版本已就绪' : '✨ New version ready'}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                if (navigator.serviceWorker.controller) {
+                  navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+                }
+                window.location.reload();
+              }}
+              className="shrink-0 rounded-lg border border-amber-300 bg-amber-100 px-3 py-1.5 text-xs font-medium text-amber-700 transition hover:bg-amber-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 dark:border-amber-600 dark:bg-amber-800 dark:text-amber-200 dark:hover:bg-amber-700 min-h-[36px]"
+            >
+              {lang === 'zh' ? '立即刷新' : 'Refresh Now'}
+            </button>
+          </div>
+        )}
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
           <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[280px]">

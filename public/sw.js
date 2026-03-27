@@ -1,12 +1,32 @@
-const CACHE_NAME = 'promptpage-static-v2';
-const PRECACHE_ASSETS = ['/', '/manifest.webmanifest', '/icons/icon.svg'];
+const CACHE_NAME = 'promptpage-static-v3';
+const PRECACHE_ASSETS = ['/', '/manifest.webmanifest', '/icon.svg'];
+
+let newVersionAvailable = false;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) => cache.addAll(PRECACHE_ASSETS))
-      .then(() => self.skipWaiting())
+      .then(() => {
+        // Check if there's already an active SW controlling clients
+        return self.registration.active;
+      })
+      .then((active) => {
+        if (!active) {
+          // First install: claim immediately
+          return self.clients.claim();
+        }
+        // Update install: signal new version available
+        newVersionAvailable = true;
+        // Broadcast to all clients
+        self.clients.matchAll({ type: 'window' }).then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: 'SW_UPDATE_AVAILABLE' });
+          });
+        });
+        return self.skipWaiting();
+      })
   );
 });
 
@@ -23,6 +43,12 @@ self.addEventListener('activate', (event) => {
       )
       .then(() => self.clients.claim())
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('fetch', (event) => {
