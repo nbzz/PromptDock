@@ -13,6 +13,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "fuse.js": "^7.1.0",
     "js-yaml": "^4.1.0",
     "lz-string": "^1.5.0",
     "next": "^15.1.0",

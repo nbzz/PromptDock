@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
+import Fuse from 'fuse.js';
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
 
 import { BookmarkPanel } from '@/components/bookmark-panel';
@@ -359,12 +360,23 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       result = result.filter((t) => getTemplateCategory(t) === filterTab);
     }
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (t) =>
-          t.title.toLowerCase().includes(q) ||
-          t.rawMarkdown.toLowerCase().includes(q)
-      );
+      // Create search items that include template tags
+      const searchItems = result.map((t) => ({
+        ...t,
+        tags: templateTags[t.id] ?? [],
+      }));
+      const fuse = new Fuse(searchItems, {
+        keys: [
+          { name: 'title', weight: 0.6 },
+          { name: 'tags', weight: 0.3 },
+          { name: 'rawMarkdown', weight: 0.1 },
+        ],
+        threshold: 0.4,
+        includeScore: true,
+        minMatchCharLength: 1,
+      });
+      const fuzzyResults = fuse.search(searchQuery.trim());
+      result = fuzzyResults.map((r) => r.item);
     }
     return result;
   }, [templates, searchQuery, filterTab, favorites]);
