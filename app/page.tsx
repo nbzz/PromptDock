@@ -353,6 +353,17 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
     });
   }, [selectedTemplate, draftMarkdown]);
 
+  // Auto-save draft to localStorage
+  useEffect(() => {
+    if (!selectedId) return;
+    const timer = window.setTimeout(() => {
+      try {
+        localStorage.setItem(`promptpage.draft.${selectedId}`, draftMarkdown);
+      } catch {}
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [draftMarkdown, selectedId]);
+
   const filteredTemplates = useMemo(() => {
     let result = templates;
     // Sort favorites to top (preserving original relative order within each group)
@@ -736,6 +747,19 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   }
 
   function handleTemplateSelect(id: string) {
+    // Restore draft from localStorage if exists
+    try {
+      const savedDraft = localStorage.getItem(`promptpage.draft.${id}`);
+      if (savedDraft) {
+        setDraftMarkdown(savedDraft);
+        return;
+      }
+    } catch {}
+    // Fall back to template's rawMarkdown
+    const template = templates.find((t) => t.id === id);
+    if (template) {
+      setDraftMarkdown(template.rawMarkdown);
+    }
     setSelectedId(id);
   }
 
