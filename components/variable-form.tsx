@@ -20,6 +20,8 @@ interface VariableFormProps {
     removeBookmark: string;
     selectPlaceholder?: string;
     validationFailed?: string;
+    aiFill?: string;
+    aiFillPlaceholder?: string;
   };
 }
 
@@ -36,6 +38,8 @@ const DEFAULT_VARIABLE_FORM_LABELS = {
   removeBookmark: '移除书签',
   selectPlaceholder: '请选择',
   validationFailed: '请填写必填字段：',
+  aiFill: 'AI填充',
+  aiFillPlaceholder: '你看着办',
 };
 
 // Shared field classes to avoid repetition
@@ -134,6 +138,11 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
     addBookmarkHistoryEntry(name, val);
   };
 
+  const handleAiFill = (name: string) => {
+    const aiFillValue = t.aiFillPlaceholder ?? '你看着办';
+    onChange(name, aiFillValue);
+  };
+
   const bookmarkedVars = useMemo(
     () => variables.filter((v) => bookmarks[v.name]),
     [variables, bookmarks]
@@ -184,20 +193,35 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
 
           return (
             <div key={variable.id} className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label htmlFor={`var-${variable.id}`} className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <div className="flex items-center justify-between gap-2">
+                <label htmlFor={`var-${variable.id}`} className="text-sm font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">
                   {label}
                 </label>
-                {value.trim() && (
-                  <button
-                    type="button"
-                    onClick={() => isBookmarked ? handleRemoveBookmark(variable.name) : handleSaveBookmark(variable.name, value)}
-                    className="flex items-center gap-1 rounded-md p-2 min-h-[44px] min-w-[44px] transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:hover:bg-slate-700"
-                    title={isBookmarked ? t.removeBookmark : t.addBookmark}
-                  >
-                    <BookmarkIcon filled={isBookmarked} />
-                  </button>
-                )}
+                <div className="flex items-center gap-1">
+                  {!value.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => handleAiFill(variable.name)}
+                      className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-teal-600 transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 min-h-[32px] border border-teal-200 dark:text-teal-400 dark:hover:bg-teal-900/30 dark:border-teal-700"
+                      title={t.aiFill}
+                    >
+                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      <span className="hidden sm:inline">{t.aiFill ?? 'AI填充'}</span>
+                    </button>
+                  )}
+                  {value.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => isBookmarked ? handleRemoveBookmark(variable.name) : handleSaveBookmark(variable.name, value)}
+                      className="flex items-center gap-1 rounded-md p-2 min-h-[44px] min-w-[44px] transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:hover:bg-slate-700"
+                      title={isBookmarked ? t.removeBookmark : t.addBookmark}
+                    >
+                      <BookmarkIcon filled={isBookmarked} />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {variable.type === 'stock' ? (

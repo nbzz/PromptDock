@@ -9,8 +9,8 @@
 - [x] `BookmarkHistoryEntry` 接口已添加到 storage.ts ✅
 
 ### 1.2 错误处理
-- [ ] `parseTemplate` 中 `yaml.load` 失败只是静默降级，建议加 console.warn 或 toast
-- [ ] `loadLocalTemplates` / `loadBookmarks` 等 storage 函数多处 try-catch 返回空值，行为一致但可追溯
+- [x] `parseTemplate` yaml.load 失败时加 console.warn ✅
+- [x] storage 函数统一 try-catch 通过 safeGet/safeSet 集中处理 ✅
 - [ ] 考虑用 `window.localStorage` 封装一层，加 try-catch 并记录错误
 
 ### 1.3 代码重复
@@ -24,9 +24,9 @@
 - [ ] `focusNextField` 查询全量 DOM，考虑用 ref 替代
 
 ### 1.5 可维护性
-- [ ] `PLACEHOLDER_RE`、`IGNORED_PLACEHOLDER_NAMES` 这些 magic strings/values 加上注释说明
+- [x] `PLACEHOLDER_RE` / `CODE_FENCE_RE` / `INLINE_CODE_RE` / `IGNORED_PLACEHOLDER_NAMES` 加上注释说明 ✅
+- [x] storage.ts 所有 localStorage key 集中到 `STORAGE_KEYS`，`safeGet`/`safeSet`/`safeRemove` 统一错误处理 ✅
 - [ ] `parseFrontmatter` 支持 `\r\n` 但系统主要是 macOS，检查是否必要
-- [ ] `storage.ts` 的 localStorage key 散落多处，抽取 `const STORAGE_KEYS = {...}`
 
 ---
 
@@ -50,7 +50,7 @@
 - [ ] 考虑用 CSS 变量统一管理颜色主题
 
 ### 2.4 空状态 & 边界情况
-- [ ] 模板列表为空时应该有引导页（创建第一个模板）
+- [x] 模板列表为空时显示引导页：图标+说明+上传/导入按钮 ✅
 - [ ] 股票搜索无结果时的用户体验
 - [ ] localStorage 满或不可用时的错误提示
 
@@ -86,7 +86,7 @@
 ### 4.1 测试
 - [x] 添加 Vitest 单元测试框架和核心函数测试（template-parser 16 tests, auto-fill 18 tests） ✅
 - [ ] 添加组件 snapshot 测试
-- [ ] 配置 CI 测试流水线
+- [x] CI 流水线完善（npm ci + lint + build + test） ✅
 
 ### 4.2 构建 & 部署
 - [ ] `.github/workflows/ci.yml` 完善
@@ -148,5 +148,7 @@
 | P2 | 搜索增强（Fuzzy） | ✅ 已完成 |
 | P3 | i18n（部分） | ✅ 进行中 |
 | P2 | 数据更新机制 | ⏳ 待处理 |
+| P3 | i18n | ✅ 大部分完成，剩余少量零散硬编码 |
+| P3 | 安全审计 | ⏳ 待处理 |
 | P3 | 安全审计 | ⏳ 待处理 |
 | P3 | 性能监控 | ⏳ 待处理 |
