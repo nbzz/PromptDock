@@ -309,6 +309,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [stocks, setStocks] = useState<StockItem[]>(clientFallback);
   const [notice, setNotice] = useState('');
   const [noticeKey, setNoticeKey] = useState(0);
+  const [toast, setToast] = useState<{message: string; type: 'success' | 'error' | 'warning'} | null>(null);
+  const [toastKey, setToastKey] = useState(0);
   const [qrModalText, setQrModalText] = useState('');
   const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
   const [shareCount, setShareCount] = useState<number>(0);
@@ -670,6 +672,12 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
     window.setTimeout(() => setNotice(''), 1800);
   }
 
+  function showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
+    setToastKey((k) => k + 1);
+    setToast({ message, type });
+    window.setTimeout(() => setToast(null), 3000);
+  }
+
   function notifyBrowser(title: string, body: string) {
     if (typeof window === 'undefined') return;
     if (Notification.permission === 'granted') {
@@ -954,13 +962,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       setShareCount(next);
       safeSet(STORAGE_KEYS.SHARE_COUNT, next);
       showNotice(t('shareNotice'));
-      alert(
-        '✅ 分享链接已复制到剪贴板！\n\n' +
-        '📋 粘贴给他人即可分享此模板\n' +
-        '🔗 对方打开链接后，模板会自动导入到他的 PromptDock'
-      );
+      showNotice(t('shareNotice'));
     } catch {
-      alert('❌ 复制失败，请手动复制地址栏链接');
+      showToast('复制失败，请手动复制', 'error');
     }
   }
 
@@ -972,12 +976,12 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       const compressed = compressToEncodedURIComponent(draftMarkdown);
       const url = `${window.location.origin}${window.location.pathname}?t=${compressed}`;
       if (url.length > 2000) {
-        alert('⚠️ 模板内容过长，无法生成二维码\n\n请改用「分享链接」功能，将链接复制给对方');
+        showToast('模板内容过长，无法生成二维码', 'warning');
         return;
       }
       setQrModalText(url);
     } catch {
-      alert('❌ 生成二维码失败，请使用分享链接');
+      showToast('生成二维码失败，请使用分享链接', 'error');
     }
   }
 
@@ -1160,12 +1164,34 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 <span className="inline-block w-4 text-center">{lang === 'zh' ? 'EN' : '中'}</span>
               </button>
               <ThemeToggle />
-              <p key={noticeKey} className={`h-4 overflow-hidden text-xs text-teal-700 dark:text-teal-400 ${notice ? 'notice-pop' : ''}`}>
+              <div
+                key={noticeKey}
+                role="status"
+                aria-live="polite"
+                className={`pointer-events-auto min-h-[28px] overflow-hidden rounded-lg bg-teal-100 px-3 py-1 text-xs font-medium text-teal-800 shadow-sm transition-all duration-300 dark:bg-teal-900/60 dark:text-teal-200 ${notice ? 'opacity-100 translate-y-0' : 'h-0 opacity-0 translate-y-[-8px]'}`}
+              >
                 {notice || ''}
-              </p>
+              </div>
             </div>
           </div>
         </header>
+
+        {/* Toast notifications */}
+        {toast && (
+          <div
+            key={toastKey}
+            role="alert"
+            className={`pointer-events-none fixed left-1/2 top-4 z-50 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium shadow-lg transition-all ${
+              toast.type === 'error' ? 'bg-rose-500 text-white' :
+              toast.type === 'warning' ? 'bg-amber-500 text-white' :
+              'bg-teal-500 text-white'
+            }`}
+            style={{ transform: 'translateX(-50%)' }}
+          >
+            {toast.type === 'error' ? '❌' : toast.type === 'warning' ? '⚠️' : '✅'}
+            {toast.message}
+          </div>
+        )}
 
         {swUpdateAvailable && (
           <div className="flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-700 dark:bg-amber-900/30">
