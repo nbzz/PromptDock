@@ -198,7 +198,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                   {label}
                 </label>
                 <div className="flex items-center gap-1">
-                  {!value.trim() && (
+                  {!value.trim() && !variable.required && (
                     <button
                       type="button"
                       onClick={() => handleAiFill(variable.name)}
