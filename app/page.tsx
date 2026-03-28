@@ -91,8 +91,8 @@ const I18N = {
     copyAndOpenAction: '复制并打开',
     autoFillTip: '仅以下变量名会自动填充：',
     autoFillSuffix: '。其他所有 [] 都按手动输入处理。',
-    templateNotice1: '上传的 .md 模板仅保存在当前设备浏览器本地缓存，不会自动同步到其他设备。',
-    templateNotice2: '模板正文可直接使用，不需要固定开场语法；系统仅识别 [] 作为变量占位符。',
+    templateNotice1: '模板仅保存在本地浏览器',
+    templateNotice2: '正文直接用，系统识别 [] 作为变量',
     importedNotice: '模板已导入',
     savedAsCopyNotice: '已另存为本地模板副本',
     exportedNotice: '模板已导出为 Markdown',
@@ -1393,10 +1393,10 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </div>
               )}
 
-              <p className="mb-3 break-words text-xs leading-5 text-slate-500">
+              <p className="mb-3 break-words text-xs leading-5 text-slate-600 dark:text-slate-400">
                 {t('templateNotice1')}
               </p>
-              <p className="mb-3 break-words text-xs leading-5 text-slate-500">
+              <p className="mb-3 break-words text-xs leading-5 text-slate-600 dark:text-slate-400">
                 {t('templateNotice2')}
               </p>
 
