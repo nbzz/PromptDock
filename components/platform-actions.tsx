@@ -117,7 +117,7 @@ export function PlatformActions({ content, onAction, onCopyAndOpen, onBeforeCopy
             <span className="flex h-7 w-7 items-center justify-center rounded bg-slate-100 dark:bg-slate-700">
               <Image
                 src={platform.icon}
-                alt={platform.name}
+                alt=""
                 width={20}
                 height={20}
                 className="h-5 w-5 rounded"

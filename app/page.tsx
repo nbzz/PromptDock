@@ -92,7 +92,7 @@ const I18N = {
     autoFillTip: '仅以下变量名会自动填充：',
     autoFillSuffix: '。其他所有 [] 都按手动输入处理。',
     templateNotice1: '模板仅保存在本地浏览器',
-    templateNotice2: '正文直接用，系统识别 [] 作为变量',
+    templateNotice2: '提示词 [] 内的字符作为变量',
     importedNotice: '模板已导入',
     savedAsCopyNotice: '已另存为本地模板副本',
     exportedNotice: '模板已导出为 Markdown',
