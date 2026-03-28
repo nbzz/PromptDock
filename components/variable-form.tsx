@@ -84,6 +84,30 @@ function handleEnterToNext(
   focusNextField(index);
 }
 
+function focusNextEmptyField(currentIndex: number, values: Record<string, string>) {
+  const allFields = document.querySelectorAll<HTMLElement>('[data-field-index]');
+  // Find empty non-required fields after current
+  for (let i = currentIndex + 1; i < allFields.length; i++) {
+    const field = allFields[i];
+    const name = field.getAttribute('data-field-name');
+    if (name && values[name] !== undefined && !values[name]?.trim()) {
+      field.focus();
+      return;
+    }
+  }
+  // Wrap around to start
+  for (let i = 0; i <= currentIndex; i++) {
+    const field = allFields[i];
+    const name = field.getAttribute('data-field-name');
+    if (name && values[name] !== undefined && !values[name]?.trim()) {
+      field.focus();
+      return;
+    }
+  }
+  // If all filled, go to first field
+  allFields[0]?.focus();
+}
+
 function BookmarkIcon({ filled }: { filled: boolean }) {
   return filled ? (
     <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
@@ -278,13 +302,21 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                 <textarea
                   id={`var-${variable.id}`}
                   data-field-index={index}
+                  data-field-name={variable.name}
                   rows={3}
                   value={value}
                   placeholder={variable.placeholder ?? ''}
                   className={`${FIELD_BASE} px-4 py-3 sm:px-3 sm:py-2 ${
                     isInvalid ? FIELD_INVALID_CLASSES : FIELD_NORMAL_CLASSES
                   }`}
-                  onKeyDown={(event) => handleEnterToNext(event, index, true)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Tab') {
+                      event.preventDefault();
+                      focusNextEmptyField(index, values);
+                      return;
+                    }
+                    handleEnterToNext(event, index, true);
+                  }}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
               ) : null}
@@ -293,6 +325,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                 <select
                   id={`var-${variable.id}`}
                   data-field-index={index}
+                  data-field-name={variable.name}
                   value={value}
                   className={`${FIELD_BASE} px-3 py-3 sm:py-2 min-h-[48px] ${
                     isInvalid
@@ -312,6 +345,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                 <input
                   id={`var-${variable.id}`}
                   data-field-index={index}
+                  data-field-name={variable.name}
                   type={
                     variable.type === 'date' ? 'date'
                       : variable.type === 'time' ? 'time'
@@ -326,7 +360,14 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
                       ? `${FIELD_INVALID_CLASSES} dark:bg-slate-800 dark:text-slate-200`
                       : FIELD_NORMAL_CLASSES
                   }`}
-                  onKeyDown={(event) => handleEnterToNext(event, index)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Tab') {
+                      event.preventDefault();
+                      focusNextEmptyField(index, values);
+                      return;
+                    }
+                    handleEnterToNext(event, index);
+                  }}
                   onChange={(event) => onChange(variable.name, event.target.value)}
                 />
               ) : null}
