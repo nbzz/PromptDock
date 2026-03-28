@@ -22,6 +22,8 @@ interface VariableFormProps {
     validationFailed?: string;
     aiFill?: string;
     aiFillPlaceholder?: string;
+    aiAutoFill?: string;
+    aiAutoFillDesc?: string;
   };
 }
 
@@ -40,6 +42,8 @@ const DEFAULT_VARIABLE_FORM_LABELS = {
   validationFailed: '请填写必填字段：',
   aiFill: 'AI填充',
   aiFillPlaceholder: '你看着办',
+  aiAutoFill: 'AI一键补全',
+  aiAutoFillDesc: '自动填充所有选填字段',
 };
 
 // Shared field classes to avoid repetition
@@ -143,6 +147,18 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
     onChange(name, aiFillValue);
   };
 
+  const handleAiAutoFill = () => {
+    const aiFillValue = t.aiFillPlaceholder ?? '你看着办';
+    for (const v of variables) {
+      if (!v.required && !values[v.name]?.trim()) {
+        onChange(v.name, aiFillValue);
+      }
+    }
+  };
+
+  // Check if there are empty optional fields
+  const hasEmptyOptional = variables.some((v) => !v.required && !values[v.name]?.trim());
+
   const bookmarkedVars = useMemo(
     () => variables.filter((v) => bookmarks[v.name]),
     [variables, bookmarks]
@@ -163,6 +179,27 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
         <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t.sectionTitle}</h3>
         {stockStatusText ? <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{stockStatusText}</p> : null}
       </div>
+
+      {hasEmptyOptional && (
+        <div className="mb-4 rounded-xl border border-violet-200 bg-violet-50 p-3 dark:border-violet-700 dark:bg-violet-900/30">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <p className="text-xs font-medium text-violet-700 dark:text-violet-400">{t.aiAutoFill ?? 'AI一键补全'}</p>
+              <p className="text-xs text-violet-600 dark:text-violet-500">{t.aiAutoFillDesc}</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAiAutoFill}
+              className="flex items-center gap-1.5 rounded-lg border border-violet-300 bg-white px-3 py-2 text-sm font-medium text-violet-700 transition hover:bg-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-1 dark:border-violet-600 dark:bg-slate-800 dark:text-violet-300 dark:hover:bg-violet-900/50 min-h-[40px]"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              {t.aiAutoFill ?? 'AI一键补全'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {bookmarkedVars.length > 0 && (
         <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-700 dark:bg-amber-900/30">
