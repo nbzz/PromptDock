@@ -1265,6 +1265,29 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 <div className="flex gap-2">
                   <button
                     type="button"
+                    onClick={() => {
+                      const newTemplate: StoredTemplate = {
+                        id: `local:${crypto.randomUUID()}`,
+                        title: lang === 'zh' ? '新模板' : 'New Template',
+                        rawMarkdown: `---\ntitle: ${lang === 'zh' ? '新模板' : 'New Template'}\ndescription: \nvariables: {}\n---\n# ${lang === 'zh' ? '任务' : 'Task'}\n`,
+                        source: 'local',
+                        updatedAt: Date.now()
+                      };
+                      setTemplates((prev) => {
+                        const next = [newTemplate, ...prev];
+                        saveLocalTemplates(getLocalTemplates(next));
+                        return next;
+                      });
+                      setSelectedId(newTemplate.id);
+                      setDraftMarkdown(newTemplate.rawMarkdown);
+                    }}
+                    className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] min-w-[44px] sm:text-xs sm:py-1.5 sm:min-h-0 sm:w-auto"
+                    title={lang === 'zh' ? '新建模板' : 'New Template'}
+                  >
+                    + {lang === 'zh' ? '新建' : 'New'}
+                  </button>
+                  <button
+                    type="button"
                     onClick={handleUploadClick}
                     className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px] min-w-[44px] sm:text-xs sm:py-1.5 sm:min-h-0 sm:w-auto"
                   >
