@@ -1163,7 +1163,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
         )}
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
-          <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[320px]">
+          <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[400px]">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
                 <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>

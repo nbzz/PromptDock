@@ -42,8 +42,8 @@ const DEFAULT_VARIABLE_FORM_LABELS = {
   validationFailed: '请填写必填字段：',
   aiFill: 'AI填充',
   aiFillPlaceholder: '你看着办',
-  aiAutoFill: 'AI一键补全',
-  aiAutoFillDesc: '自动填充所有选填字段',
+  aiAutoFill: '由AI自己决定',
+  aiAutoFillDesc: '自动填入提示词，让AI根据上下文判断',
 };
 
 // Shared field classes to avoid repetition
