@@ -1163,7 +1163,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
         )}
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
-          <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[280px]">
+          <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[320px]">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
                 <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
@@ -1302,9 +1302,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   return (
                     <div
                       key={item.id}
-                      className={`flex items-center gap-2 rounded-xl border px-3 py-2 min-h-[60px] transition overflow-hidden ${
+                      className={`flex items-center gap-2 rounded-xl border px-3 py-2 min-h-[60px] transition ${
                         isSelected
-                          ? 'border-teal-400 bg-teal-50 dark:bg-teal-900/30 ring-2 ring-teal-400 ring-offset-1'
+                          ? 'border-teal-500 bg-teal-50 shadow-sm shadow-teal-200 dark:bg-teal-900/30 dark:shadow-teal-900 dark:border-teal-500'
                           : isChecked && isLocal
                             ? 'border-teal-400 bg-teal-50/50 dark:bg-teal-900/20'
                             : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800'
