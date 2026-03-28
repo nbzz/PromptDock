@@ -174,6 +174,7 @@ export function parseTemplate(input: StoredTemplate): ParsedTemplate {
       hint: merged.hint,
       options: merged.options,
       autoFill: merged.autoFill,
+      aiFill: merged.aiFill,
       value
     };
   });
