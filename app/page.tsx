@@ -604,6 +604,11 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
     return renderPromptSegments(parsed.content, values);
   }, [parsed, values]);
 
+  const requiredVariableNames = useMemo(() => {
+    if (!parsed) return new Set<string>();
+    return new Set(parsed.variables.filter((v) => v.required).map((v) => v.name));
+  }, [parsed]);
+
   const shouldShowStockStatus = useMemo(() => {
     if (!parsed) {
       return false;
@@ -1485,18 +1490,26 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
                 <pre className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700 dark:text-slate-300">
-                  {renderedSegments.map((segment, index) =>
-                    segment.isFilled ? (
+                  {renderedSegments.map((segment, index) => {
+                    const isRequiredEmpty = segment.variableName && requiredVariableNames.has(segment.variableName) && !segment.isFilled;
+                    return segment.isFilled ? (
                       <span
                         key={`seg-${index}`}
                         className="rounded bg-teal-100 px-1 font-mono text-teal-800"
                       >
                         {segment.text}
                       </span>
+                    ) : isRequiredEmpty ? (
+                      <span
+                        key={`seg-${index}`}
+                        className="rounded bg-amber-100 px-1 font-mono text-amber-800 border-b-2 border-dashed border-amber-400"
+                      >
+                        {segment.text}
+                      </span>
                     ) : (
                       <span key={`seg-${index}`}>{segment.text}</span>
-                    )
-                  )}
+                    );
+                  })}
                 </pre>
               </div>
 

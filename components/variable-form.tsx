@@ -143,14 +143,15 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
   };
 
   const handleAiFill = (name: string) => {
-    const aiFillValue = t.aiFillPlaceholder ?? '你看着办';
+    const variable = variables.find((v) => v.name === name);
+    const aiFillValue = variable?.aiFill ?? t.aiFillPlaceholder ?? '你看着办';
     onChange(name, aiFillValue);
   };
 
   const handleAiAutoFill = () => {
-    const aiFillValue = t.aiFillPlaceholder ?? '你看着办';
     for (const v of variables) {
       if (!v.required && !values[v.name]?.trim()) {
+        const aiFillValue = v.aiFill ?? t.aiFillPlaceholder ?? '你看着办';
         onChange(v.name, aiFillValue);
       }
     }

@@ -26,6 +26,7 @@ export interface VariableMeta {
   hint?: string;
   options?: string[];
   autoFill?: AutoFillKind;
+  aiFill?: string;
 }
 
 export interface ParsedVariable extends VariableMeta {
