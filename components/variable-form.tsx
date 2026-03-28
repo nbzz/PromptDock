@@ -184,7 +184,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
         <div className="mb-4 rounded-xl border border-violet-200 bg-violet-50 p-3 dark:border-violet-700 dark:bg-violet-900/30">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <p className="text-xs font-medium text-violet-700 dark:text-violet-400">{t.aiAutoFill ?? 'AI一键补全'}</p>
+              <p className="text-xs font-medium text-violet-700 dark:text-violet-400">{t.aiAutoFill ?? '由AI自己决定'}</p>
               <p className="text-xs text-violet-600 dark:text-violet-500">{t.aiAutoFillDesc}</p>
             </div>
             <button
@@ -195,7 +195,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              {t.aiAutoFill ?? 'AI一键补全'}
+              {t.aiAutoFill ?? '由AI自己决定'}
             </button>
           </div>
         </div>

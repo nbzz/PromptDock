@@ -263,21 +263,19 @@ export default function HomePage() {
   const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  type FilterTab = 'all' | 'financial' | 'news' | 'writing' | 'other' | 'claude';
+  type FilterTab = 'all' | 'financial' | 'writing' | 'other' | 'claude';
 const [filterTab, setFilterTab] = useState<FilterTab>('all');
 
 const CATEGORY_LABELS: Record<FilterTab, string> = {
   all: '全部',
   financial: '金融分析',
-  news: '新闻资讯',
   writing: '写作创作',
   other: '其他',
   claude: 'Claude金融分析',
 };
 
-const FINANCIAL_KEYWORDS = ['审计', '财务', '竞争', 'comps', 'dcf', 'lbo', '杠杆', '宏观', '建模', '三表', '企业竞争', '个股', '分析报告', '现金流折现', '数据清洗'];
-const NEWS_KEYWORDS = ['新闻', '财经新闻'];
-const WRITING_KEYWORDS = ['报告转', '网页', '体育营销', '学术论文', '论文结构化', '西甲', '提示词生成', '提示词压缩', '品牌体育'];
+const FINANCIAL_KEYWORDS = ['审计', '财务', '竞争', 'comps', 'dcf', 'lbo', '杠杆', '宏观', '建模', '三表', '企业竞争', '个股', '分析报告', '现金流折现', '数据清洗', '新闻', '财经新闻', '枯燥报告', '报告转', '网页'];
+const WRITING_KEYWORDS = ['体育营销', '学术论文', '论文结构化', '西甲', '提示词生成', '提示词压缩', '品牌体育'];
 
 function getTemplateCategory(item: StoredTemplate): FilterTab {
   const title = item.title.toLowerCase();
@@ -286,7 +284,6 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   // Underscore-named prompts go to Claude金融分析 category
   if (title.includes('_')) return 'claude';
   if (FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'financial';
-  if (NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'news';
   if (WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'writing';
   return 'other';
 }
@@ -368,9 +365,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
         const desc = (item.rawMarkdown.match(/description:\s*(.+)/i)?.[1] ?? '').toLowerCase();
         if (filterTab === 'claude') return title.includes('_');
         if (filterTab === 'financial' && !title.includes('_') && FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
-        if (filterTab === 'news' && !title.includes('_') && NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
         if (filterTab === 'writing' && !title.includes('_') && WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
-        if (filterTab === 'other') return !title.includes('_') && !FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw)) && !NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw)) && !WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw));
+        if (filterTab === 'other') return !title.includes('_') && !FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw)) && !WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw));
         return false;
       });
     }
@@ -394,7 +390,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       result = fuzzyResults.map((r) => r.item);
     }
     return result;
-  }, [templates, searchQuery, filterTab, favorites, templateTags, FINANCIAL_KEYWORDS, NEWS_KEYWORDS, WRITING_KEYWORDS]);
+  }, [templates, searchQuery, filterTab, favorites, templateTags, FINANCIAL_KEYWORDS, WRITING_KEYWORDS]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
