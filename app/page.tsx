@@ -311,6 +311,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [noticeKey, setNoticeKey] = useState(0);
   const [toast, setToast] = useState<{message: string; type: 'success' | 'error' | 'warning'} | null>(null);
   const [toastKey, setToastKey] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const [qrModalText, setQrModalText] = useState('');
   const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
   const [shareCount, setShareCount] = useState<number>(0);
@@ -676,6 +677,49 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
     setToastKey((k) => k + 1);
     setToast({ message, type });
     window.setTimeout(() => setToast(null), 3000);
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }
+
+  function handleDragLeave(e: React.DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    const mdFile = files.find((f) => f.name.endsWith('.md'));
+    if (mdFile) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const content = event.target?.result as string;
+        if (!content) return;
+        const localTemplate: StoredTemplate = {
+          id: `local:${crypto.randomUUID()}`,
+          title: mdFile.name.replace(/\.md$/i, ''),
+          rawMarkdown: content,
+          source: 'local',
+          updatedAt: Date.now()
+        };
+        setTemplates((previous) => {
+          const next = mergeTemplates([], [localTemplate, ...previous]);
+          saveLocalTemplates(getLocalTemplates(next));
+          return next;
+        });
+        setSelectedId(localTemplate.id);
+        setDraftMarkdown(content);
+        showNotice(lang === 'zh' ? '已导入模板' : 'Template imported');
+      };
+      reader.readAsText(mdFile);
+    }
   }
 
   function notifyBrowser(title: string, body: string) {
@@ -1340,11 +1384,21 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               <div
                 ref={templateListRef}
-                className="max-h-[70vh] space-y-2 overflow-auto pr-1"
+                className={`max-h-[70vh] space-y-2 overflow-auto pr-1 transition-colors ${
+                  isDragging ? 'bg-teal-50 dark:bg-teal-900/20 rounded-xl' : ''
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
                 onKeyDown={handleTemplateListKeyDown}
                 role="listbox"
                 aria-label="模板列表"
               >
+                {isDragging && (
+                  <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-teal-400 bg-teal-50/50 py-8 dark:bg-teal-900/20">
+                    <p className="text-sm text-teal-600 dark:text-teal-400">📄 {lang === 'zh' ? '松开以上传 .md 文件' : 'Drop .md file here'}</p>
+                  </div>
+                )}
                 {isLoading ? (
                   <div className="space-y-2">
                     {[1,2,3,4,5].map((i) => (
