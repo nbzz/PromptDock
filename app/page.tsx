@@ -262,6 +262,7 @@ export default function HomePage() {
   const [tagInput, setTagInput] = useState('');
   const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   type FilterTab = 'all' | 'financial' | 'writing' | 'other' | 'claude';
 const [filterTab, setFilterTab] = useState<FilterTab>('all');
@@ -397,6 +398,28 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       return;
     }
 
+    function handleKeyDown(e: KeyboardEvent) {
+      // Ctrl/Cmd + Enter to fill and copy
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        const platform = document.querySelector('[data-platform-btn]') as HTMLButtonElement | null;
+        if (platform) platform.click();
+      }
+      // Escape to clear validation
+      if (e.key === 'Escape') {
+        variableFormRef.current?.clearValidation();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     if ('serviceWorker' in navigator) {
       if (process.env.NODE_ENV === 'production') {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
@@ -460,6 +483,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
       const merged = mergeTemplates(builtinTemplates, localTemplates);
       setTemplates(merged);
+      setIsLoading(false);
 
       // If shared template in URL, load it
       if (shareData) {
@@ -1295,7 +1319,19 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 role="listbox"
                 aria-label="模板列表"
               >
-                {filteredTemplates.map((item, idx) => {
+                {isLoading ? (
+                  <div className="space-y-2">
+                    {[1,2,3,4,5].map((i) => (
+                      <div key={i} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3 dark:border-slate-700 dark:bg-slate-800 animate-pulse">
+                        <div className="h-4 w-4 rounded bg-slate-200 dark:bg-slate-600" />
+                        <div className="flex-1 space-y-1">
+                          <div className="h-4 w-3/4 rounded bg-slate-200 dark:bg-slate-600" />
+                          <div className="h-3 w-1/4 rounded bg-slate-100 dark:bg-slate-700" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : filteredTemplates.map((item, idx) => {
                   const isLocal = item.source === 'local';
                   const isChecked = batchSelectedIds.has(item.id);
                   const isSelected = selectedId === item.id;
@@ -1353,7 +1389,6 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                     </div>
                   );
                 })}
-
                 {templates.length === 0 ? (
                   <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center dark:border-slate-600">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
@@ -1801,6 +1836,17 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
             </div>
           );
         })()}
+
+        {/* Keyboard shortcuts hint */}
+        <footer className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400 dark:text-slate-500">
+          <span>⌘/Ctrl+Enter {lang === 'zh' ? '填充并复制' : 'Fill & Copy'}</span>
+          <span>Esc {lang === 'zh' ? '清空' : 'Clear'}</span>
+          <span>Tab {lang === 'zh' ? '下一个字段' : 'Next field'}</span>
+          <span className="text-slate-300 dark:text-slate-600">·</span>
+          <a href="https://github.com/nbzz/PromptDock" target="_blank" rel="noopener noreferrer" className="hover:text-teal-500 transition-colors">
+            PromptDock
+          </a>
+        </footer>
       </div>
     </main>
   );

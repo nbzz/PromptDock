@@ -80,3 +80,43 @@ button {
     font-size: 16px;
   }
 }
+
+/* Custom scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #94a3b8;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b;
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(20, 184, 166, 0.3);
+}
+
+/* Smooth transitions for theme switch */
+html {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Focus visible improvement */
+:focus-visible {
+  outline: 2px solid #14b8a6;
+  outline-offset: 2px;
+}
