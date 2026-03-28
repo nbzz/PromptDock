@@ -1302,9 +1302,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   return (
                     <div
                       key={item.id}
-                      className={`flex items-center gap-2 rounded-xl border px-3 py-2 min-h-[60px] transition focus-within:ring-2 focus-within:ring-teal-400 focus-within:ring-offset-1 ${
+                      className={`flex items-center gap-2 rounded-xl border px-3 py-2 min-h-[60px] transition overflow-hidden ${
                         isSelected
-                          ? 'border-teal-400 bg-teal-50 dark:bg-teal-900/30'
+                          ? 'border-teal-400 bg-teal-50 dark:bg-teal-900/30 ring-2 ring-teal-400 ring-offset-1'
                           : isChecked && isLocal
                             ? 'border-teal-400 bg-teal-50/50 dark:bg-teal-900/20'
                             : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800'
@@ -1331,11 +1331,6 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                           <p className={`truncate text-sm font-medium ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
                             {item.title}
                           </p>
-                          {favorites.includes(item.id) && (
-                            <span className="shrink-0 text-amber-400 dark:text-amber-300" aria-label="已收藏">
-                              ★
-                            </span>
-                          )}
                         </div>
                         <p className={`mt-0.5 text-xs ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
                           {item.source === 'builtin' ? t('builtIn') : t('local')}
