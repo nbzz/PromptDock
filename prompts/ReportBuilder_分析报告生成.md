@@ -6,6 +6,7 @@ variables:
     type: select
     options: ["深度研究", "季报点评", "事件点评", "行业跟踪", "估值报告", "策略报告"]
     default: "深度研究"
+    aiFill: "深度研究"
   公司或标的:
     type: text
     required: true

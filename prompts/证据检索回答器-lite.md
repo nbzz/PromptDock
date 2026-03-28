@@ -8,11 +8,13 @@ variables:
     placeholder: 输入你要检索和回答的问题
   时效要求:
     type: text
+    aiFill: "近30天"
     placeholder: 例如：近30天 / 截至今天
   输出语言:
     type: select
     options: ["中文", "英文"]
     default: "中文"
+    aiFill: "中文"
 ---
 # 任务
 请将以下问题按“证据驱动”的方式回答，避免把猜测写成事实。
