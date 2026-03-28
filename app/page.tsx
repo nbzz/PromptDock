@@ -263,7 +263,7 @@ export default function HomePage() {
   const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
   const [templates, setTemplates] = useState<StoredTemplate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  type FilterTab = 'all' | 'financial' | 'news' | 'writing' | 'other';
+  type FilterTab = 'all' | 'financial' | 'news' | 'writing' | 'other' | 'claude';
 const [filterTab, setFilterTab] = useState<FilterTab>('all');
 
 const CATEGORY_LABELS: Record<FilterTab, string> = {
@@ -272,6 +272,7 @@ const CATEGORY_LABELS: Record<FilterTab, string> = {
   news: '新闻资讯',
   writing: '写作创作',
   other: '其他',
+  claude: 'Claude金融分析',
 };
 
 const FINANCIAL_KEYWORDS = ['审计', '财务', '竞争', 'comps', 'dcf', 'lbo', '杠杆', '宏观', '建模', '三表', '企业竞争', '个股', '分析报告', '现金流折现', '数据清洗'];
@@ -282,6 +283,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const title = item.title.toLowerCase();
   const desc = (item.rawMarkdown.match(/description:\s*(.+)/i)?.[1] ?? '').toLowerCase();
 
+  // Underscore-named prompts go to Claude金融分析 category
+  if (title.includes('_')) return 'claude';
   if (FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'financial';
   if (NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'news';
   if (WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return 'writing';
@@ -363,9 +366,11 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       result = result.filter((item) => {
         const title = item.title.toLowerCase();
         const desc = (item.rawMarkdown.match(/description:\s*(.+)/i)?.[1] ?? '').toLowerCase();
-        if (filterTab === 'financial' && FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
-        if (filterTab === 'news' && NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
-        if (filterTab === 'writing' && WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
+        if (filterTab === 'claude') return title.includes('_');
+        if (filterTab === 'financial' && !title.includes('_') && FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
+        if (filterTab === 'news' && !title.includes('_') && NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
+        if (filterTab === 'writing' && !title.includes('_') && WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw))) return true;
+        if (filterTab === 'other') return !title.includes('_') && !FINANCIAL_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw)) && !NEWS_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw)) && !WRITING_KEYWORDS.some((kw) => title.includes(kw) || desc.includes(kw));
         return false;
       });
     }
