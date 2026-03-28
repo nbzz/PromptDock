@@ -1440,6 +1440,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 onKeyDown={handleTemplateListKeyDown}
                 role="listbox"
                 aria-label="模板列表"
+                aria-multiselectable="true"
               >
                 {isDragging && (
                   <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-teal-400 bg-teal-50/50 py-8 dark:bg-teal-900/20">
@@ -1466,6 +1467,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   return (
                     <div
                       key={item.id}
+                      role="option"
+                      aria-selected={isSelected}
                       className={`flex items-center gap-2 rounded-xl border px-3 py-2 min-h-[60px] transition ${
                         isSelected
                           ? 'border-teal-500 bg-teal-50 shadow-sm shadow-teal-200 dark:bg-teal-900/30 dark:shadow-teal-900 dark:border-teal-500'
