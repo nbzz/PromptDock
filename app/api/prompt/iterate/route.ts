@@ -26,6 +26,28 @@ function extractContinueField(parsed: Record<string, string>): { continue: boole
   };
 }
 
+/**
+ * Evaluate stop_when expression against output content.
+ * Supports simple patterns like: "output.contains('xxx')", "output.includes('xxx')"
+ */
+function evaluateStopWhen(stopWhen: string, output: string): boolean {
+  if (!stopWhen || !output) return false;
+
+  // Handle output.contains('...') pattern
+  const containsMatch = stopWhen.match(/output\.contains\s*\(\s*['"]([^'"]+)['"]\s*\)/);
+  if (containsMatch) {
+    return output.includes(containsMatch[1]);
+  }
+
+  // Handle output.includes('...') pattern
+  const includesMatch = stopWhen.match(/output\.includes\s*\(\s*['"]([^'"]+)['"]\s*\)/);
+  if (includesMatch) {
+    return output.includes(includesMatch[1]);
+  }
+
+  return false;
+}
+
 // POST /api/prompt/iterate — 多轮迭代填充
 export async function POST(request: NextRequest) {
   try {
@@ -133,6 +155,9 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const output = searchParams.get('output');
+  const stopWhen = searchParams.get('stop_when');
+  const currentRound = parseInt(searchParams.get('round') || '1', 10);
+  const maxRounds = parseInt(searchParams.get('max_rounds') || '5', 10);
 
   if (!output) {
     return NextResponse.json({ error: 'Missing output parameter' }, { status: 400 });
@@ -147,9 +172,17 @@ export async function GET(request: NextRequest) {
   const parsed = parseXmlResult(xmlContent);
   const { continue: isContinue, next_focus, confidence, stage, analysis } = extractContinueField(parsed);
 
+  // Evaluate stop_when expression if provided
+  const stopByExpression = stopWhen ? evaluateStopWhen(stopWhen, output) : false;
+
+  // Determine if should continue
+  // Stop if: AI said continue=false, OR stop_when expression matched, OR max rounds reached
+  const shouldContinue = isContinue && !stopByExpression && currentRound < maxRounds;
+
   return NextResponse.json({
-    continue: isContinue,
-    next_focus,
+    continue: shouldContinue,
+    continue_reason: !isContinue ? 'ai_stop' : stopByExpression ? 'expression_match' : currentRound >= maxRounds ? 'max_rounds' : 'ok',
+    next_focus: shouldContinue ? next_focus : undefined,
     confidence,
     stage,
     analysis,
