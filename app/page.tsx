@@ -623,8 +623,17 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       return;
     }
 
+    // Only use template's rawMarkdown if there's no saved draft for this template
+    try {
+      const savedDraft = localStorage.getItem(`promptpage.draft.${selectedId}`);
+      if (savedDraft) {
+        // Draft exists, don't overwrite - the draft was already loaded by handleTemplateSelect
+        return;
+      }
+    } catch {}
+
     setDraftMarkdown(selectedTemplate.rawMarkdown);
-  }, [selectedTemplate]);
+  }, [selectedTemplate, selectedId]);
 
   const rendered = useMemo(() => {
     if (!parsed) {
