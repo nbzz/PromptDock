@@ -752,6 +752,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
       const savedDraft = localStorage.getItem(`promptpage.draft.${id}`);
       if (savedDraft) {
         setDraftMarkdown(savedDraft);
+        setSelectedId(id);
         return;
       }
     } catch {}
