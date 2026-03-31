@@ -46,6 +46,10 @@ export interface FrontmatterShape {
         } & VariableMeta
       >;
   tags?: string[];
+  iteration?: {
+    max_rounds?: number;
+    stop_when?: string;
+  };
 }
 
 export interface ParsedTemplate {
@@ -129,4 +133,45 @@ export interface TemplateTagRecord {
   id: string;
   name: string;
   slug: string;
+}
+
+// ============ 多轮迭代相关类型 ============
+
+export interface IterationConfig {
+  max_rounds: number;
+  stop_when?: string;
+}
+
+export interface StructuredOutputField {
+  name: string;
+  description: string;
+  required: boolean;
+}
+
+export interface StructuredOutputSchema {
+  root: string;
+  fields: StructuredOutputField[];
+}
+
+export interface IterationState {
+  round: number;
+  history: Array<{
+    round: number;
+    output: string;
+    continue: boolean;
+    next_focus?: string;
+  }>;
+  last_output?: string;
+}
+
+export interface IterativePromptResult {
+  rendered: string;
+  iteration: {
+    round: number;
+    is_continue: boolean;
+    next_focus?: string;
+    confidence?: '高' | '中' | '低';
+  };
+  stage?: string;
+  analysis?: string;
 }

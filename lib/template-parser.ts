@@ -5,7 +5,9 @@ import {
   ParsedTemplate,
   ParsedVariable,
   StoredTemplate,
-  VariableMeta
+  VariableMeta,
+  IterationConfig,
+  StructuredOutputSchema,
 } from '@/lib/types';
 
 // Matches [...] but not [...]( with negative lookahead to avoid Markdown links
@@ -244,6 +246,52 @@ export function renderPromptSegments(
   }
 
   return segments;
+}
+
+/**
+ * 解析 frontmatter 中的 iteration 配置
+ */
+export function parseIterationConfig(frontmatter: FrontmatterShape): IterationConfig | null {
+  const iteration = frontmatter.iteration;
+  if (!iteration) return null;
+
+  if (typeof iteration === 'object' && 'max_rounds' in iteration) {
+    return {
+      max_rounds: Number(iteration.max_rounds) || 5,
+      stop_when: iteration.stop_when as string | undefined,
+    };
+  }
+
+  return null;
+}
+
+const STRUCTURED_OUTPUT_RE = /<result>([\s\S]*?)<\/result>/i;
+const OUTPUT_FIELD_RE = /<(\w+)>\s*([^<]*?)\s*<\/\1>/g;
+
+/**
+ * 解析模板中的结构化输出 schema
+ */
+export function parseStructuredOutput(content: string): StructuredOutputSchema | null {
+  const match = content.match(STRUCTURED_OUTPUT_RE);
+  if (!match) return null;
+
+  const xmlContent = match[1];
+  const fields: StructuredOutputSchema['fields'] = [];
+
+  for (const fieldMatch of xmlContent.matchAll(OUTPUT_FIELD_RE)) {
+    const name = fieldMatch[1];
+    if (name === 'result') continue; // skip root tag
+    fields.push({
+      name,
+      description: `Field: ${name}`,
+      required: ['continue', 'analysis', 'stage', 'confidence', 'next_focus'].includes(name),
+    });
+  }
+
+  return {
+    root: 'result',
+    fields,
+  };
 }
 
 export function buildMarkdownExport(parsed: ParsedTemplate): string {
