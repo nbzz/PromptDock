@@ -330,6 +330,10 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [shareCount, setShareCount] = useState<number>(0);
   const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
+  // 手机端默认收起「模板列表 / 模板预览」这两块长内容，让变量填写与快捷动作一屏可达。
+  // 桌面端（lg 断点以上）通过 lg:block 强制展开，这两个开关不影响大屏表现。
+  const [templateListOpen, setTemplateListOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
   const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ template: StoredTemplate } | null>(null);
   const [batchDeleteConfirmDialog, setBatchDeleteConfirmDialog] = useState<{ count: number } | null>(null);
@@ -1233,7 +1237,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   }
 
   return (
-    <main className="px-3 py-4 sm:px-5 lg:px-8">
+    // pb-28：给手机端吸底操作条留出空间，避免遮住页脚
+    <main className="px-3 pt-4 pb-28 sm:px-5 lg:px-8 lg:pb-4">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
         <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <div className="flex items-start justify-between gap-3">
@@ -1308,7 +1313,17 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
           <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[400px]">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
-                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
+                <button
+                  type="button"
+                  onClick={() => setTemplateListOpen((open) => !open)}
+                  aria-expanded={templateListOpen}
+                  className="flex min-h-[44px] items-center gap-1.5 rounded text-sm font-semibold text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 lg:min-h-0 dark:text-slate-200"
+                >
+                  <span>{t('templateList')}</span>
+                  <span className="text-[10px] text-slate-400 lg:hidden" aria-hidden="true">
+                    {templateListOpen ? '▲' : '▼'}
+                  </span>
+                </button>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -1387,6 +1402,30 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </div>
               )}
 
+              {/* 手机端：横向滑动的模板快选条，一屏内即可切换模板 */}
+              <div className="-mx-1 mb-3 overflow-x-auto px-1 lg:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex gap-1.5">
+                  {filteredTemplates.map((item) => {
+                    const active = selectedId === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleTemplateSelect(item.id)}
+                        aria-pressed={active}
+                        className={`min-h-[40px] shrink-0 rounded-full border px-3 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
+                          active
+                            ? 'border-teal-500 bg-teal-50 text-teal-700 dark:border-teal-500 dark:bg-teal-900/30 dark:text-teal-300'
+                            : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                        }`}
+                      >
+                        {item.title}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {batchSelectedIds.size > 0 && (
                 <div className="mb-3 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 dark:border-rose-800 dark:bg-rose-900/30">
                   <span className="text-xs text-rose-700 dark:text-rose-300">
@@ -1416,14 +1455,14 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </div>
               )}
 
-              <p className="mb-3 break-words text-xs leading-5 text-slate-600 dark:text-slate-400">
+              <p className="mb-3 hidden break-words text-xs leading-5 text-slate-600 lg:block dark:text-slate-400">
                 {t('templateNotice1')}
               </p>
-              <p className="mb-3 break-words text-xs leading-5 text-slate-600 dark:text-slate-400">
+              <p className="mb-3 hidden break-words text-xs leading-5 text-slate-600 lg:block dark:text-slate-400">
                 {t('templateNotice2')}
               </p>
 
-              <div className="mb-3">
+              <div className={`mb-3 ${templateListOpen ? '' : 'hidden'} lg:block`}>
                 <input
                   type="text"
                   value={searchQuery}
@@ -1433,7 +1472,11 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 />
               </div>
 
-              <div className="mb-3 -mx-1 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div
+                className={`mb-3 -mx-1 overflow-x-auto px-1 lg:block [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+                  templateListOpen ? '' : 'hidden'
+                }`}
+              >
                 <div className="flex gap-1.5">
                   {(Object.keys(CATEGORY_LABELS) as FilterTab[]).map((tab) => (
                     <button
@@ -1454,9 +1497,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               <div
                 ref={templateListRef}
-                className={`max-h-[70vh] space-y-2 overflow-auto pr-1 transition-colors ${
-                  isDragging ? 'bg-teal-50 dark:bg-teal-900/20 rounded-xl' : ''
-                }`}
+                className={`max-h-[45vh] space-y-2 overflow-auto pr-1 transition-colors lg:block lg:max-h-[70vh] ${
+                  templateListOpen ? '' : 'hidden'
+                } ${isDragging ? 'bg-teal-50 dark:bg-teal-900/20 rounded-xl' : ''}`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -1672,11 +1715,33 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templatePreview')}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{t('highlightTip')}</p>
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen((open) => !open)}
+                  aria-expanded={previewOpen}
+                  className="flex min-h-[44px] items-center gap-1.5 rounded text-sm font-semibold text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 lg:min-h-0 dark:text-slate-200"
+                >
+                  <span>{t('templatePreview')}</span>
+                  <span className="text-[10px] text-slate-400 lg:hidden" aria-hidden="true">
+                    {previewOpen ? '▲' : '▼'}
+                  </span>
+                </button>
+                <p className="hidden text-xs text-slate-500 lg:block dark:text-slate-400">{t('highlightTip')}</p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
+              {!previewOpen && (
+                <p className="rounded-xl border border-dashed border-slate-300 px-3 py-2 text-xs text-slate-500 lg:hidden dark:border-slate-600 dark:text-slate-400">
+                  {lang === 'zh'
+                    ? `已收起完整提示词（约 ${rendered.length} 字），点上方标题展开`
+                    : `Collapsed (~${rendered.length} chars) — tap the title to expand`}
+                </p>
+              )}
+
+              <div
+                className={`rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 lg:block dark:border-slate-700 dark:bg-slate-800 ${
+                  previewOpen ? '' : 'hidden'
+                }`}
+              >
                 <pre className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700 dark:text-slate-300">
                   {renderedSegments.map((segment, index) => {
                     const isRequiredEmpty = segment.variableName && requiredVariableNames.has(segment.variableName) && !segment.isFilled;
