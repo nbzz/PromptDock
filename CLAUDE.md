@@ -65,6 +65,11 @@ npm run lint     # 检查
 2. **组件**: 使用 Tailwind CSS + `shadcn/ui` 风格
 3. **类型**: 严格 TypeScript
 4. **提交**: 用中文描述，格式 `feat:`, `fix:`, `chore:`
+5. **Tailwind 坑**:
+   - `min-h-*` / `min-w-*` 会压过 `h-*` / `w-*`。要隐藏带 min 的元素，
+     光写 `h-0 w-0` 无效，必须同时把 min 归零，或直接用 `hidden`。
+   - 冲突的工具类不要叠加（如 `p-0` 想抵消 `px-3`）——Tailwind 输出顺序里
+     基础方向（p）在轴方向（px）之前，`px-3` 会赢。冲突类必须放进互斥分支。
 
 ## 自动开发循环
 
