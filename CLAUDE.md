@@ -19,6 +19,54 @@
 | `components/stock-input.tsx` | 股票输入组件 |
 | `components/platform-actions.tsx` | 平台跳转按钮 |
 | `prompts/*.md` | 内置模板 |
+| `data/stocks.*.json` | 股票库数据（base + delta + meta） |
+| `scripts/fetch-local-stocks.mjs` | 刷新股票库脚本 |
+
+## 内置模板的排序与分类
+
+全部在 `app/page.tsx` 顶部的常量里控制，改动模板时记得同步：
+
+- `PINNED_BUILTIN_TITLES`：内置模板置顶顺序（取不到则排到 100 之后）
+- `DEFAULT_TEMPLATE_TITLE`：打开页面默认选中的模板
+- `FINANCIAL_KEYWORDS` / `WRITING_KEYWORDS`：分类标签的命中关键词（按标题或 frontmatter description 匹配）
+- `STOCK_TEMPLATE_KEYWORDS`：命中后展示「股票库」数据同步状态
+- 标题里含下划线的模板会被归入「Claude金融分析」分类
+
+模板正文里除真实变量外，不要使用半角 `[]` 包住说明性文字——`lib/template-parser.ts`
+会把它们一并解析成变量。说明文字请改用全角 `（）` 或 `【】`。
+
+## 响应式布局约定
+
+移动端与桌面端是两套呈现，**分界在 `md`（768px）**：`< 768px` 是手机版式，
+`>= 768px`（含 iPad 竖屏 768/810/834）一律走桌面版式。
+
+> 历史：分界原为 `lg`（1024px），导致 iPad 竖屏掉进手机版式；已整体把
+> `lg:` 前缀替换为 `md:`。现在项目里 `lg:` 只用于真正的宽屏细节（如 `lg:px-8`、
+> `lg:w-[400px]`），不再承担「手机 ↔ 桌面」的分界职责。
+
+- 布局容器用 `md:` 前缀切换（如模板列表 `grid grid-cols-2 md:block md:space-y-2`）
+- 移动端专属隐藏项统一写 `hidden md:block` / `hidden md:flex`
+- 触控目标 ≥ 44px；输入框字号保持 `text-base`（16px），否则 iOS 聚焦会缩放
+- 吸底操作条在 `components/platform-actions.tsx` 内双渲染（桌面卡片 + 手机 `fixed` 条）
+- 平台按钮网格：768~1023 用 4 列、≥1024 用 9 列，写成
+  `grid-cols-3 sm:grid-cols-4 min-[1024px]:grid-cols-9`
+
+⚠️ **flex 子项必须写 `min-w-0`**：`flex-1` 的默认 `min-width: auto` 会让内容列
+无法收缩到内容最小宽度以下。768px 下内容列曾被撑到 449px（应 388px）、右侧溢出 37px。
+另外页面全局有 `overflow-x: hidden`，**用 `scrollWidth` 检测横向溢出会永远通过**，
+必须直接比较元素 `getBoundingClientRect().right` 与 `window.innerWidth`。
+
+移动端刻意隐藏的功能（避免页面过长）：新建 / 上传 .md / 从链接导入、最近使用、
+高级设置、自动变量、模板来源标签、收藏星标、勾选列、顶部介绍文案。桌面端不受影响。
+移动端侧栏不允许横向滑动（列表 `overflow-x-hidden touch-pan-y`、分类标签 `flex-wrap`）；
+预览区移动端限高 `max-h-[45vh]` 内部滚动，桌面端 `md:max-h-none`。
+
+移动端**不加外层卡片容器**：header 与各 section 统一写成
+`md:rounded-2xl md:border md:border-slate-200 md:bg-white md:p-N md:shadow-soft md:dark:...`，
+手机端保持透明无框，避免「胶囊套胶囊」。因此内层元素必须自带底色
+（输入框 `bg-white`、模板卡片 `bg-white`），否则会与页面底色糊在一起。
+注意 `md:bg-*` 是媒体查询、会排在 `dark:bg-*` 之后，暗色下若两边都要生效，
+需要显式补 `md:dark:bg-*`。
 
 ## 开发命令
 
@@ -36,6 +84,11 @@ npm run lint     # 检查
 2. **组件**: 使用 Tailwind CSS + `shadcn/ui` 风格
 3. **类型**: 严格 TypeScript
 4. **提交**: 用中文描述，格式 `feat:`, `fix:`, `chore:`
+5. **Tailwind 坑**:
+   - `min-h-*` / `min-w-*` 会压过 `h-*` / `w-*`。要隐藏带 min 的元素，
+     光写 `h-0 w-0` 无效，必须同时把 min 归零，或直接用 `hidden`。
+   - 冲突的工具类不要叠加（如 `p-0` 想抵消 `px-3`）——Tailwind 输出顺序里
+     基础方向（p）在轴方向（px）之前，`px-3` 会赢。冲突类必须放进互斥分支。
 
 ## 自动开发循环
 

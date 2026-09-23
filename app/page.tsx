@@ -49,9 +49,14 @@ function countFallbackByMarket(items: StockItem[]): { CN: number; HK: number; US
   return counts;
 }
 
-const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股', '证券', '财报'];
-const PINNED_BUILTIN_TITLES = ['个股分析', '由新闻分析个股板块影响', '枯燥报告转生动网页'];
-const DEFAULT_TEMPLATE_TITLE = '个股分析';
+const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股', '证券', '财报', '备忘录'];
+const PINNED_BUILTIN_TITLES = [
+  '30分钟投资备忘录',
+  '个股分析',
+  '由新闻分析个股板块影响',
+  '枯燥报告转生动网页'
+];
+const DEFAULT_TEMPLATE_TITLE = '30分钟投资备忘录';
 
 const I18N = {
   zh: {
@@ -81,9 +86,8 @@ const I18N = {
     savedNotice: '模板已保存',
     deletedNotice: '本地模板已删除',
     advancedTip: '自动变量（可选）',
-    footer: '© 2026 cyberteng. All rights reserved.',
-    pr: '公共模板投稿：Pull Request',
-    contact: '，或联系',
+    footer: '© 2026 cyberteng.',
+    mitLicense: 'MIT 开源',
     recentHistory: '最近使用',
     clearHistory: '清空',
     noHistory: '还没有历史记录。',
@@ -150,9 +154,8 @@ const I18N = {
     savedNotice: 'Template saved',
     deletedNotice: 'Local template deleted',
     advancedTip: 'Auto Variables (Optional)',
-    footer: '© 2026 cyberteng. All rights reserved.',
-    pr: 'Submit templates via Pull Request',
-    contact: ', or contact',
+    footer: '© 2026 cyberteng.',
+    mitLicense: 'MIT Licensed',
     recentHistory: 'Recent',
     clearHistory: 'Clear',
     noHistory: 'No history yet.',
@@ -252,12 +255,20 @@ export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
-  const [lang, setLang] = useState<'zh' | 'en'>(() => {
-    if (typeof window !== 'undefined') {
-      return safeGet<'zh' | 'en'>(STORAGE_KEYS.LANG, 'zh');
-    }
-    return 'zh';
-  });
+  // 服务端与首次客户端渲染必须输出一致结果，所以初始值固定为 'zh'。
+  // 若在此处直接读 localStorage，英文用户刷新时会「服务端中文 / 客户端英文」，
+  // 触发 "Hydration failed ... text didn't match" 并让 React 丢弃整棵树重建。
+  const [lang, setLang] = useState<'zh' | 'en'>('zh');
+
+  useEffect(() => {
+    setLang(safeGet<'zh' | 'en'>(STORAGE_KEYS.LANG, 'zh'));
+  }, []);
+
+  // 让 <html lang> 跟随语言，切换语言时无需刷新即可同步
+  useEffect(() => {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+  }, [lang]);
+
   const t = (key: keyof typeof I18N.zh) => I18N[lang][key];
   const [tagInput, setTagInput] = useState('');
   const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
@@ -275,7 +286,7 @@ const CATEGORY_LABELS: Record<FilterTab, string> = {
   claude: 'Claude金融分析',
 };
 
-const FINANCIAL_KEYWORDS = ['审计', '财务', '竞争', 'comps', 'dcf', 'lbo', '杠杆', '宏观', '建模', '三表', '企业竞争', '个股', '分析报告', '现金流折现', '数据清洗', '新闻', '财经新闻', '枯燥报告', '报告转', '网页'];
+const FINANCIAL_KEYWORDS = ['审计', '财务', '竞争', 'comps', 'dcf', 'lbo', '杠杆', '宏观', '建模', '三表', '企业竞争', '个股', '分析报告', '现金流折现', '数据清洗', '新闻', '财经新闻', '枯燥报告', '报告转', '网页', '备忘录', '投资'];
 const WRITING_KEYWORDS = ['体育营销', '学术论文', '论文结构化', '西甲', '提示词生成', '提示词压缩', '品牌体育'];
 
 function getTemplateCategory(item: StoredTemplate): FilterTab {
@@ -317,6 +328,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [shareCount, setShareCount] = useState<number>(0);
   const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
+  // 搜索框与分类标签在手机端始终可见（不再需要「筛选」开关）。
+  // 「模板与预览」默认展开，手机端可点标题收起；桌面端始终展开（md:block）。
+  const [previewOpen, setPreviewOpen] = useState(true);
   const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
   const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ template: StoredTemplate } | null>(null);
   const [batchDeleteConfirmDialog, setBatchDeleteConfirmDialog] = useState<{ count: number } | null>(null);
@@ -1220,13 +1234,18 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   }
 
   return (
-    <main className="px-3 py-4 sm:px-5 lg:px-8">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
-        <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-          <div className="flex items-start justify-between gap-3">
+    // pb-40：给手机端两行吸底操作条留出空间（含 iPhone 安全区），避免遮住页脚
+    // md(768px) 起进入桌面版式（iPad 竖屏也算桌面）；md~lg 之间收窄左右留白，
+    // 避免 768px 下侧栏 320px + 内容列过窄
+    <main className="px-3 pt-4 pb-40 sm:px-5 md:px-6 md:pb-4 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 md:gap-3">
+        {/* 手机端不加胶囊外框，内容直接落在页面底色上；桌面端恢复卡片 */}
+        <header className="md:rounded-2xl md:border md:border-slate-200 md:bg-white md:px-4 md:py-3 md:shadow-soft md:dark:border-slate-700 md:dark:bg-slate-900">
+          <div className="flex items-center justify-between gap-3 md:items-start">
             <div>
-              <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('appTitle')}</h1>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t('appDesc')}</p>
+              <h1 className="text-base font-semibold text-slate-900 md:text-lg dark:text-slate-100">{t('appTitle')}</h1>
+              {/* 手机端只留标题与切换按钮，介绍文案隐藏以节省高度 */}
+              <p className="mt-1 hidden text-xs text-slate-500 md:block dark:text-slate-400">{t('appDesc')}</p>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -1242,14 +1261,20 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 <span className="inline-block w-4 text-center">{lang === 'zh' ? 'EN' : '中'}</span>
               </button>
               <ThemeToggle />
-              <div
-                key={noticeKey}
-                role="status"
-                aria-live="polite"
-                className={`pointer-events-auto min-h-[28px] overflow-hidden rounded-lg bg-teal-100 px-3 py-1 text-xs font-medium text-teal-800 shadow-sm transition-all duration-300 dark:bg-teal-900/60 dark:text-teal-200 ${notice ? 'opacity-100 translate-y-0' : 'h-0 opacity-0 translate-y-[-8px]'}`}
-              >
-                {notice || ''}
-              </div>
+              {/* 操作反馈气泡（保存 / 删除 / 导出 / 导入 / 分享链接等 15 处调用）。
+                  改为条件渲染：空闲时元素根本不存在，父级 gap-2 也就不会在
+                  主题按钮右侧留下一条 8px 的空隙（原来是 0 宽度但仍占一个 flex 槽位）。
+                  .notice-pop 负责 1.8s 的淡入淡出，与 showNotice 的 setTimeout 对齐。 */}
+              {notice ? (
+                <div
+                  key={noticeKey}
+                  role="status"
+                  aria-live="polite"
+                  className="notice-pop rounded-lg bg-teal-100 px-3 py-1 text-xs font-medium text-teal-800 shadow-sm dark:bg-teal-900/60 dark:text-teal-200"
+                >
+                  {notice}
+                </div>
+              ) : null}
             </div>
           </div>
         </header>
@@ -1291,12 +1316,13 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
           </div>
         )}
 
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
-          <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[400px]">
-            <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start">
+          <aside className="w-full space-y-3 md:flex-none md:sticky md:top-3 md:w-[320px] lg:w-[400px]">
+            <section className="box-border max-w-full overflow-hidden md:rounded-2xl md:border md:border-slate-200 md:bg-white md:p-3 md:shadow-soft md:dark:border-slate-700 md:dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
                 <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
-                <div className="flex gap-2">
+                {/* 手机端隐藏整组工具栏（新建 / 上传 .md / 从链接导入），桌面端保留 */}
+                <div className="hidden gap-2 md:flex">
                   <button
                     type="button"
                     onClick={() => {
@@ -1403,10 +1429,10 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </div>
               )}
 
-              <p className="mb-3 break-words text-xs leading-5 text-slate-600 dark:text-slate-400">
+              <p className="mb-3 hidden break-words text-xs leading-5 text-slate-600 md:block dark:text-slate-400">
                 {t('templateNotice1')}
               </p>
-              <p className="mb-3 break-words text-xs leading-5 text-slate-600 dark:text-slate-400">
+              <p className="mb-3 hidden break-words text-xs leading-5 text-slate-600 md:block dark:text-slate-400">
                 {t('templateNotice2')}
               </p>
 
@@ -1416,12 +1442,14 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('searchPlaceholder')}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
                 />
               </div>
 
-              <div className="mb-3 -mx-1 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="flex gap-1.5">
+              {/* 手机端分类标签换行显示（不再横向滑动），也不需要 -mx-1 出血；
+                  桌面端仍是单行 + 横向滚动，靠 md:p-3 的内边距吸收负外边距 */}
+              <div className="mb-3 md:-mx-1 md:overflow-x-auto md:px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex flex-wrap gap-1.5 md:flex-nowrap">
                   {(Object.keys(CATEGORY_LABELS) as FilterTab[]).map((tab) => (
                     <button
                       key={tab}
@@ -1441,7 +1469,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               <div
                 ref={templateListRef}
-                className={`max-h-[70vh] space-y-2 overflow-auto pr-1 transition-colors ${
+                className={`grid grid-cols-2 gap-2 max-h-[34vh] overflow-y-auto overflow-x-hidden touch-pan-y pr-1 transition-colors md:block md:max-h-[70vh] md:space-y-2 ${
                   isDragging ? 'bg-teal-50 dark:bg-teal-900/20 rounded-xl' : ''
                 }`}
                 onDragOver={handleDragOver}
@@ -1453,12 +1481,12 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 aria-multiselectable="true"
               >
                 {isDragging && (
-                  <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-teal-400 bg-teal-50/50 py-8 dark:bg-teal-900/20">
+                  <div className="col-span-2 flex items-center justify-center rounded-xl border-2 border-dashed border-teal-400 bg-teal-50/50 py-8 md:col-span-1 dark:bg-teal-900/20">
                     <p className="text-sm text-teal-600 dark:text-teal-400">📄 {lang === 'zh' ? '松开以上传 .md 文件' : 'Drop .md file here'}</p>
                   </div>
                 )}
                 {isLoading ? (
-                  <div className="space-y-2">
+                  <div className="col-span-2 grid grid-cols-2 gap-2 md:col-span-1 md:block md:space-y-2">
                     {[1,2,3,4,5].map((i) => (
                       <div key={i} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3 dark:border-slate-700 dark:bg-slate-800 animate-pulse">
                         <div className="h-4 w-4 rounded bg-slate-200 dark:bg-slate-600" />
@@ -1479,7 +1507,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                       key={item.id}
                       role="option"
                       aria-selected={isSelected}
-                      className={`flex items-center gap-2 rounded-xl border px-3 py-2 min-h-[60px] transition ${
+                      className={`flex items-center gap-2 rounded-xl border px-2 py-2 min-h-[56px] transition md:px-3 md:min-h-[60px] ${
                         isSelected
                           ? 'border-teal-500 bg-teal-50 shadow-sm shadow-teal-200 dark:bg-teal-900/30 dark:shadow-teal-900 dark:border-teal-500'
                           : isChecked && isLocal
@@ -1487,15 +1515,18 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                             : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800'
                       }`}
                     >
+                      {/* 手机端隐藏勾选列：批量操作入口只在卡片上，而手机的
+                          「高级设置」（删除按钮所在）本就隐藏，勾选没有可用场景，
+                          留着只是给每张卡加一个 16px 的灰方块噪音 */}
                       {isLocal ? (
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => handleBatchSelect(item.id)}
-                          className="h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600"
+                          className="hidden h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 md:block dark:border-slate-600"
                         />
                       ) : (
-                        <span className="h-4 w-4 shrink-0 rounded border border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-700" />
+                        <span className="hidden h-4 w-4 shrink-0 rounded border border-slate-300 bg-slate-100 md:block dark:border-slate-600 dark:bg-slate-700" />
                       )}
                       <button
                         type="button"
@@ -1505,18 +1536,18 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                         className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 rounded"
                       >
                         <div className="flex items-center gap-1.5">
-                          <p className={`truncate text-sm font-medium ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                          <p className={`break-words text-sm font-medium md:truncate ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
                             {item.title}
                           </p>
                         </div>
-                        <p className={`mt-0.5 text-xs ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <p className={`mt-0.5 hidden text-xs md:block ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
                           {item.source === 'builtin' ? t('builtIn') : t('local')}
                         </p>
                       </button>
                       <button
                         type="button"
                         onClick={() => toggleFavorite(item.id)}
-                        className="shrink-0 self-start rounded-md p-1.5 text-base leading-none transition hover:bg-slate-100 dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+                        className="hidden shrink-0 self-start rounded-md p-1.5 text-base leading-none transition hover:bg-slate-100 md:block dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
                         aria-label={favorites.includes(item.id) ? '取消收藏' : '收藏'}
                         title={favorites.includes(item.id) ? '取消收藏' : '收藏'}
                       >
@@ -1530,7 +1561,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   );
                 })}
                 {templates.length === 0 ? (
-                  <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center dark:border-slate-600">
+                  <div className="col-span-2 flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center md:col-span-1 dark:border-slate-600">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
                       <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -1560,43 +1591,48 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                     </div>
                   </div>
                 ) : filteredTemplates.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
+                  <p className="col-span-2 rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 md:col-span-1 dark:border-slate-600 dark:text-slate-400">
                     {t('noResults')}
                   </p>
                 ) : null}
               </div>
             </section>
 
-            <HistoryPanel
-              entries={history}
-              platforms={PLATFORMS}
-              onReuse={(entry) => {
-                const template = templates.find((t) => t.id === entry.templateId);
-                if (!template) {
-                  return;
-                }
-                setSelectedId(template.id);
-                setDraftMarkdown(template.rawMarkdown);
-                setValues(entry.values);
-              }}
-              onCopyAndOpen={(platformKey, url) => {
-                void copyAndOpenAction(platformKey, url);
-              }}
-              onClear={() => {
-                clearHistory();
-                setHistory([]);
-              }}
-              labels={{
-                title: t('recentHistory'),
-                clear: t('clearHistory'),
-                noHistory: t('noHistory'),
-                copyOnly: t('copyOnlyAction'),
-                copyAndOpen: t('copyAndOpenAction'),
-              }}
-            />
+            {/* 手机端隐藏「最近使用」，桌面端保留 */}
+            <div className="hidden md:block">
+              <HistoryPanel
+                entries={history}
+                platforms={PLATFORMS}
+                onReuse={(entry) => {
+                  const template = templates.find((t) => t.id === entry.templateId);
+                  if (!template) {
+                    return;
+                  }
+                  setSelectedId(template.id);
+                  setDraftMarkdown(template.rawMarkdown);
+                  setValues(entry.values);
+                }}
+                onCopyAndOpen={(platformKey, url) => {
+                  void copyAndOpenAction(platformKey, url);
+                }}
+                onClear={() => {
+                  clearHistory();
+                  setHistory([]);
+                }}
+                labels={{
+                  title: t('recentHistory'),
+                  clear: t('clearHistory'),
+                  noHistory: t('noHistory'),
+                  copyOnly: t('copyOnlyAction'),
+                  copyAndOpen: t('copyAndOpenAction'),
+                }}
+              />
+            </div>
           </aside>
 
-          <section className="flex-1 space-y-3">
+          {/* min-w-0：flex 子项默认 min-width:auto，内容的最小宽度会把这一列撑破，
+              768px（iPad 竖屏）下实测溢出 37px */}
+          <section className="min-w-0 flex-1 space-y-3">
             <VariableForm
               ref={variableFormRef}
               variables={parsed?.variables ?? []}
@@ -1657,13 +1693,36 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
               }}
             />
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <section className="md:rounded-2xl md:border md:border-slate-200 md:bg-white md:p-4 md:shadow-soft md:dark:border-slate-700 md:dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templatePreview')}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{t('highlightTip')}</p>
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen((open) => !open)}
+                  aria-expanded={previewOpen}
+                  className="flex min-h-[44px] items-center gap-1.5 rounded text-sm font-semibold text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 md:min-h-0 dark:text-slate-200"
+                >
+                  <span>{t('templatePreview')}</span>
+                  <span className="text-[10px] text-slate-400 md:hidden" aria-hidden="true">
+                    {previewOpen ? '▲' : '▼'}
+                  </span>
+                </button>
+                <p className="hidden text-xs text-slate-500 md:block dark:text-slate-400">{t('highlightTip')}</p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
+              {!previewOpen && (
+                <p className="rounded-xl border border-dashed border-slate-300 px-3 py-2 text-xs text-slate-500 md:hidden dark:border-slate-600 dark:text-slate-400">
+                  {lang === 'zh'
+                    ? `已收起完整提示词（约 ${rendered.length} 字），点上方标题展开`
+                    : `Collapsed (~${rendered.length} chars) — tap the title to expand`}
+                </p>
+              )}
+
+              {/* 手机端限制预览高度并内部滚动，避免整页被提示词撑到 6 屏；桌面端不限高 */}
+              <div
+                className={`max-h-[45vh] overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white px-3 py-2 md:max-h-none md:block md:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 md:dark:bg-slate-800 ${
+                  previewOpen ? '' : 'hidden'
+                }`}
+              >
                 <pre className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700 dark:text-slate-300">
                   {renderedSegments.map((segment, index) => {
                     const isRequiredEmpty = segment.variableName && requiredVariableNames.has(segment.variableName) && !segment.isFilled;
@@ -1688,7 +1747,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </pre>
               </div>
 
-              <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+              {/* 手机端隐藏「高级设置」，桌面端保留 */}
+              <details className="mt-3 hidden rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600 md:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                 <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">
                   {t('advancedSettings')}
                 </summary>
@@ -1801,7 +1861,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </div>
               </details>
 
-              <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+              {/* 手机端隐藏「自动变量」说明，桌面端保留 */}
+              <details className="mt-3 hidden rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 md:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                 <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">{t('advancedTip')}</summary>
                 <p className="mt-2 leading-5">
                   {t('autoFillTip')}
@@ -1814,23 +1875,16 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
         </div>
 
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500 dark:text-slate-400">
-          <p>{t('footer')}</p>
           <p>
-            {t('pr')}（
+            {t('footer')} {t('mitLicense')} ·{' '}
             <a
               href="https://github.com/nbzz/PromptDock"
               target="_blank"
               rel="noreferrer"
+              title="https://github.com/nbzz/PromptDock"
               className="font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700 dark:text-slate-300"
             >
-              GitHub: PromptDock
-            </a>
-            ）{t('contact')}
-            <a
-              href="mailto:tz@ittz.top"
-              className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700 dark:text-slate-300"
-            >
-              tz@ittz.top
+              GitHub
             </a>
           </p>
         </footer>
@@ -1976,17 +2030,6 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
             </div>
           );
         })()}
-
-        {/* Keyboard shortcuts hint */}
-        <footer className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400 dark:text-slate-500">
-          <span>⌘/Ctrl+Enter {lang === 'zh' ? '填充并复制' : 'Fill & Copy'}</span>
-          <span>Esc {lang === 'zh' ? '清空' : 'Clear'}</span>
-          <span>Tab {lang === 'zh' ? '下一个字段' : 'Next field'}</span>
-          <span className="text-slate-300 dark:text-slate-600">·</span>
-          <a href="https://github.com/nbzz/PromptDock" target="_blank" rel="noopener noreferrer" className="hover:text-teal-500 transition-colors">
-            PromptDock
-          </a>
-        </footer>
       </div>
     </main>
   );

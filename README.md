@@ -21,12 +21,26 @@ PromptDock 是一个轻量、直接可用的 Prompt 工作台：
 - 股票搜索增强（A/H/US 联想）
 - PWA 支持（手机可安装）
 
+## 移动端（< 768px）布局约定
+
+移动端与桌面端是两套呈现，统一用 Tailwind 的 `md:` 前缀区分
+（**≥768px 走桌面版**，包含 iPad 竖屏的 768 / 810 / 834 等宽度）。
+
+- 移动端**不使用外层卡片容器**：header 与各 section 无边框、无白底、无圆角，内容直接落在页面底色上，只保留输入框 / 模板卡片等**一层**功能性边框（避免「胶囊套胶囊」）
+- 模板列表：移动端为 **2 列卡片**、标题自动换行；桌面端为单列长列表
+- 搜索框与分类标签在移动端常显（已移除「筛选」开关）；分类标签**换行显示**，整个侧栏不允许横向滑动
+- 卡片在移动端隐藏收藏星标与勾选列；顶部只保留标题与中英 / 主题切换按钮，介绍文案隐藏
+- 「模板与预览」默认展开，移动端**限高约 45vh 并内部滚动**（桌面端不限高）
+- 以下功能**仅桌面端显示**：新建 / 上传 .md / 从链接导入、最近使用、高级设置、自动变量、模板来源标签（「内置模板」）、收藏星标、勾选列
+- 底部为常驻吸底操作条：「仅复制」+ 各 AI 平台按钮，两行平铺
+
 ## 内置模板（当前顺序）
 
-1. 个股分析（默认进入即选中）
-2. 由新闻分析个股板块影响
-3. 枯燥报告转生动网页
-4. 其他通用模板
+1. 30分钟投资备忘录（默认进入即选中）
+2. 个股分析
+3. 由新闻分析个股板块影响
+4. 枯燥报告转生动网页
+5. 其他通用模板
 
 ## 支持平台
 
@@ -132,6 +146,15 @@ npm run dev
   - 你点击平台按钮跳转
   - 股票增量同步脚本/cron 拉取 GitHub 数据源
 
+### 更新股票库
+
+```bash
+node scripts/fetch-local-stocks.mjs
+```
+
+从 GitHub 数据源重新拉取 A 股 / 港股 / 美股清单，写入 `data/stocks.base.json`，
+同时重置 `data/stocks.delta.json` 并刷新 `data/stocks.meta.json` 的统计信息。
+
 ## 贡献
 
 欢迎通过 PR 提交模板或功能优化。
@@ -193,4 +216,4 @@ import Markdown templates, fill variables, then copy-and-jump to AI platforms.
 - Local dev: `npm install && npm run dev`
 - Deploy: Vercel one-click button above
 - Template syntax: plain Markdown + optional front matter + `[]` placeholders
-- Default built-in template: `个股分析`
+- Default built-in template: `30分钟投资备忘录`
