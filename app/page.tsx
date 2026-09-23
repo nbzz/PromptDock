@@ -330,9 +330,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [shareCount, setShareCount] = useState<number>(0);
   const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
-  // 手机端默认收起「模板列表 / 模板预览」这两块长内容，让变量填写与快捷动作一屏可达。
-  // 桌面端（lg 断点以上）通过 lg:block 强制展开，这两个开关不影响大屏表现。
-  const [templateListOpen, setTemplateListOpen] = useState(false);
+  // 手机端收起搜索框与分类标签（列表本身始终可见），点「筛选」展开；
+  // 桌面端用 lg:block 强制展开，不受此开关影响。
+  const [filterOpen, setFilterOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
   const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ template: StoredTemplate } | null>(null);
@@ -1237,8 +1237,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   }
 
   return (
-    // pb-28：给手机端吸底操作条留出空间，避免遮住页脚
-    <main className="px-3 pt-4 pb-28 sm:px-5 lg:px-8 lg:pb-4">
+    // pb-40：给手机端两行吸底操作条留出空间（含 iPhone 安全区），避免遮住页脚
+    <main className="px-3 pt-4 pb-40 sm:px-5 lg:px-8 lg:pb-4">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
         <header className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <div className="flex items-start justify-between gap-3">
@@ -1313,18 +1313,24 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
           <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[400px]">
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => setTemplateListOpen((open) => !open)}
-                  aria-expanded={templateListOpen}
-                  className="flex min-h-[44px] items-center gap-1.5 rounded text-sm font-semibold text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 lg:min-h-0 dark:text-slate-200"
-                >
-                  <span>{t('templateList')}</span>
-                  <span className="text-[10px] text-slate-400 lg:hidden" aria-hidden="true">
-                    {templateListOpen ? '▲' : '▼'}
-                  </span>
-                </button>
+                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
                 <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setFilterOpen((open) => !open)}
+                    aria-expanded={filterOpen}
+                    className="flex min-h-[36px] items-center gap-1 rounded-lg border border-slate-300 px-2.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 lg:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                  >
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+                      />
+                    </svg>
+                    <span>{filterOpen ? (lang === 'zh' ? '收起' : 'Hide') : lang === 'zh' ? '筛选' : 'Filter'}</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => {
@@ -1402,30 +1408,6 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </div>
               )}
 
-              {/* 手机端：横向滑动的模板快选条，一屏内即可切换模板 */}
-              <div className="-mx-1 mb-3 overflow-x-auto px-1 lg:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="flex gap-1.5">
-                  {filteredTemplates.map((item) => {
-                    const active = selectedId === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => handleTemplateSelect(item.id)}
-                        aria-pressed={active}
-                        className={`min-h-[40px] shrink-0 rounded-full border px-3 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 ${
-                          active
-                            ? 'border-teal-500 bg-teal-50 text-teal-700 dark:border-teal-500 dark:bg-teal-900/30 dark:text-teal-300'
-                            : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                        }`}
-                      >
-                        {item.title}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
               {batchSelectedIds.size > 0 && (
                 <div className="mb-3 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 dark:border-rose-800 dark:bg-rose-900/30">
                   <span className="text-xs text-rose-700 dark:text-rose-300">
@@ -1462,7 +1444,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 {t('templateNotice2')}
               </p>
 
-              <div className={`mb-3 ${templateListOpen ? '' : 'hidden'} lg:block`}>
+              <div className={`mb-3 ${filterOpen ? '' : 'hidden'} lg:block`}>
                 <input
                   type="text"
                   value={searchQuery}
@@ -1474,7 +1456,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               <div
                 className={`mb-3 -mx-1 overflow-x-auto px-1 lg:block [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
-                  templateListOpen ? '' : 'hidden'
+                  filterOpen ? '' : 'hidden'
                 }`}
               >
                 <div className="flex gap-1.5">
@@ -1497,9 +1479,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               <div
                 ref={templateListRef}
-                className={`max-h-[45vh] space-y-2 overflow-auto pr-1 transition-colors lg:block lg:max-h-[70vh] ${
-                  templateListOpen ? '' : 'hidden'
-                } ${isDragging ? 'bg-teal-50 dark:bg-teal-900/20 rounded-xl' : ''}`}
+                className={`max-h-[34vh] space-y-2 overflow-auto pr-1 transition-colors lg:max-h-[70vh] ${
+                  isDragging ? 'bg-teal-50 dark:bg-teal-900/20 rounded-xl' : ''
+                }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}

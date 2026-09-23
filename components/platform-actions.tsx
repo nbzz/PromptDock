@@ -54,9 +54,9 @@ const DEFAULT_LABELS = {
   openWithoutCopyNotice: '已跳转（复制失败）',
 };
 
-// 操作条按钮的公共尺寸，保证移动端触控目标不小于 44px
+// 吸底操作条按钮的公共样式（2 行 5 列平铺，触控高度不小于 44px）
 const BAR_BUTTON_CLASS =
-  'flex shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[52px]';
+  'flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border px-0.5 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 min-h-[44px]';
 
 export function PlatformActions({ content, onAction, onCopyAndOpen, onBeforeCopy, labels }: PlatformActionsProps) {
   const t = { ...DEFAULT_LABELS, ...labels };
@@ -150,12 +150,13 @@ export function PlatformActions({ content, onAction, onCopyAndOpen, onBeforeCopy
           </p>
         ) : null}
 
-        <div className="flex items-stretch gap-2 px-2 py-2">
+        {/* 2 行 5 列平铺：仅复制 + 9 个平台全部一眼可见，不再需要横向滑动 */}
+        <div className="grid grid-cols-5 gap-1.5 px-2 py-2">
           <button
             type="button"
             onClick={copyOnly}
             aria-label={t.copyOnly}
-            className={`${BAR_BUTTON_CLASS} min-w-[56px] border-slate-300 px-2.5 text-[10px] font-medium text-slate-700 active:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:active:bg-slate-800`}
+            className={`${BAR_BUTTON_CLASS} border-teal-300 bg-teal-50 text-[10px] font-medium text-teal-700 active:bg-teal-100 dark:border-teal-700 dark:bg-teal-900/30 dark:text-teal-300 dark:active:bg-teal-900/60`}
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -165,32 +166,30 @@ export function PlatformActions({ content, onAction, onCopyAndOpen, onBeforeCopy
                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
               />
             </svg>
-            <span>{t.copyOnly}</span>
+            <span className="w-full truncate text-center">{t.copyOnly}</span>
           </button>
 
-          <div className="-mr-2 flex min-w-0 flex-1 items-stretch gap-1.5 overflow-x-auto pr-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {PLATFORMS.map((platform) => (
-              <button
-                key={platform.key}
-                type="button"
-                title={`${platform.name}（复制并跳转）`}
-                onClick={() => {
-                  void handleCopyAndOpen(platform.key, platform.url);
-                }}
-                className={`${BAR_BUTTON_CLASS} w-[60px] border-slate-200 bg-white px-1 text-[10px] text-slate-700 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:active:bg-slate-700`}
-              >
-                <Image
-                  src={platform.icon}
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="h-5 w-5 rounded"
-                  loading="lazy"
-                />
-                <span className="max-w-full truncate">{platform.name}</span>
-              </button>
-            ))}
-          </div>
+          {PLATFORMS.map((platform) => (
+            <button
+              key={platform.key}
+              type="button"
+              title={`${platform.name}（复制并跳转）`}
+              onClick={() => {
+                void handleCopyAndOpen(platform.key, platform.url);
+              }}
+              className={`${BAR_BUTTON_CLASS} border-slate-200 bg-white text-[10px] text-slate-700 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:active:bg-slate-700`}
+            >
+              <Image
+                src={platform.icon}
+                alt=""
+                width={20}
+                height={20}
+                className="h-5 w-5 rounded"
+                loading="lazy"
+              />
+              <span className="w-full truncate text-center">{platform.name}</span>
+            </button>
+          ))}
         </div>
       </div>
     </>
