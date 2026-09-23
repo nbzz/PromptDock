@@ -23,10 +23,11 @@ PromptDock 是一个轻量、直接可用的 Prompt 工作台：
 
 ## 内置模板（当前顺序）
 
-1. 个股分析（默认进入即选中）
-2. 由新闻分析个股板块影响
-3. 枯燥报告转生动网页
-4. 其他通用模板
+1. 30分钟投资备忘录（默认进入即选中）
+2. 个股分析
+3. 由新闻分析个股板块影响
+4. 枯燥报告转生动网页
+5. 其他通用模板
 
 ## 支持平台
 
@@ -132,6 +133,15 @@ npm run dev
   - 你点击平台按钮跳转
   - 股票增量同步脚本/cron 拉取 GitHub 数据源
 
+### 更新股票库
+
+```bash
+node scripts/fetch-local-stocks.mjs
+```
+
+从 GitHub 数据源重新拉取 A 股 / 港股 / 美股清单，写入 `data/stocks.base.json`，
+同时重置 `data/stocks.delta.json` 并刷新 `data/stocks.meta.json` 的统计信息。
+
 ## 贡献
 
 欢迎通过 PR 提交模板或功能优化。
@@ -193,4 +203,4 @@ import Markdown templates, fill variables, then copy-and-jump to AI platforms.
 - Local dev: `npm install && npm run dev`
 - Deploy: Vercel one-click button above
 - Template syntax: plain Markdown + optional front matter + `[]` placeholders
-- Default built-in template: `个股分析`
+- Default built-in template: `30分钟投资备忘录`

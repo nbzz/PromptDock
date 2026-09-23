@@ -49,9 +49,14 @@ function countFallbackByMarket(items: StockItem[]): { CN: number; HK: number; US
   return counts;
 }
 
-const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股', '证券', '财报'];
-const PINNED_BUILTIN_TITLES = ['个股分析', '由新闻分析个股板块影响', '枯燥报告转生动网页'];
-const DEFAULT_TEMPLATE_TITLE = '个股分析';
+const STOCK_TEMPLATE_KEYWORDS = ['股票', 'a股', '港股', '美股', '个股', '证券', '财报', '备忘录'];
+const PINNED_BUILTIN_TITLES = [
+  '30分钟投资备忘录',
+  '个股分析',
+  '由新闻分析个股板块影响',
+  '枯燥报告转生动网页'
+];
+const DEFAULT_TEMPLATE_TITLE = '30分钟投资备忘录';
 
 const I18N = {
   zh: {
@@ -275,7 +280,7 @@ const CATEGORY_LABELS: Record<FilterTab, string> = {
   claude: 'Claude金融分析',
 };
 
-const FINANCIAL_KEYWORDS = ['审计', '财务', '竞争', 'comps', 'dcf', 'lbo', '杠杆', '宏观', '建模', '三表', '企业竞争', '个股', '分析报告', '现金流折现', '数据清洗', '新闻', '财经新闻', '枯燥报告', '报告转', '网页'];
+const FINANCIAL_KEYWORDS = ['审计', '财务', '竞争', 'comps', 'dcf', 'lbo', '杠杆', '宏观', '建模', '三表', '企业竞争', '个股', '分析报告', '现金流折现', '数据清洗', '新闻', '财经新闻', '枯燥报告', '报告转', '网页', '备忘录', '投资'];
 const WRITING_KEYWORDS = ['体育营销', '学术论文', '论文结构化', '西甲', '提示词生成', '提示词压缩', '品牌体育'];
 
 function getTemplateCategory(item: StoredTemplate): FilterTab {

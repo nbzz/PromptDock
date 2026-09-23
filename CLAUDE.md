@@ -19,6 +19,21 @@
 | `components/stock-input.tsx` | 股票输入组件 |
 | `components/platform-actions.tsx` | 平台跳转按钮 |
 | `prompts/*.md` | 内置模板 |
+| `data/stocks.*.json` | 股票库数据（base + delta + meta） |
+| `scripts/fetch-local-stocks.mjs` | 刷新股票库脚本 |
+
+## 内置模板的排序与分类
+
+全部在 `app/page.tsx` 顶部的常量里控制，改动模板时记得同步：
+
+- `PINNED_BUILTIN_TITLES`：内置模板置顶顺序（取不到则排到 100 之后）
+- `DEFAULT_TEMPLATE_TITLE`：打开页面默认选中的模板
+- `FINANCIAL_KEYWORDS` / `WRITING_KEYWORDS`：分类标签的命中关键词（按标题或 frontmatter description 匹配）
+- `STOCK_TEMPLATE_KEYWORDS`：命中后展示「股票库」数据同步状态
+- 标题里含下划线的模板会被归入「Claude金融分析」分类
+
+模板正文里除真实变量外，不要使用半角 `[]` 包住说明性文字——`lib/template-parser.ts`
+会把它们一并解析成变量。说明文字请改用全角 `（）` 或 `【】`。
 
 ## 开发命令
 
