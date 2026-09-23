@@ -329,7 +329,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
   // 搜索框与分类标签在手机端始终可见（不再需要「筛选」开关）。
-  // 「模板与预览」默认展开，手机端可点标题收起；桌面端始终展开（lg:block）。
+  // 「模板与预览」默认展开，手机端可点标题收起；桌面端始终展开（md:block）。
   const [previewOpen, setPreviewOpen] = useState(true);
   const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
   const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ template: StoredTemplate } | null>(null);
@@ -1235,15 +1235,17 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
   return (
     // pb-40：给手机端两行吸底操作条留出空间（含 iPhone 安全区），避免遮住页脚
-    <main className="px-3 pt-4 pb-40 sm:px-5 lg:px-8 lg:pb-4">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 lg:gap-3">
+    // md(768px) 起进入桌面版式（iPad 竖屏也算桌面）；md~lg 之间收窄左右留白，
+    // 避免 768px 下侧栏 320px + 内容列过窄
+    <main className="px-3 pt-4 pb-40 sm:px-5 md:px-6 md:pb-4 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 md:gap-3">
         {/* 手机端不加胶囊外框，内容直接落在页面底色上；桌面端恢复卡片 */}
-        <header className="lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:px-4 lg:py-3 lg:shadow-soft lg:dark:border-slate-700 lg:dark:bg-slate-900">
-          <div className="flex items-center justify-between gap-3 lg:items-start">
+        <header className="md:rounded-2xl md:border md:border-slate-200 md:bg-white md:px-4 md:py-3 md:shadow-soft md:dark:border-slate-700 md:dark:bg-slate-900">
+          <div className="flex items-center justify-between gap-3 md:items-start">
             <div>
-              <h1 className="text-base font-semibold text-slate-900 lg:text-lg dark:text-slate-100">{t('appTitle')}</h1>
+              <h1 className="text-base font-semibold text-slate-900 md:text-lg dark:text-slate-100">{t('appTitle')}</h1>
               {/* 手机端只留标题与切换按钮，介绍文案隐藏以节省高度 */}
-              <p className="mt-1 hidden text-xs text-slate-500 lg:block dark:text-slate-400">{t('appDesc')}</p>
+              <p className="mt-1 hidden text-xs text-slate-500 md:block dark:text-slate-400">{t('appDesc')}</p>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -1314,13 +1316,13 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
           </div>
         )}
 
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
-          <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[400px]">
-            <section className="box-border max-w-full overflow-hidden lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-3 lg:shadow-soft lg:dark:border-slate-700 lg:dark:bg-slate-900">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start">
+          <aside className="w-full space-y-3 md:flex-none md:sticky md:top-3 md:w-[320px] lg:w-[400px]">
+            <section className="box-border max-w-full overflow-hidden md:rounded-2xl md:border md:border-slate-200 md:bg-white md:p-3 md:shadow-soft md:dark:border-slate-700 md:dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
                 <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
                 {/* 手机端隐藏整组工具栏（新建 / 上传 .md / 从链接导入），桌面端保留 */}
-                <div className="hidden gap-2 lg:flex">
+                <div className="hidden gap-2 md:flex">
                   <button
                     type="button"
                     onClick={() => {
@@ -1427,10 +1429,10 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </div>
               )}
 
-              <p className="mb-3 hidden break-words text-xs leading-5 text-slate-600 lg:block dark:text-slate-400">
+              <p className="mb-3 hidden break-words text-xs leading-5 text-slate-600 md:block dark:text-slate-400">
                 {t('templateNotice1')}
               </p>
-              <p className="mb-3 hidden break-words text-xs leading-5 text-slate-600 lg:block dark:text-slate-400">
+              <p className="mb-3 hidden break-words text-xs leading-5 text-slate-600 md:block dark:text-slate-400">
                 {t('templateNotice2')}
               </p>
 
@@ -1445,9 +1447,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
               </div>
 
               {/* 手机端分类标签换行显示（不再横向滑动），也不需要 -mx-1 出血；
-                  桌面端仍是单行 + 横向滚动，靠 lg:p-3 的内边距吸收负外边距 */}
-              <div className="mb-3 lg:-mx-1 lg:overflow-x-auto lg:px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="flex flex-wrap gap-1.5 lg:flex-nowrap">
+                  桌面端仍是单行 + 横向滚动，靠 md:p-3 的内边距吸收负外边距 */}
+              <div className="mb-3 md:-mx-1 md:overflow-x-auto md:px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex flex-wrap gap-1.5 md:flex-nowrap">
                   {(Object.keys(CATEGORY_LABELS) as FilterTab[]).map((tab) => (
                     <button
                       key={tab}
@@ -1467,7 +1469,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               <div
                 ref={templateListRef}
-                className={`grid grid-cols-2 gap-2 max-h-[34vh] overflow-y-auto overflow-x-hidden touch-pan-y pr-1 transition-colors lg:block lg:max-h-[70vh] lg:space-y-2 ${
+                className={`grid grid-cols-2 gap-2 max-h-[34vh] overflow-y-auto overflow-x-hidden touch-pan-y pr-1 transition-colors md:block md:max-h-[70vh] md:space-y-2 ${
                   isDragging ? 'bg-teal-50 dark:bg-teal-900/20 rounded-xl' : ''
                 }`}
                 onDragOver={handleDragOver}
@@ -1479,12 +1481,12 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 aria-multiselectable="true"
               >
                 {isDragging && (
-                  <div className="col-span-2 flex items-center justify-center rounded-xl border-2 border-dashed border-teal-400 bg-teal-50/50 py-8 lg:col-span-1 dark:bg-teal-900/20">
+                  <div className="col-span-2 flex items-center justify-center rounded-xl border-2 border-dashed border-teal-400 bg-teal-50/50 py-8 md:col-span-1 dark:bg-teal-900/20">
                     <p className="text-sm text-teal-600 dark:text-teal-400">📄 {lang === 'zh' ? '松开以上传 .md 文件' : 'Drop .md file here'}</p>
                   </div>
                 )}
                 {isLoading ? (
-                  <div className="col-span-2 grid grid-cols-2 gap-2 lg:col-span-1 lg:block lg:space-y-2">
+                  <div className="col-span-2 grid grid-cols-2 gap-2 md:col-span-1 md:block md:space-y-2">
                     {[1,2,3,4,5].map((i) => (
                       <div key={i} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3 dark:border-slate-700 dark:bg-slate-800 animate-pulse">
                         <div className="h-4 w-4 rounded bg-slate-200 dark:bg-slate-600" />
@@ -1505,7 +1507,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                       key={item.id}
                       role="option"
                       aria-selected={isSelected}
-                      className={`flex items-center gap-2 rounded-xl border px-2 py-2 min-h-[56px] transition lg:px-3 lg:min-h-[60px] ${
+                      className={`flex items-center gap-2 rounded-xl border px-2 py-2 min-h-[56px] transition md:px-3 md:min-h-[60px] ${
                         isSelected
                           ? 'border-teal-500 bg-teal-50 shadow-sm shadow-teal-200 dark:bg-teal-900/30 dark:shadow-teal-900 dark:border-teal-500'
                           : isChecked && isLocal
@@ -1521,10 +1523,10 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => handleBatchSelect(item.id)}
-                          className="hidden h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 lg:block dark:border-slate-600"
+                          className="hidden h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 md:block dark:border-slate-600"
                         />
                       ) : (
-                        <span className="hidden h-4 w-4 shrink-0 rounded border border-slate-300 bg-slate-100 lg:block dark:border-slate-600 dark:bg-slate-700" />
+                        <span className="hidden h-4 w-4 shrink-0 rounded border border-slate-300 bg-slate-100 md:block dark:border-slate-600 dark:bg-slate-700" />
                       )}
                       <button
                         type="button"
@@ -1534,18 +1536,18 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                         className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 rounded"
                       >
                         <div className="flex items-center gap-1.5">
-                          <p className={`break-words text-sm font-medium lg:truncate ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                          <p className={`break-words text-sm font-medium md:truncate ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
                             {item.title}
                           </p>
                         </div>
-                        <p className={`mt-0.5 hidden text-xs lg:block ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <p className={`mt-0.5 hidden text-xs md:block ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
                           {item.source === 'builtin' ? t('builtIn') : t('local')}
                         </p>
                       </button>
                       <button
                         type="button"
                         onClick={() => toggleFavorite(item.id)}
-                        className="hidden shrink-0 self-start rounded-md p-1.5 text-base leading-none transition hover:bg-slate-100 lg:block dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+                        className="hidden shrink-0 self-start rounded-md p-1.5 text-base leading-none transition hover:bg-slate-100 md:block dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
                         aria-label={favorites.includes(item.id) ? '取消收藏' : '收藏'}
                         title={favorites.includes(item.id) ? '取消收藏' : '收藏'}
                       >
@@ -1559,7 +1561,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   );
                 })}
                 {templates.length === 0 ? (
-                  <div className="col-span-2 flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center lg:col-span-1 dark:border-slate-600">
+                  <div className="col-span-2 flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center md:col-span-1 dark:border-slate-600">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
                       <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -1589,7 +1591,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                     </div>
                   </div>
                 ) : filteredTemplates.length === 0 ? (
-                  <p className="col-span-2 rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 lg:col-span-1 dark:border-slate-600 dark:text-slate-400">
+                  <p className="col-span-2 rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 md:col-span-1 dark:border-slate-600 dark:text-slate-400">
                     {t('noResults')}
                   </p>
                 ) : null}
@@ -1597,7 +1599,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
             </section>
 
             {/* 手机端隐藏「最近使用」，桌面端保留 */}
-            <div className="hidden lg:block">
+            <div className="hidden md:block">
               <HistoryPanel
                 entries={history}
                 platforms={PLATFORMS}
@@ -1628,7 +1630,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
             </div>
           </aside>
 
-          <section className="flex-1 space-y-3">
+          {/* min-w-0：flex 子项默认 min-width:auto，内容的最小宽度会把这一列撑破，
+              768px（iPad 竖屏）下实测溢出 37px */}
+          <section className="min-w-0 flex-1 space-y-3">
             <VariableForm
               ref={variableFormRef}
               variables={parsed?.variables ?? []}
@@ -1689,24 +1693,24 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
               }}
             />
 
-            <section className="lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-soft lg:dark:border-slate-700 lg:dark:bg-slate-900">
+            <section className="md:rounded-2xl md:border md:border-slate-200 md:bg-white md:p-4 md:shadow-soft md:dark:border-slate-700 md:dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={() => setPreviewOpen((open) => !open)}
                   aria-expanded={previewOpen}
-                  className="flex min-h-[44px] items-center gap-1.5 rounded text-sm font-semibold text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 lg:min-h-0 dark:text-slate-200"
+                  className="flex min-h-[44px] items-center gap-1.5 rounded text-sm font-semibold text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 md:min-h-0 dark:text-slate-200"
                 >
                   <span>{t('templatePreview')}</span>
-                  <span className="text-[10px] text-slate-400 lg:hidden" aria-hidden="true">
+                  <span className="text-[10px] text-slate-400 md:hidden" aria-hidden="true">
                     {previewOpen ? '▲' : '▼'}
                   </span>
                 </button>
-                <p className="hidden text-xs text-slate-500 lg:block dark:text-slate-400">{t('highlightTip')}</p>
+                <p className="hidden text-xs text-slate-500 md:block dark:text-slate-400">{t('highlightTip')}</p>
               </div>
 
               {!previewOpen && (
-                <p className="rounded-xl border border-dashed border-slate-300 px-3 py-2 text-xs text-slate-500 lg:hidden dark:border-slate-600 dark:text-slate-400">
+                <p className="rounded-xl border border-dashed border-slate-300 px-3 py-2 text-xs text-slate-500 md:hidden dark:border-slate-600 dark:text-slate-400">
                   {lang === 'zh'
                     ? `已收起完整提示词（约 ${rendered.length} 字），点上方标题展开`
                     : `Collapsed (~${rendered.length} chars) — tap the title to expand`}
@@ -1715,7 +1719,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               {/* 手机端限制预览高度并内部滚动，避免整页被提示词撑到 6 屏；桌面端不限高 */}
               <div
-                className={`max-h-[45vh] overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white px-3 py-2 lg:max-h-none lg:block lg:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 lg:dark:bg-slate-800 ${
+                className={`max-h-[45vh] overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white px-3 py-2 md:max-h-none md:block md:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 md:dark:bg-slate-800 ${
                   previewOpen ? '' : 'hidden'
                 }`}
               >
@@ -1744,7 +1748,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
               </div>
 
               {/* 手机端隐藏「高级设置」，桌面端保留 */}
-              <details className="mt-3 hidden rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600 lg:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+              <details className="mt-3 hidden rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600 md:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                 <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">
                   {t('advancedSettings')}
                 </summary>
@@ -1858,7 +1862,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
               </details>
 
               {/* 手机端隐藏「自动变量」说明，桌面端保留 */}
-              <details className="mt-3 hidden rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 lg:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+              <details className="mt-3 hidden rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 md:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                 <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">{t('advancedTip')}</summary>
                 <p className="mt-2 leading-5">
                   {t('autoFillTip')}

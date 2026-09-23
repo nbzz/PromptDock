@@ -96,8 +96,8 @@ export function PlatformActions({ content, onAction, onCopyAndOpen, onBeforeCopy
 
   return (
     <>
-      {/* 大屏（lg 及以上）：常规卡片，平台按钮铺成网格 */}
-      <section className="hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-soft lg:block dark:border-slate-700 dark:bg-slate-900">
+      {/* 平板 / 桌面（md = 768px 及以上）：常规卡片，平台按钮铺成网格 */}
+      <section className="hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-soft md:block dark:border-slate-700 dark:bg-slate-900">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t.title}</h3>
           <button
@@ -109,7 +109,9 @@ export function PlatformActions({ content, onAction, onCopyAndOpen, onBeforeCopy
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-9">
+        {/* 这块现在从 768（iPad 竖屏）就开始显示，所以列数要按实际可用宽度定：
+            768~1023 用 4 列（5 列会挤到 65px 一个），≥1024 才铺 9 列 */}
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 min-[1024px]:grid-cols-9">
           {PLATFORMS.map((platform) => (
             <button
               key={platform.key}
@@ -139,11 +141,11 @@ export function PlatformActions({ content, onAction, onCopyAndOpen, onBeforeCopy
       </section>
 
       {/*
-        手机 / 平板（单列布局）：固定吸底操作条。
+        手机（md 以下）：固定吸底操作条。
         原来这块要多滚约 1.7 屏才能碰到，是移动端最不实用的部分；
-        改成常驻屏底后，「仅复制」与平台跳转随时可点，平台按钮横向滑动。
+        改成常驻屏底后，「仅复制」与平台跳转随时可点。
       */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(15,23,42,0.08)] backdrop-blur lg:hidden dark:border-slate-700 dark:bg-slate-900/95">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(15,23,42,0.08)] backdrop-blur md:hidden dark:border-slate-700 dark:bg-slate-900/95">
         {notice ? (
           <p className="absolute -top-8 left-3 rounded-lg bg-teal-600 px-2.5 py-1 text-xs font-medium text-white shadow-lg">
             {notice}
