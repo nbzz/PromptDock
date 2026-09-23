@@ -1260,11 +1260,18 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 <span className="inline-block w-4 text-center">{lang === 'zh' ? 'EN' : '中'}</span>
               </button>
               <ThemeToggle />
+              {/* 操作反馈气泡（保存 / 删除 / 导出 / 导入 / 分享链接等 15 处调用）。
+                  空闲时必须彻底收成 0×0：原来的 min-h-[28px] + px-3 会压过 h-0，
+                  在 header 里留下一个 24×28 的隐形方块。 */}
               <div
                 key={noticeKey}
                 role="status"
                 aria-live="polite"
-                className={`pointer-events-auto min-h-[28px] overflow-hidden rounded-lg bg-teal-100 px-3 py-1 text-xs font-medium text-teal-800 shadow-sm transition-all duration-300 dark:bg-teal-900/60 dark:text-teal-200 ${notice ? 'opacity-100 translate-y-0' : 'h-0 opacity-0 translate-y-[-8px]'}`}
+                className={`pointer-events-auto overflow-hidden rounded-lg bg-teal-100 text-xs font-medium text-teal-800 shadow-sm transition-all duration-300 dark:bg-teal-900/60 dark:text-teal-200 ${
+                  notice
+                    ? 'min-h-[28px] px-3 py-1 opacity-100 translate-y-0'
+                    : 'h-0 w-0 min-h-0 opacity-0 translate-y-[-8px]'
+                }`}
               >
                 {notice || ''}
               </div>
