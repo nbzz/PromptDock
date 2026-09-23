@@ -21,11 +21,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh-CN">
+    // suppressHydrationWarning: 下面 head 里的内联脚本会在 hydration 之前改写
+    // <html> 的 class（暗色模式）与 lang（语言），服务端无从得知，必然产生属性差异。
+    // 这是主题闪烁防护的标准做法，需要在此显式抑制该元素的属性告警。
+    <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}var l=localStorage.getItem('lang');if(l==='en'){document.documentElement.lang='en';}})()`
+            // lang 由 safeSet 写入，是 JSON 字符串（"en"），这里先 JSON.parse 再比较，
+            // 否则永远匹配不上，<html lang> 会一直停留在 zh-CN
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}var raw=localStorage.getItem('lang'),l=raw;try{l=JSON.parse(raw)}catch(e){}if(l==='en'){document.documentElement.lang='en';}}catch(e){}})()`
           }}
         />
       </head>

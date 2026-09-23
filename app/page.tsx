@@ -257,12 +257,20 @@ export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const clientFallback = useMemo(() => createClientFallbackStocks(), []);
 
-  const [lang, setLang] = useState<'zh' | 'en'>(() => {
-    if (typeof window !== 'undefined') {
-      return safeGet<'zh' | 'en'>(STORAGE_KEYS.LANG, 'zh');
-    }
-    return 'zh';
-  });
+  // 服务端与首次客户端渲染必须输出一致结果，所以初始值固定为 'zh'。
+  // 若在此处直接读 localStorage，英文用户刷新时会「服务端中文 / 客户端英文」，
+  // 触发 "Hydration failed ... text didn't match" 并让 React 丢弃整棵树重建。
+  const [lang, setLang] = useState<'zh' | 'en'>('zh');
+
+  useEffect(() => {
+    setLang(safeGet<'zh' | 'en'>(STORAGE_KEYS.LANG, 'zh'));
+  }, []);
+
+  // 让 <html lang> 跟随语言，切换语言时无需刷新即可同步
+  useEffect(() => {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+  }, [lang]);
+
   const t = (key: keyof typeof I18N.zh) => I18N[lang][key];
   const [tagInput, setTagInput] = useState('');
   const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({});
