@@ -86,9 +86,8 @@ const I18N = {
     savedNotice: '模板已保存',
     deletedNotice: '本地模板已删除',
     advancedTip: '自动变量（可选）',
-    footer: '© 2026 cyberteng. All rights reserved.',
-    pr: '公共模板投稿：Pull Request',
-    contact: '，或联系',
+    footer: '© 2026 cyberteng.',
+    mitLicense: 'MIT 开源',
     recentHistory: '最近使用',
     clearHistory: '清空',
     noHistory: '还没有历史记录。',
@@ -155,9 +154,8 @@ const I18N = {
     savedNotice: 'Template saved',
     deletedNotice: 'Local template deleted',
     advancedTip: 'Auto Variables (Optional)',
-    footer: '© 2026 cyberteng. All rights reserved.',
-    pr: 'Submit templates via Pull Request',
-    contact: ', or contact',
+    footer: '© 2026 cyberteng.',
+    mitLicense: 'MIT Licensed',
     recentHistory: 'Recent',
     clearHistory: 'Clear',
     noHistory: 'No history yet.',
@@ -1873,23 +1871,16 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
         </div>
 
         <footer className="px-1 pb-1 pt-2 text-center text-xs text-slate-500 dark:text-slate-400">
-          <p>{t('footer')}</p>
           <p>
-            {t('pr')}（
+            {t('footer')} {t('mitLicense')} ·{' '}
             <a
               href="https://github.com/nbzz/PromptDock"
               target="_blank"
               rel="noreferrer"
+              title="https://github.com/nbzz/PromptDock"
               className="font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700 dark:text-slate-300"
             >
-              GitHub: PromptDock
-            </a>
-            ）{t('contact')}
-            <a
-              href="mailto:tz@ittz.top"
-              className="ml-1 font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-teal-700 dark:text-slate-300"
-            >
-              tz@ittz.top
+              GitHub
             </a>
           </p>
         </footer>
@@ -2035,17 +2026,6 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
             </div>
           );
         })()}
-
-        {/* Keyboard shortcuts hint */}
-        <footer className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400 dark:text-slate-500">
-          <span>⌘/Ctrl+Enter {lang === 'zh' ? '填充并复制' : 'Fill & Copy'}</span>
-          <span>Esc {lang === 'zh' ? '清空' : 'Clear'}</span>
-          <span>Tab {lang === 'zh' ? '下一个字段' : 'Next field'}</span>
-          <span className="text-slate-300 dark:text-slate-600">·</span>
-          <a href="https://github.com/nbzz/PromptDock" target="_blank" rel="noopener noreferrer" className="hover:text-teal-500 transition-colors">
-            PromptDock
-          </a>
-        </footer>
       </div>
     </main>
   );
