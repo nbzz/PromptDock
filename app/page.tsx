@@ -1238,8 +1238,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   return (
     // pb-40：给手机端两行吸底操作条留出空间（含 iPhone 安全区），避免遮住页脚
     <main className="px-3 pt-4 pb-40 sm:px-5 lg:px-8 lg:pb-4">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
-        <header className="rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-soft lg:px-4 lg:py-3 dark:border-slate-700 dark:bg-slate-900">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 lg:gap-3">
+        {/* 手机端不加胶囊外框，内容直接落在页面底色上；桌面端恢复卡片 */}
+        <header className="lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:px-4 lg:py-3 lg:shadow-soft lg:dark:border-slate-700 lg:dark:bg-slate-900">
           <div className="flex items-center justify-between gap-3 lg:items-start">
             <div>
               <h1 className="text-base font-semibold text-slate-900 lg:text-lg dark:text-slate-100">{t('appTitle')}</h1>
@@ -1261,20 +1262,19 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
               </button>
               <ThemeToggle />
               {/* 操作反馈气泡（保存 / 删除 / 导出 / 导入 / 分享链接等 15 处调用）。
-                  空闲时必须彻底收成 0×0：原来的 min-h-[28px] + px-3 会压过 h-0，
-                  在 header 里留下一个 24×28 的隐形方块。 */}
-              <div
-                key={noticeKey}
-                role="status"
-                aria-live="polite"
-                className={`pointer-events-auto overflow-hidden rounded-lg bg-teal-100 text-xs font-medium text-teal-800 shadow-sm transition-all duration-300 dark:bg-teal-900/60 dark:text-teal-200 ${
-                  notice
-                    ? 'min-h-[28px] px-3 py-1 opacity-100 translate-y-0'
-                    : 'h-0 w-0 min-h-0 opacity-0 translate-y-[-8px]'
-                }`}
-              >
-                {notice || ''}
-              </div>
+                  改为条件渲染：空闲时元素根本不存在，父级 gap-2 也就不会在
+                  主题按钮右侧留下一条 8px 的空隙（原来是 0 宽度但仍占一个 flex 槽位）。
+                  .notice-pop 负责 1.8s 的淡入淡出，与 showNotice 的 setTimeout 对齐。 */}
+              {notice ? (
+                <div
+                  key={noticeKey}
+                  role="status"
+                  aria-live="polite"
+                  className="notice-pop rounded-lg bg-teal-100 px-3 py-1 text-xs font-medium text-teal-800 shadow-sm dark:bg-teal-900/60 dark:text-teal-200"
+                >
+                  {notice}
+                </div>
+              ) : null}
             </div>
           </div>
         </header>
@@ -1318,7 +1318,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
           <aside className="w-full space-y-3 lg:flex-none lg:sticky lg:top-3 lg:w-[400px]">
-            <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
+            <section className="box-border max-w-full overflow-hidden lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-3 lg:shadow-soft lg:dark:border-slate-700 lg:dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
                 <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
                 {/* 手机端隐藏整组工具栏（新建 / 上传 .md / 从链接导入），桌面端保留 */}
@@ -1442,12 +1442,13 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('searchPlaceholder')}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none transition focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-400 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 sm:px-3 sm:py-2 sm:text-sm"
                 />
               </div>
 
-              {/* 手机端分类标签换行显示（不再横向滑动），桌面端保持单行可横向滚动 */}
-              <div className="mb-3 -mx-1 px-1 lg:overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {/* 手机端分类标签换行显示（不再横向滑动），也不需要 -mx-1 出血；
+                  桌面端仍是单行 + 横向滚动，靠 lg:p-3 的内边距吸收负外边距 */}
+              <div className="mb-3 lg:-mx-1 lg:overflow-x-auto lg:px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="flex flex-wrap gap-1.5 lg:flex-nowrap">
                   {(Object.keys(CATEGORY_LABELS) as FilterTab[]).map((tab) => (
                     <button
@@ -1514,15 +1515,18 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                             : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800'
                       }`}
                     >
+                      {/* 手机端隐藏勾选列：批量操作入口只在卡片上，而手机的
+                          「高级设置」（删除按钮所在）本就隐藏，勾选没有可用场景，
+                          留着只是给每张卡加一个 16px 的灰方块噪音 */}
                       {isLocal ? (
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => handleBatchSelect(item.id)}
-                          className="h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 dark:border-slate-600"
+                          className="hidden h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 lg:block dark:border-slate-600"
                         />
                       ) : (
-                        <span className="h-4 w-4 shrink-0 rounded border border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-700" />
+                        <span className="hidden h-4 w-4 shrink-0 rounded border border-slate-300 bg-slate-100 lg:block dark:border-slate-600 dark:bg-slate-700" />
                       )}
                       <button
                         type="button"
@@ -1687,7 +1691,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
               }}
             />
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <section className="lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-soft lg:dark:border-slate-700 lg:dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <button
                   type="button"
@@ -1713,7 +1717,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               {/* 手机端限制预览高度并内部滚动，避免整页被提示词撑到 6 屏；桌面端不限高 */}
               <div
-                className={`max-h-[45vh] overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 lg:max-h-none lg:block dark:border-slate-700 dark:bg-slate-800 ${
+                className={`max-h-[45vh] overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white px-3 py-2 lg:max-h-none lg:block lg:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 lg:dark:bg-slate-800 ${
                   previewOpen ? '' : 'hidden'
                 }`}
               >

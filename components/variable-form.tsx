@@ -48,7 +48,7 @@ const DEFAULT_VARIABLE_FORM_LABELS = {
 
 // Shared field classes to avoid repetition
 const FIELD_BASE =
-  'w-full rounded-xl border text-base outline-none transition sm:text-sm';
+  'w-full rounded-xl border bg-white text-base outline-none transition sm:text-sm';
 
 const FIELD_NORMAL_CLASSES =
   'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:focus-visible:border-teal-500 dark:focus-visible:ring-teal-400 focus-visible:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-200';
@@ -191,7 +191,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
 
   if (variables.length === 0) {
     return (
-      <section className="variable-form-section rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+      <section className="variable-form-section lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-soft lg:dark:border-slate-700 lg:dark:bg-slate-900">
         <h3 className="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-200">{t.sectionTitle}</h3>
         <p className="text-base text-slate-500 sm:text-sm dark:text-slate-400">{t.noVariables}</p>
       </section>
@@ -199,7 +199,7 @@ export const VariableForm = forwardRef<VariableFormRef, VariableFormProps>(funct
   }
 
   return (
-    <section className="variable-form-section rounded-2xl border border-slate-200 bg-white p-3 shadow-soft lg:p-4 dark:border-slate-700 dark:bg-slate-900">
+    <section className="variable-form-section lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-soft lg:dark:border-slate-700 lg:dark:bg-slate-900">
       <div className="mb-2 flex items-center justify-between gap-3 lg:mb-3">
         <h3 className="shrink-0 text-sm font-semibold text-slate-800 dark:text-slate-200">{t.sectionTitle}</h3>
         {stockStatusText ? (

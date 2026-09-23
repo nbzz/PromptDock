@@ -45,9 +45,16 @@
 - 吸底操作条在 `components/platform-actions.tsx` 内双渲染（桌面卡片 + 手机 `fixed` 条）
 
 移动端刻意隐藏的功能（避免页面过长）：新建 / 上传 .md / 从链接导入、最近使用、
-高级设置、自动变量、模板来源标签、收藏星标、顶部介绍文案。桌面端不受影响。
+高级设置、自动变量、模板来源标签、收藏星标、勾选列、顶部介绍文案。桌面端不受影响。
 移动端侧栏不允许横向滑动（列表 `overflow-x-hidden touch-pan-y`、分类标签 `flex-wrap`）；
 预览区移动端限高 `max-h-[45vh]` 内部滚动，桌面端 `lg:max-h-none`。
+
+移动端**不加外层卡片容器**：header 与各 section 统一写成
+`lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-N lg:shadow-soft lg:dark:...`，
+手机端保持透明无框，避免「胶囊套胶囊」。因此内层元素必须自带底色
+（输入框 `bg-white`、模板卡片 `bg-white`），否则会与页面底色糊在一起。
+注意 `lg:bg-*` 是媒体查询、会排在 `dark:bg-*` 之后，暗色下若两边都要生效，
+需要显式补 `lg:dark:bg-*`。
 
 ## 开发命令
 
