@@ -330,10 +330,9 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
   const [shareCount, setShareCount] = useState<number>(0);
   const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
-  // 手机端收起搜索框与分类标签（列表本身始终可见），点「筛选」展开；
-  // 桌面端用 lg:block 强制展开，不受此开关影响。
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
+  // 搜索框与分类标签在手机端始终可见（不再需要「筛选」开关）。
+  // 「模板与预览」默认展开，手机端可点标题收起；桌面端始终展开（lg:block）。
+  const [previewOpen, setPreviewOpen] = useState(true);
   const [saveConfirmDialog, setSaveConfirmDialog] = useState<{template: StoredTemplate; draftMarkdown: string} | null>(null);
   const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ template: StoredTemplate } | null>(null);
   const [batchDeleteConfirmDialog, setBatchDeleteConfirmDialog] = useState<{ count: number } | null>(null);
@@ -1314,23 +1313,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
             <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft overflow-hidden max-w-full box-border dark:border-slate-700 dark:bg-slate-900">
               <div className="mb-3 flex items-center justify-between gap-2 flex-wrap">
                 <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t('templateList')}</h2>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setFilterOpen((open) => !open)}
-                    aria-expanded={filterOpen}
-                    className="flex min-h-[36px] items-center gap-1 rounded-lg border border-slate-300 px-2.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 lg:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
-                  >
-                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-                      />
-                    </svg>
-                    <span>{filterOpen ? (lang === 'zh' ? '收起' : 'Hide') : lang === 'zh' ? '筛选' : 'Filter'}</span>
-                  </button>
+                {/* 手机端隐藏整组工具栏（新建 / 上传 .md / 从链接导入），桌面端保留 */}
+                <div className="hidden gap-2 lg:flex">
                   <button
                     type="button"
                     onClick={() => {
@@ -1444,7 +1428,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 {t('templateNotice2')}
               </p>
 
-              <div className={`mb-3 ${filterOpen ? '' : 'hidden'} lg:block`}>
+              <div className="mb-3">
                 <input
                   type="text"
                   value={searchQuery}
@@ -1454,11 +1438,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 />
               </div>
 
-              <div
-                className={`mb-3 -mx-1 overflow-x-auto px-1 lg:block [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
-                  filterOpen ? '' : 'hidden'
-                }`}
-              >
+              <div className="mb-3 -mx-1 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="flex gap-1.5">
                   {(Object.keys(CATEGORY_LABELS) as FilterTab[]).map((tab) => (
                     <button
@@ -1479,7 +1459,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
 
               <div
                 ref={templateListRef}
-                className={`max-h-[34vh] space-y-2 overflow-auto pr-1 transition-colors lg:max-h-[70vh] ${
+                className={`grid grid-cols-2 gap-2 max-h-[34vh] overflow-auto pr-1 transition-colors lg:block lg:max-h-[70vh] lg:space-y-2 ${
                   isDragging ? 'bg-teal-50 dark:bg-teal-900/20 rounded-xl' : ''
                 }`}
                 onDragOver={handleDragOver}
@@ -1491,12 +1471,12 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 aria-multiselectable="true"
               >
                 {isDragging && (
-                  <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-teal-400 bg-teal-50/50 py-8 dark:bg-teal-900/20">
+                  <div className="col-span-2 flex items-center justify-center rounded-xl border-2 border-dashed border-teal-400 bg-teal-50/50 py-8 lg:col-span-1 dark:bg-teal-900/20">
                     <p className="text-sm text-teal-600 dark:text-teal-400">📄 {lang === 'zh' ? '松开以上传 .md 文件' : 'Drop .md file here'}</p>
                   </div>
                 )}
                 {isLoading ? (
-                  <div className="space-y-2">
+                  <div className="col-span-2 grid grid-cols-2 gap-2 lg:col-span-1 lg:block lg:space-y-2">
                     {[1,2,3,4,5].map((i) => (
                       <div key={i} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3 dark:border-slate-700 dark:bg-slate-800 animate-pulse">
                         <div className="h-4 w-4 rounded bg-slate-200 dark:bg-slate-600" />
@@ -1517,7 +1497,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                       key={item.id}
                       role="option"
                       aria-selected={isSelected}
-                      className={`flex items-center gap-2 rounded-xl border px-3 py-2 min-h-[60px] transition ${
+                      className={`flex items-center gap-2 rounded-xl border px-2 py-2 min-h-[56px] transition lg:px-3 lg:min-h-[60px] ${
                         isSelected
                           ? 'border-teal-500 bg-teal-50 shadow-sm shadow-teal-200 dark:bg-teal-900/30 dark:shadow-teal-900 dark:border-teal-500'
                           : isChecked && isLocal
@@ -1543,11 +1523,11 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                         className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 rounded"
                       >
                         <div className="flex items-center gap-1.5">
-                          <p className={`truncate text-sm font-medium ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                          <p className={`break-words text-sm font-medium lg:truncate ${isSelected ? 'text-teal-900 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
                             {item.title}
                           </p>
                         </div>
-                        <p className={`mt-0.5 text-xs ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <p className={`mt-0.5 hidden text-xs lg:block ${isSelected ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
                           {item.source === 'builtin' ? t('builtIn') : t('local')}
                         </p>
                       </button>
@@ -1568,7 +1548,7 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                   );
                 })}
                 {templates.length === 0 ? (
-                  <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center dark:border-slate-600">
+                  <div className="col-span-2 flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center lg:col-span-1 dark:border-slate-600">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
                       <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -1598,40 +1578,43 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                     </div>
                   </div>
                 ) : filteredTemplates.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
+                  <p className="col-span-2 rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-sm text-slate-500 lg:col-span-1 dark:border-slate-600 dark:text-slate-400">
                     {t('noResults')}
                   </p>
                 ) : null}
               </div>
             </section>
 
-            <HistoryPanel
-              entries={history}
-              platforms={PLATFORMS}
-              onReuse={(entry) => {
-                const template = templates.find((t) => t.id === entry.templateId);
-                if (!template) {
-                  return;
-                }
-                setSelectedId(template.id);
-                setDraftMarkdown(template.rawMarkdown);
-                setValues(entry.values);
-              }}
-              onCopyAndOpen={(platformKey, url) => {
-                void copyAndOpenAction(platformKey, url);
-              }}
-              onClear={() => {
-                clearHistory();
-                setHistory([]);
-              }}
-              labels={{
-                title: t('recentHistory'),
-                clear: t('clearHistory'),
-                noHistory: t('noHistory'),
-                copyOnly: t('copyOnlyAction'),
-                copyAndOpen: t('copyAndOpenAction'),
-              }}
-            />
+            {/* 手机端隐藏「最近使用」，桌面端保留 */}
+            <div className="hidden lg:block">
+              <HistoryPanel
+                entries={history}
+                platforms={PLATFORMS}
+                onReuse={(entry) => {
+                  const template = templates.find((t) => t.id === entry.templateId);
+                  if (!template) {
+                    return;
+                  }
+                  setSelectedId(template.id);
+                  setDraftMarkdown(template.rawMarkdown);
+                  setValues(entry.values);
+                }}
+                onCopyAndOpen={(platformKey, url) => {
+                  void copyAndOpenAction(platformKey, url);
+                }}
+                onClear={() => {
+                  clearHistory();
+                  setHistory([]);
+                }}
+                labels={{
+                  title: t('recentHistory'),
+                  clear: t('clearHistory'),
+                  noHistory: t('noHistory'),
+                  copyOnly: t('copyOnlyAction'),
+                  copyAndOpen: t('copyAndOpenAction'),
+                }}
+              />
+            </div>
           </aside>
 
           <section className="flex-1 space-y-3">
@@ -1748,7 +1731,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </pre>
               </div>
 
-              <details className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+              {/* 手机端隐藏「高级设置」，桌面端保留 */}
+              <details className="mt-3 hidden rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-600 lg:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                 <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">
                   {t('advancedSettings')}
                 </summary>
@@ -1861,7 +1845,8 @@ function getTemplateCategory(item: StoredTemplate): FilterTab {
                 </div>
               </details>
 
-              <details className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+              {/* 手机端隐藏「自动变量」说明，桌面端保留 */}
+              <details className="mt-3 hidden rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 lg:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                 <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">{t('advancedTip')}</summary>
                 <p className="mt-2 leading-5">
                   {t('autoFillTip')}
